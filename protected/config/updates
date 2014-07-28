@@ -1,0 +1,6 @@
+Alter table usuario change Nombre nombre varchar(45);
+Alter table usuario change Apellido apellido varchar(45);
+Alter table usuario change Email email varchar(255);
+Alter table usuario change Pass pass varchar(45);
+Alter table usuario change Perfil perfil int(11);
+

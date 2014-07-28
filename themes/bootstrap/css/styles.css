@@ -1,0 +1,11 @@
+#page {
+    padding-top: 85px;
+}
+a {
+	font-style: italic;
+}
+#footer {
+  height: 60px;
+  background-color: #f5f5f5;
+  text-align:center;
+}
