@@ -9,7 +9,6 @@
 $config = parse_ini_file(dirname(__FILE__).'/config.ini', true);
 $connconf = $config['mysql'];
 $giiconf = $config['gii'];
-$mongoconf = $config['mongodb'];
 
 Yii::setPathOfAlias('bootstrap', dirname(__FILE__).'/../extensions/bootstrap');
 return array(
