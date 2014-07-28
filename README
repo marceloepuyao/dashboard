@@ -7,6 +7,7 @@ Thank you for choosing Yii - a high-performance component-based PHP framework.
 INSTALLATION
 ------------
 
-1.- Crear base de datos: crmdcc2
+1.- Crear base de datos (nombre: crmdcc2)
+2.- Crear protected/config/config.ini con credenciales de la base de datos (ejemplo: cofig_example.ini)
 2.- Correr "yiic migrate" por cmd dentro de /protected
 

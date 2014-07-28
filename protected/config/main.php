@@ -5,6 +5,12 @@
 
 // This is the main Web application configuration. Any writable
 // CWebApplication properties can be configured here.
+
+$config = parse_ini_file(dirname(__FILE__).'/config.ini', true);
+$connconf = $config['mysql'];
+$giiconf = $config['gii'];
+$mongoconf = $config['mongodb'];
+
 Yii::setPathOfAlias('bootstrap', dirname(__FILE__).'/../extensions/bootstrap');
 return array(
 	'language' => 'es',
@@ -27,7 +33,7 @@ return array(
 		
 		'gii'=>array(
 			'class'=>'system.gii.GiiModule',
-			'password'=>'pepito.P0',
+			'password'=>$giiconf["gii_password"],
 			// If removed, Gii defaults to localhost only. Edit carefully to taste.
 			'ipFilters'=>array('127.0.0.1','::1'),
 		),
@@ -60,10 +66,10 @@ return array(
 		
 	
 		'db'=>array(
-			'connectionString' => 'mysql:host=localhost;dbname=crmdcc2',
+			'connectionString' => 'mysql:host='.$connconf['mysql_host'].';dbname='.$connconf['mysql_database'],
 			'emulatePrepare' => true,
-			'username' => 'root',
-			'password' => '',
+			'username' => $connconf['mysql_user'],
+			'password' => $connconf['mysql_password'],
 			'charset' => 'utf8',
 		),
 		
