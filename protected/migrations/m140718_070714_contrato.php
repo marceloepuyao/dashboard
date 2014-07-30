@@ -15,8 +15,7 @@ class m140718_070714_contrato extends CDbMigration
 				'titulo' => 'VARCHAR(100) DEFAULT NULL',
 		));
 		$this->addForeignKey('FK01_contrato_cliente', 'contrato', 'cliente_id', 'cliente', 'id', 'RESTRICT');
-		//$this->addForeignKey('FK01_sla_contrato', 'sla', 'contrato_id', 'contrato', 'id', 'RESTRICT');
-		
+
 		$this->insert("contrato", array(
 				'cliente_id' => 1,
 				'facturacion' => 400,
