@@ -20,7 +20,7 @@
 	<?php echo $form->errorSummary($model); ?>
 
 		<?php echo $form->textAreaRow($model,'descripcion',array('rows'=>6, 'cols'=>50)); ?>
-		<?php echo $form->dropDownListRow($model, 'linea_servicio_id', $lineaservicios); ?>
+		<?php //echo $form->dropDownListRow($model, 'linea_servicio_id', $lineaservicios); ?>
 
 		<?php //echo $form->dropDownListRow($model, 'cliente_id', array('Something ...', '1', '2', '3', '4', '5')); ?>
 		

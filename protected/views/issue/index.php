@@ -19,10 +19,6 @@ $this->menu=array(
 	'id'=>'issue-grid',
 	'dataProvider'=>$model,
 	'columns'=>array(
-		array(
-			'name'=>'linea_servicio_id',
-			'value'=> 'LineaServicio::model()->findByPk($data->linea_servicio_id)["nombre"]',
-		),
 		'descripcion',
 		'fecha',
 		array(
