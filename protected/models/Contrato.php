@@ -35,7 +35,7 @@ class Contrato extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('cliente_id', 'required'),
+			array('cliente_id, titulo', 'required'),
 			array('cliente_id, facturacion', 'numerical', 'integerOnly'=>true),
 			array('codigo_moebius', 'length', 'max'=>20),
 			array('titulo', 'length', 'max'=>100),
@@ -68,7 +68,7 @@ class Contrato extends CActiveRecord
 		return array(
 			'id' => 'ID',
 			'cliente_id' => 'Cliente',
-			'facturacion' => 'Facturacion',
+			'facturacion' => 'Facturación',
 			'inicio' => 'Inicio',
 			'fin' => 'Fin',
 			'codigo_moebius' => 'Código Moebius',

@@ -37,8 +37,14 @@ $this->menu=array(
 		),
 	),
 )); ?>
+<?php $this->widget('bootstrap.widgets.TbButton', array(
+	'url' => array('contrato/update', 'id'=>$model->id),
+    'label'=>'Actualizar Contrato',
+    'type'=>'primary', // null, 'primary', 'info', 'success', 'warning', 'danger' or 'inverse'
+    'size'=>'small', // null, 'large', 'small' or 'mini'
+)); ?>
 
-<h2>SLA</h2>
+<h3>SLA</h3>
 
 <?php $this->widget('bootstrap.widgets.TbGridView', array(
 	'id'=>'contrato-grid',
@@ -68,6 +74,7 @@ $this->menu=array(
     'type'=>'primary', // null, 'primary', 'info', 'success', 'warning', 'danger' or 'inverse'
     'size'=>'small', // null, 'large', 'small' or 'mini'
 )); ?>
+</br>
 <?php $this->widget('bootstrap.widgets.TbButton', array(
 	'url' => array('contrato/index', 'id'=>$cliente->id),
     'label'=>'Volver',

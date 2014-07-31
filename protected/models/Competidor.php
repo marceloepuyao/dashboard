@@ -1,26 +1,23 @@
 <?php
 
 /**
- * This is the model class for table "sla".
+ * This is the model class for table "competidor".
  *
- * The followings are the available columns in table 'sla':
+ * The followings are the available columns in table 'competidor':
  * @property integer $id
- * @property integer $contrato_id
  * @property string $nombre
- * @property integer $objetivo
- * @property string $descripcion
  *
  * The followings are the available model relations:
- * @property SeguimientoSla[] $seguimientoSlas
+ * @property Cliente[] $clientes
  */
-class Sla extends CActiveRecord
+class Competidor extends CActiveRecord
 {
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return 'sla';
+		return 'competidor';
 	}
 
 	/**
@@ -31,14 +28,11 @@ class Sla extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('nombre, objetivo', 'required'),
-			array('contrato_id', 'numerical', 'integerOnly'=>true),
-			array('objetivo', 'type', 'type'=>'float'), // 'message'=>'{attribute} debe ser un número.'
+			array('nombre', 'required'),
 			array('nombre', 'length', 'max'=>45),
-			array('descripcion', 'length', 'max'=>200),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, nombre, objetivo, descripcion', 'safe', 'on'=>'search'),
+			array('id, nombre', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -50,8 +44,7 @@ class Sla extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'contrato' => array(self::BELONGS_TO, 'Contrato', 'contrato_id'),
-			'seguimientoSlas' => array(self::HAS_MANY, 'SeguimientoSla', 'sla_id'),
+			'clientes' => array(self::MANY_MANY, 'Cliente', 'cliente_competidor(competidor_id, cliente_id)'),
 		);
 	}
 
@@ -62,10 +55,7 @@ class Sla extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'contrato_id' => 'Contrato',
 			'nombre' => 'Nombre',
-			'objetivo' => 'Objetivo (%)',
-			'descripcion' => 'Descripción',
 		);
 	}
 
@@ -88,27 +78,18 @@ class Sla extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id',$this->id);
-		$criteria->compare('contrato_id',$this->contrato_id);
 		$criteria->compare('nombre',$this->nombre,true);
-		$criteria->compare('objetivo',$this->objetivo);
-		$criteria->compare('descripcion',$this->descripcion,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
-	}
-	
-	public function beforeDelete(){
-		foreach($this->seguimientoSlas as $c)
-			$c->delete();
-		return parent::beforeDelete();
 	}
 
 	/**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return Sla the static model class
+	 * @return Competidor the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{

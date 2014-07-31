@@ -9,8 +9,8 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-	array('label'=>'Administrar Issues', 'url'=>array('index')),
-	array('label'=>'Crear Issue', 'url'=>array('create')),
+	array('label'=>'Administrar Issues', 'url'=>array('index', 'id'=>$cliente->id)),
+	array('label'=>'Crear Issue', 'url'=>array('create','id'=>$cliente->id)),
 	array('label'=>'Actualizar Issue', 'url'=>array('update', 'id'=>$model->id)),
 	array('label'=>'Eliminar Issue', 'url'=>'#', 'linkOptions'=>array('submit'=>array('delete','id'=>$model->id),'confirm'=>'Are you sure you want to delete this item?')),
 );
@@ -31,8 +31,15 @@ $this->menu=array(
 		),
 		'descripcion',
 		'fecha',
-		'solucionado',
-		'criticidad',
+		array(
+			'name'=>'solucionado',
+			'value'=>$model->solucionado==1?"Pendiente":"Terminado" ,
+		),
+		array(
+			'name'=>'criticidad',
+			'value'=>$model->criticidad==1?"Baja":($model->criticidad==2?"Media":"Alta"),
+		),
+		
 	),
 )); ?>
 

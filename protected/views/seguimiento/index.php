@@ -23,7 +23,7 @@ $this->breadcrumbs=array(
     
 <?php $this->widget('bootstrap.widgets.TbButton', array(
 	'url'=>array('seguimiento/historico', 'id'=>$cliente->id),
-    'label'=>'Seguimiento Histórico',
+    'label'=>'Ver Seguimiento Histórico',
     'type'=>'primary', // null, 'primary', 'info', 'success', 'warning', 'danger' or 'inverse'
     'size'=>'small', // null, 'large', 'small' or 'mini'
 )); ?>
@@ -41,7 +41,7 @@ if(!$seguimiento){
 }else{
 	$this->widget('bootstrap.widgets.TbButton', array(
 		'url'=>array('seguimiento/update', 'id'=>$cliente->id),
-		'label'=>'Editar Último Seguimiento',
+		'label'=>'Editar Seguimiento Semanal',
 		'type'=>'primary', // null, 'primary', 'info', 'success', 'warning', 'danger' or 'inverse'
 		'size'=>'small', // null, 'large', 'small' or 'mini'
 	));

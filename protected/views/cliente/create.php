@@ -13,5 +13,10 @@ $this->menu=array(
 ?>
 
 <h2>Crear Cliente</h2>
-
-<?php $this->renderPartial('_form', array('model'=>$model, 'usuarios'=>$usuarios)); ?>
+<?php $selected_keys = array();?>
+<?php $this->renderPartial('_form', array(
+		'model'=>$model, 
+		'usuarios'=>$usuarios,
+		'competidores'=>$competidores,
+		'selected_keys'=>$selected_keys
+)); ?>

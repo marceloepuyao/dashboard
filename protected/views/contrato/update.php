@@ -20,3 +20,6 @@ $this->menu=array(
 
 <?php $this->renderPartial('_form', array('model'=>$model,	'cliente'=>$cliente,'lineaservicios'=>$lineaservicios,
 			'selected_keys'=>$selected_keys,)); ?>
+
+			
+			

@@ -9,7 +9,7 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-	array('label'=>'Issues : '.$cliente->nombre, 'url'=>array('index')),
+	array('label'=>'Issues : '.$cliente->nombre, 'url'=>array('index','id'=>$model->cliente_id)),
 	array('label'=>'Crear Issue', 'url'=>array('create', 'id'=>$model->cliente_id)),
 	array('label'=>'Ver Issue', 'url'=>array('view', 'id'=>$model->id)),
 );

@@ -8,7 +8,7 @@ class SeguimientoController extends Controller
 		$fecha = date('YW');
 		$contratos = $cliente->contratos;
 		
-		$serviciosRawData = Yii::app()->db->createCommand("select * from linea_servicio ls, contrato c, linea_servicio_contrato lsc Where c.cliente_id = $cliente->id  AND c.id =lsc.contrato_id AND ls.id=lsc.linea_servicio_id group by ls.id; ")->queryAll();
+		$serviciosRawData = Yii::app()->db->createCommand("select ls.* from linea_servicio ls, linea_servicio_contrato lsc, contrato c where c.cliente_id = $cliente->id AND lsc.contrato_id = c.id AND ls.id = lsc.linea_servicio_id GROUP BY ls.id;")->queryAll();
 		
 		$lineaservicios=new CArrayDataProvider($serviciosRawData, array(
 		    'id'=>'id',
@@ -47,7 +47,7 @@ class SeguimientoController extends Controller
 			$seg_itil = $_POST['itil'];
 			$seg_sla = $_POST['sla'];
 			//foreach ($per_cliente as $i=>$pc){
-				$serviciocontrato = Yii::app()->db->createCommand("select lsc.id, lsc.linea_servicio_id, lsc.contrato_id from linea_servicio_contrato lsc, contrato c Where c.cliente_id =1 group by lsc.id; ")->queryAll(); 
+				$serviciocontrato = Yii::app()->db->createCommand("select lsc.id, lsc.linea_servicio_id, lsc.contrato_id from linea_servicio_contrato lsc, contrato c Where c.cliente_id = $cliente->id AND lsc.contrato_id = c.id group by lsc.id; ")->queryAll(); 
 				foreach ($serviciocontrato as $sc){
 					$seguimientoPercepcion = new SeguimientoPercepcion();
 					$seguimientoPercepcion->linea_servicio_contrato_id = $sc['id'];
@@ -110,9 +110,9 @@ class SeguimientoController extends Controller
 		$seguimiento = false;
 		if($seguimientoitil = SeguimientoItil::model()->findAll("cliente_id = $cliente->id AND fecha = $fecha")){
 			$seguimiento = true;
-			Yii::app()->user->setFlash('success', '<strong>Seguimiento Semanal Guardado</strong> El seguimiento semanal ha sido correctamente guardado.');
+			Yii::app()->user->setFlash('success', '<strong>Seguimiento semanal ha sido generado</strong> Puedes editarlo durante la semana.');
 		}else{
-			Yii::app()->user->setFlash('warning', '<strong>Seguimiento Semanal Incompleto</strong> El seguimiento semanal no ha sido completado.');
+			Yii::app()->user->setFlash('warning', '<strong>Seguimiento semanal no ha sido generado</strong> Puedes generarlo tu!.');
 		}
 		
 		

@@ -51,8 +51,11 @@ class ClienteController extends Controller
 	 */
 	public function actionView($id)
 	{
+		$model = $this->loadModel($id);
+		$competidores = array_keys(CHtml::listData($model->competidores, 'nombre' , 'id'));
 		$this->render('view',array(
-			'model'=>$this->loadModel($id),
+			'model'=>$model,
+			'competidores'=>$competidores,
 		));
 	}
 	
@@ -88,6 +91,7 @@ class ClienteController extends Controller
 	public function actionCreate()
 	{
 		$model=new Cliente;
+		$competidores = CHtml::listData(Competidor::model()->findAll(), 'id', 'nombre');
 		
 		$usuarios = Usuario::model()->findAll();
 		$selectusuario = array();
@@ -101,13 +105,24 @@ class ClienteController extends Controller
 		if(isset($_POST['Cliente']))
 		{
 			$model->attributes=$_POST['Cliente'];
-			if($model->save())
+			if($model->save()){
+				if(isset($_POST['competidores'])){
+					$model->competidor =$_POST['competidores'];
+					foreach ($model->competidor as $competidor){
+						$clientecompetidor = new ClienteCompetidor();
+						$clientecompetidor->cliente_id = $model->id;
+						$clientecompetidor->competidor_id = $competidor;
+						$clientecompetidor->save();
+					}
+				}
 				$this->redirect(array('index'));
+			}
 		}
 
 		$this->render('create',array(
 			'model'=>$model,
 			'usuarios'=>$selectusuario,
+			'competidores'=>$competidores,
 		));
 	}
 
@@ -124,6 +139,11 @@ class ClienteController extends Controller
 		foreach ($usuarios as $usuario){
 			$selectusuario[$usuario->id] = $usuario->nombre." ".$usuario->apellido;
 		}
+		
+
+		$competidores = CHtml::listData(Competidor::model()->findAll(), 'id', 'nombre');
+	
+		$selected_keys = array_keys(CHtml::listData($model->competidores, 'id' , 'id'));
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
@@ -132,12 +152,24 @@ class ClienteController extends Controller
 		{
 			$model->attributes=$_POST['Cliente'];
 			if($model->save())
+				ClienteCompetidor::model()->deleteAll("cliente_id = $model->id");
+				if(isset($_POST['competidores'])){
+					$model->competidor=$_POST['competidores'];
+					foreach ($model->competidor as $competidor){
+						$clientecompetidor = new ClienteCompetidor();
+						$clientecompetidor->cliente_id = $model->id;
+						$clientecompetidor->competidor_id = $competidor;
+						$clientecompetidor->save();
+					}
+				}
 				$this->redirect(array('index'));
 		}
 
 		$this->render('update',array(
 			'model'=>$model,
 			'usuarios'=>$selectusuario,
+			'competidores'=>$competidores,
+			'selected_keys' => $selected_keys,
 		));
 	}
 

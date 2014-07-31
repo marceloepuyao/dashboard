@@ -41,7 +41,10 @@
 
 	<?php echo $form->textFieldRow($model,'arquitecto',array('size'=>45,'maxlength'=>45)); ?>
 
-	<?php echo $form->textFieldRow($model,'competidor',array('size'=>60,'maxlength'=>255)); ?>
+	<?php //echo $form->textFieldRow($model,'competidor',array('size'=>60,'maxlength'=>255)); ?>
+	  <?php echo $form->labelEx($model, 'competidor'); ?></p>
+	  <?php echo CHtml::checkBoxList('competidores', $selected_keys, $competidores, array('separator'=>' ','template'=>'<span class="myItem" style="display:table;">{input} {label} </span>')); ?>
+		
 	</br>
 	<?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>$model->isNewRecord ? 'Crear' : 'Guardar')); ?>
 

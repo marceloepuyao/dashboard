@@ -52,7 +52,7 @@ class Issue extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'cliente' => array(self::BELONGS_TO, 'Cliente', 'cliente_id'),
-				'lineaServicios' => array(self::MANY_MANY, 'LineaServicio', 'issue_linea_servicio(issue_id, linea_servicio_id)'),
+			'lineaServicios' => array(self::MANY_MANY, 'LineaServicio', 'issue_linea_servicio(issue_id, linea_servicio_id)'),
 					
 		);
 	}

@@ -18,7 +18,7 @@ $this->breadcrumbs=array(
 		'fecha',
 		array(
 			'name'=> 'cliente_id',
-			'value'=> 'Cliente::model()->findByPk($data->id)->nombre',
+			'value'=> 'Cliente::model()->findByPk($data->cliente_id)->nombre',
 		),
 		array(
 			'name'=> 'Líneas de Servicios',
