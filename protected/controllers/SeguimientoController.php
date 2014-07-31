@@ -8,7 +8,7 @@ class SeguimientoController extends Controller
 		$fecha = date('YW');
 		$contratos = $cliente->contratos;
 		
-		$serviciosRawData = Yii::app()->db->createCommand("select ls.id, ls.nombre from linea_servicio ls, contrato c Where c.cliente_id =1 group by ls.id; ")->queryAll();
+		$serviciosRawData = Yii::app()->db->createCommand("select * from linea_servicio ls, contrato c, linea_servicio_contrato lsc Where c.cliente_id = $cliente->id  AND c.id =lsc.contrato_id AND ls.id=lsc.linea_servicio_id group by ls.id; ")->queryAll();
 		
 		$lineaservicios=new CArrayDataProvider($serviciosRawData, array(
 		    'id'=>'id',
@@ -32,7 +32,7 @@ class SeguimientoController extends Controller
 				),
 		));
 	
-		$slasRawData = Yii::app()->db->createCommand("select s.id, s.nombre, s.objetivo, s.descripcion, s.contrato_id from sla s, contrato c, cliente cl where cl.id =1 group by s.id; ")->queryAll();
+		$slasRawData = Yii::app()->db->createCommand("select s.id, s.nombre, s.objetivo, s.descripcion, s.contrato_id from sla s, contrato c  where c.cliente_id = $cliente->id AND s.contrato_id = c.id group by s.id;")->queryAll();
 		
 		$sla=new CArrayDataProvider($slasRawData, array(
 				'id'=>'id',
