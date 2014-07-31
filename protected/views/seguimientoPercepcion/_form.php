@@ -38,12 +38,6 @@
 	</div>
 
 	<div class="row">
-		<?php echo $form->labelEx($model,'fecha'); ?>
-		<?php echo $form->textField($model,'fecha'); ?>
-		<?php echo $form->error($model,'fecha'); ?>
-	</div>
-
-	<div class="row">
 		<?php echo $form->labelEx($model,'tipo_seguimiento'); ?>
 		<?php echo $form->textField($model,'tipo_seguimiento'); ?>
 		<?php echo $form->error($model,'tipo_seguimiento'); ?>
