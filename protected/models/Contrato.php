@@ -18,6 +18,7 @@
  */
 class Contrato extends CActiveRecord
 {
+	public $lineaservicios;
 	/**
 	 * @return string the associated database table name
 	 */
@@ -55,6 +56,7 @@ class Contrato extends CActiveRecord
 		return array(
 			'cliente' => array(self::BELONGS_TO, 'Cliente', 'cliente_id'),
 			'lineaServicios' => array(self::MANY_MANY, 'LineaServicio', 'linea_servicio_contrato(contrato_id, linea_servicio_id)'),
+			'sla' => array(self::HAS_MANY, 'Sla', 'contrato_id'),
 		);
 	}
 
@@ -71,6 +73,7 @@ class Contrato extends CActiveRecord
 			'fin' => 'Fin',
 			'codigo_moebius' => 'Código Moebius',
 			'titulo' => 'Título',
+			'lineaservicios'=>'Servicios Contratados'
 		);
 	}
 

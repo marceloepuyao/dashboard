@@ -13,7 +13,7 @@ $this->menu=array(
 
 ?>
 
-<h2>Contratos : <?php echo $cliente->nombre;?></h2>
+<h2>Contratos: <?php echo $cliente->nombre;?></h2>
 
 
 <?php $this->widget('bootstrap.widgets.TbGridView', array(
@@ -25,6 +25,10 @@ $this->menu=array(
 		'inicio',
 		'fin',
 		'codigo_moebius',
+		array(
+			'name'=> 'lineaservicios',
+			'value'=> 'implode(", ", array_keys(CHtml::listData($data->lineaServicios, "nombre" , "id")));'
+		),
 		array(
 			'class'=>'CButtonColumn',
 		),

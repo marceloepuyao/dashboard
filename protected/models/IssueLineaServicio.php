@@ -41,6 +41,8 @@ class IssueLineaServicio extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'lineaServicio' => array(self::BELONGS_TO, 'LineaServicio', 'linea_servicio_id'),
+			'issue' => array(self::BELONGS_TO, 'Issue', 'issue_id'),
 		);
 	}
 

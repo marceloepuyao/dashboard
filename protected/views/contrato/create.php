@@ -14,5 +14,5 @@ $this->menu=array(
 ?>
 
 <h2>Crear Contrato</h1>
-
-<?php $this->renderPartial('_form', array('model'=>$model, 'cliente'=>$cliente)); ?>
+<?php $selected_keys = array();?>
+<?php $this->renderPartial('_form', array('model'=>$model, 'cliente'=>$cliente, 'lineaservicios'=>$lineaservicios, 'selected_keys'=>$selected_keys)); ?>

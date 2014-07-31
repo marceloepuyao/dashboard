@@ -22,6 +22,10 @@ $this->menu=array(
 		'descripcion',
 		'fecha',
 		array(
+			'name'=> 'lineaservicios',
+			'value'=> 'implode(", ", array_keys(CHtml::listData($data->lineaServicios, "nombre" , "id")));'
+		),
+		array(
 			'name'=>'criticidad',
 			'value'=>'$data->criticidad==1?"Baja":($data->criticidad==2?"Media":3) ',
 		),

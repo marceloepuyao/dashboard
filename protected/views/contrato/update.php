@@ -18,4 +18,5 @@ $this->menu=array(
 
 <h2>Actualizar: <?php echo $model->titulo; ?></h2>
 
-<?php $this->renderPartial('_form', array('model'=>$model)); ?>
+<?php $this->renderPartial('_form', array('model'=>$model,	'cliente'=>$cliente,'lineaservicios'=>$lineaservicios,
+			'selected_keys'=>$selected_keys,)); ?>

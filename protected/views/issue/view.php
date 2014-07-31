@@ -21,7 +21,10 @@ $this->menu=array(
 <?php $this->widget('bootstrap.widgets.TbDetailView', array(
 	'data'=>$model,
 	'attributes'=>array(
-		'linea_servicio_id',
+		array(
+			'name'=>'lineaservicios',
+			'value'=> implode(", ", array_keys(CHtml::listData($model->lineaServicios, "nombre" , "id"))),
+		),
 		array(
 			'name'=>'cliente_id',
 			'value'=> $cliente->nombre,

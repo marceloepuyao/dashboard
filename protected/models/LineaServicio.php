@@ -45,6 +45,7 @@ class LineaServicio extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'contratos' => array(self::MANY_MANY, 'Contrato', 'linea_servicio_contrato(linea_servicio_id, contrato_id)'),
+			'issue' => array(self::MANY_MANY, 'Issue', 'issue_linea_servicio(issue_id,linea_servicio_id)'),		
 		);
 	}
 

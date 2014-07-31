@@ -31,13 +31,13 @@ class Sla extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('contrato_id, objetivo', 'required'),
+			array('nombre, objetivo', 'required'),
 			array('contrato_id, objetivo', 'numerical', 'integerOnly'=>true),
 			array('nombre', 'length', 'max'=>45),
 			array('descripcion', 'length', 'max'=>200),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, contrato_id, nombre, objetivo, descripcion', 'safe', 'on'=>'search'),
+			array('id, nombre, objetivo, descripcion', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -49,6 +49,7 @@ class Sla extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'contrato' => array(self::BELONGS_TO, 'Contrato', 'contrato_id'),
 			'seguimientoSlas' => array(self::HAS_MANY, 'SeguimientoSla', 'sla_id'),
 		);
 	}
@@ -62,8 +63,8 @@ class Sla extends CActiveRecord
 			'id' => 'ID',
 			'contrato_id' => 'Contrato',
 			'nombre' => 'Nombre',
-			'objetivo' => 'Objetivo',
-			'descripcion' => 'Descripcion',
+			'objetivo' => 'Objetivo (%)',
+			'descripcion' => 'Descripción',
 		);
 	}
 
@@ -94,6 +95,12 @@ class Sla extends CActiveRecord
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
+	}
+	
+	public function beforeDelete(){
+		foreach($this->seguimientoSlas as $c)
+			$c->delete();
+		return parent::beforeDelete();
 	}
 
 	/**

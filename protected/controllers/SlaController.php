@@ -1,6 +1,6 @@
 <?php
 
-class ContratoController extends Controller
+class SlaController extends Controller
 {
 	/**
 	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
@@ -46,73 +46,30 @@ class ContratoController extends Controller
 	}
 
 	/**
-	 * Displays a particular model.
-	 * @param integer $id the ID of the model to be displayed
-	 */
-	public function actionView($id)
-	{
-		$model = $this->loadModel($id);
-		$lineaservicios = array_keys(CHtml::listData($model->lineaServicios, 'nombre' , 'id'));		
-		$slas=new CActiveDataProvider('Sla', array(
-				'criteria'=>array(
-						'condition'=>"contrato_id=$id",
-				),
-				'countCriteria'=>array(
-						//'condition'=>'status=1',
-						// 'order' and 'with' clauses have no meaning for the count query
-				),
-				'pagination'=>array(
-						'pageSize'=>20,
-				),
-		));
-		
-		$cliente = $model->cliente;
-		$this->render('view',array(
-			'model'=>$this->loadModel($id),
-			'cliente'=>$cliente,
-			'lineaservicios' => $lineaservicios,
-			'slas'=>$slas,
-		));
-	}
-
-	/**
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
 	 */
 	public function actionCreate($id)
 	{
-		$model=new Contrato;
-		$lineaservicios = CHtml::listData(LineaServicio::model()->findAll(), 'id', 'nombre');
-		
-		$cliente = Cliente::model()->findByPk($id);
+		$model=new Sla;
+		$contrato = Contrato::model()->findByPk($id);
+		$cliente = $contrato->cliente;
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['Contrato']))
+		if(isset($_POST['Sla']))
 		{
-			$model->attributes=$_POST['Contrato'];
-			
-			$model->cliente_id = $cliente->id;
-			if($model->save()){
-				if(isset($_POST['lineaservicios'])){
-					$model->lineaservicios=$_POST['lineaservicios'];
-					foreach ($model->lineaservicios as $servicio){
-						$serviciocontrato = new LineaServicioContrato();
-						$serviciocontrato->contrato_id = $model->id;
-						$serviciocontrato->linea_servicio_id = $servicio;
-						$serviciocontrato->save();
-					}
-				}
-				
-				$this->redirect(array('view','id'=>$model->id));
-			}
+			$model->attributes=$_POST['Sla'];
+			$model->contrato_id = $id;
+			if($model->save())
+				$this->redirect(array('contrato/view','id'=>$model->contrato_id));
 		}
 
 		$this->render('create',array(
 			'model'=>$model,
+			'contrato'=>$contrato,
 			'cliente'=>$cliente,
-			'lineaservicios'=>$lineaservicios,
 		));
 	}
 
@@ -124,40 +81,23 @@ class ContratoController extends Controller
 	public function actionUpdate($id)
 	{
 		$model=$this->loadModel($id);
-		$model->lineaServicios;
-		
-		$lineaservicios = CHtml::listData(LineaServicio::model()->findAll(), 'id', 'nombre');
-		
-		$selected_keys = array_keys(CHtml::listData($model->lineaServicios, 'id' , 'id'));
-
-		$cliente = $model->cliente;
+		$contrato = $model->contrato;
+		$cliente = $contrato->cliente;
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['Contrato']))
+		if(isset($_POST['Sla']))
 		{
-			$model->attributes=$_POST['Contrato'];
-			if($model->save()){
-				LineaServicioContrato::model()->deleteAll("contrato_id = $model->id");
-				if(isset($_POST['lineaservicios'])){
-					$model->lineaservicios=$_POST['lineaservicios'];
-					foreach ($model->lineaservicios as $servicio){
-						$serviciocontrato = new LineaServicioContrato();
-						$serviciocontrato->contrato_id = $model->id;
-						$serviciocontrato->linea_servicio_id = $servicio;
-						$serviciocontrato->save();
-					}
-				}
-				$this->redirect(array('view','id'=>$model->id));
-			}
+			$model->attributes=$_POST['Sla'];
+			if($model->save())
+				$this->redirect(array('contrato/view','id'=>$model->contrato_id));
 		}
 
 		$this->render('update',array(
 			'model'=>$model,
+			'contrato'=>$contrato,
 			'cliente'=>$cliente,
-			'lineaservicios'=>$lineaservicios,
-			'selected_keys'=>$selected_keys,
 		));
 	}
 
@@ -168,6 +108,8 @@ class ContratoController extends Controller
 	 */
 	public function actionDelete($id)
 	{
+		$model = $this->loadModel($id);
+		//$model->seguimientoSlas->delete();
 		$this->loadModel($id)->delete();
 
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
@@ -178,39 +120,39 @@ class ContratoController extends Controller
 	/**
 	 * Lists all models.
 	 */
-	public function actionIndex($id)
+	public function actionIndex()
 	{
-		$dataProvider=new CActiveDataProvider('Contrato', array(
-				'criteria'=>array(
-						'condition'=>"cliente_id=$id",
-				),
-				'countCriteria'=>array(
-						//'condition'=>'status=1',
-						// 'order' and 'with' clauses have no meaning for the count query
-				),
-				'pagination'=>array(
-						'pageSize'=>20,
-				),
-		));
-		
-		$cliente = Cliente::model()->findByPk($id);
+		$dataProvider=new CActiveDataProvider('Sla');
 		$this->render('index',array(
-			'model'=>$dataProvider,
-			'cliente'=>$cliente,
+			'dataProvider'=>$dataProvider,
 		));
 	}
 
+	/**
+	 * Manages all models.
+	 */
+	public function actionAdmin()
+	{
+		$model=new Sla('search');
+		$model->unsetAttributes();  // clear any default values
+		if(isset($_GET['Sla']))
+			$model->attributes=$_GET['Sla'];
+
+		$this->render('admin',array(
+			'model'=>$model,
+		));
+	}
 
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
 	 * @param integer $id the ID of the model to be loaded
-	 * @return Contrato the loaded model
+	 * @return Sla the loaded model
 	 * @throws CHttpException
 	 */
 	public function loadModel($id)
 	{
-		$model=Contrato::model()->findByPk($id);
+		$model=Sla::model()->findByPk($id);
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;
@@ -218,11 +160,11 @@ class ContratoController extends Controller
 
 	/**
 	 * Performs the AJAX validation.
-	 * @param Contrato $model the model to be validated
+	 * @param Sla $model the model to be validated
 	 */
 	protected function performAjaxValidation($model)
 	{
-		if(isset($_POST['ajax']) && $_POST['ajax']==='contrato-form')
+		if(isset($_POST['ajax']) && $_POST['ajax']==='sla-form')
 		{
 			echo CActiveForm::validate($model);
 			Yii::app()->end();

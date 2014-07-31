@@ -11,8 +11,9 @@ $this->breadcrumbs=array(
 $this->menu=array(
 	array('label'=>'Administrar Issues', 'url'=>array('index', 'id'=>$cliente->id)),
 );
+$selected_keys = array();
 ?>
 
 <h2>Crear Issue</h2>
 
-<?php $this->renderPartial('_form', array('model'=>$model, 'cliente'=>$cliente,'lineaservicios'=>$lineaservicios)); ?>
+<?php $this->renderPartial('_form', array('model'=>$model, 'cliente'=>$cliente, 'lineaservicios'=>$lineaservicios,'selected_keys'=>$selected_keys)); ?>

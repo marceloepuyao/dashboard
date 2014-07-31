@@ -15,12 +15,16 @@ $this->breadcrumbs=array(
 	'id'=>'issue-grid',
 	'dataProvider'=>$model,
 	'columns'=>array(
+		'fecha',
 		array(
-			'name'=>'linea_servicio_id',
-			'value'=> 'LineaServicio::model()->findByPk($data->linea_servicio_id)["nombre"]',
+			'name'=> 'cliente_id',
+			'value'=> 'Cliente::model()->findByPk($data->id)->nombre',
+		),
+		array(
+			'name'=> 'Líneas de Servicios',
+			'value'=> 'implode(", ", array_keys(CHtml::listData($data->lineaServicios, "nombre" , "id")));'
 		),
 		'descripcion',
-		'fecha',
 		array(
 			'name'=>'criticidad',
 			'value'=>'$data->criticidad==1?"Baja":($data->criticidad==2?"Media":3) ',
@@ -28,9 +32,6 @@ $this->breadcrumbs=array(
 		array(
 			'name'=>'solucionado',
 			'value'=>'$data->solucionado==1?"Pendiente":"Terminado" ',
-		),
-		array(
-			'class'=>'CButtonColumn',
 		),
 	),
 )); ?>

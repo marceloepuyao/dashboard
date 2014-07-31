@@ -17,6 +17,7 @@
  */
 class Issue extends CActiveRecord
 {
+	public $lineaservicios;
 	/**
 	 * @return string the associated database table name
 	 */
@@ -38,7 +39,7 @@ class Issue extends CActiveRecord
 			array('descripcion, fecha', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, cliente_id, descripcion, fecha, solucionado, criticidad', 'safe', 'on'=>'search'),
+			array('id, cliente_id, lineaservicios, descripcion, fecha, solucionado, criticidad', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -51,6 +52,8 @@ class Issue extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'cliente' => array(self::BELONGS_TO, 'Cliente', 'cliente_id'),
+				'lineaServicios' => array(self::MANY_MANY, 'LineaServicio', 'issue_linea_servicio(issue_id, linea_servicio_id)'),
+					
 		);
 	}
 
@@ -66,6 +69,7 @@ class Issue extends CActiveRecord
 			'fecha' => 'Fecha Creación',
 			'solucionado' => 'Solucionado',
 			'criticidad' => 'Criticidad',
+			'lineaservicios'=> 'Líneas de Servicio',
 		);
 	}
 
