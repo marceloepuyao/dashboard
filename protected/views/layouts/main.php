@@ -25,8 +25,6 @@
                array('label'=>'Inicio', 'url'=>array('/site/index'), 'visible'=>!Yii::app()->user->isGuest),
             	array('label'=>'Estado Cliente', 'url'=>array('/cliente/estado'), 'visible'=>!Yii::app()->user->isGuest),
             	array('label'=>'Mis Clientes', 'url'=>array('/cliente/misclientes'), 'visible'=>!Yii::app()->user->isGuest),	
-				array('label'=>'SM', 'url'=>'#', 'visible'=>!Yii::app()->user->isGuest),
-            	array('label'=>'Línea de Servicios', 'url'=>array('/lineaServicio/index'), 'visible'=>!Yii::app()->user->isGuest),
 				array('label'=>'Mis Issues Abiertos', 'url'=>array('/issue/misissues'), 'visible'=>!Yii::app()->user->isGuest),
             	array('label'=>'Usuario', 'url'=>array('/usuario'), 'visible'=>(isset(Yii::app()->user->perfil)?(Yii::app()->user->perfil=="Admin"):false)),
             		
@@ -39,6 +37,9 @@
     						array('label'=>isset(Yii::app()->user->nombre)?"Bienvenido ".Yii::app()->user->nombre." ".Yii::app()->user->apellido:"", 'url'=>'#', 'visible'=>!Yii::app()->user->isGuest, 'items'=>array(
     								array('label'=>'Usuarios', 'url'=>array('/usuario/index'),'visible'=>Yii::app()->user->isAdmin()),
 									array('label'=>'Clientes', 'url'=>array('/cliente/index'),'visible'=>Yii::app()->user->isAdmin()),
+    								array('label'=>'Competidores', 'url'=>array('/competidor/index'),'visible'=>Yii::app()->user->isAdmin()),
+    								array('label'=>'Línea de Servicios', 'url'=>array('/lineaServicio/index'), 'visible'=>Yii::app()->user->isAdmin()),
+    								array('label'=>'SM', 'url'=>'#', 'visible'=>Yii::app()->user->isAdmin()),
 									'---',
     								array('label'=>'Logout', 'url'=>array('/site/logout')),
     						)),

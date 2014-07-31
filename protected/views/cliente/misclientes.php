@@ -19,7 +19,7 @@ $this->breadcrumbs=array(
 	<?php echo CHtml::link('Ficha',array('update', 'id'=>$cliente->id )); ?>
 	<?php echo CHtml::link('Contratos',array('contrato/index', 'id'=>$cliente->id )); ?>
 	<?php echo CHtml::link('Issues',array('issue/index', 'id'=>$cliente->id )); ?>
-	<?php echo CHtml::link('Seguimiento',array('cliente/seguimiento', 'id'=>$cliente->id )); ?>
+	<?php echo CHtml::link('Seguimiento',array('seguimiento/index', 'id'=>$cliente->id )); ?>
 
 	<?php }?>
 	

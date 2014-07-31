@@ -52,10 +52,26 @@ class ContratoController extends Controller
 	public function actionView($id)
 	{
 		$model = $this->loadModel($id);
+		$lineaservicios = array_keys(CHtml::listData($model->lineaServicios, 'nombre' , 'id'));		
+		$slas=new CActiveDataProvider('Sla', array(
+				'criteria'=>array(
+						'condition'=>"contrato_id=$id",
+				),
+				'countCriteria'=>array(
+						//'condition'=>'status=1',
+						// 'order' and 'with' clauses have no meaning for the count query
+				),
+				'pagination'=>array(
+						'pageSize'=>100,
+				),
+		));
+		
 		$cliente = $model->cliente;
 		$this->render('view',array(
 			'model'=>$this->loadModel($id),
 			'cliente'=>$cliente,
+			'lineaservicios' => $lineaservicios,
+			'slas'=>$slas,
 		));
 	}
 
@@ -66,6 +82,7 @@ class ContratoController extends Controller
 	public function actionCreate($id)
 	{
 		$model=new Contrato;
+		$lineaservicios = CHtml::listData(LineaServicio::model()->findAll(), 'id', 'nombre');
 		
 		$cliente = Cliente::model()->findByPk($id);
 
@@ -75,14 +92,27 @@ class ContratoController extends Controller
 		if(isset($_POST['Contrato']))
 		{
 			$model->attributes=$_POST['Contrato'];
+			
 			$model->cliente_id = $cliente->id;
-			if($model->save())
+			if($model->save()){
+				if(isset($_POST['lineaservicios'])){
+					$model->lineaservicios=$_POST['lineaservicios'];
+					foreach ($model->lineaservicios as $servicio){
+						$serviciocontrato = new LineaServicioContrato();
+						$serviciocontrato->contrato_id = $model->id;
+						$serviciocontrato->linea_servicio_id = $servicio;
+						$serviciocontrato->save();
+					}
+				}
+				
 				$this->redirect(array('view','id'=>$model->id));
+			}
 		}
 
 		$this->render('create',array(
 			'model'=>$model,
 			'cliente'=>$cliente,
+			'lineaservicios'=>$lineaservicios,
 		));
 	}
 
@@ -94,7 +124,12 @@ class ContratoController extends Controller
 	public function actionUpdate($id)
 	{
 		$model=$this->loadModel($id);
+		$model->lineaServicios;
 		
+		$lineaservicios = CHtml::listData(LineaServicio::model()->findAll(), 'id', 'nombre');
+		
+		$selected_keys = array_keys(CHtml::listData($model->lineaServicios, 'id' , 'id'));
+
 		$cliente = $model->cliente;
 
 		// Uncomment the following line if AJAX validation is needed
@@ -103,13 +138,26 @@ class ContratoController extends Controller
 		if(isset($_POST['Contrato']))
 		{
 			$model->attributes=$_POST['Contrato'];
-			if($model->save())
+			if($model->save()){
+				LineaServicioContrato::model()->deleteAll("contrato_id = $model->id");
+				if(isset($_POST['lineaservicios'])){
+					$model->lineaservicios=$_POST['lineaservicios'];
+					foreach ($model->lineaservicios as $servicio){
+						$serviciocontrato = new LineaServicioContrato();
+						$serviciocontrato->contrato_id = $model->id;
+						$serviciocontrato->linea_servicio_id = $servicio;
+						$serviciocontrato->save();
+					}
+				}
 				$this->redirect(array('view','id'=>$model->id));
+			}
 		}
 
 		$this->render('update',array(
 			'model'=>$model,
 			'cliente'=>$cliente,
+			'lineaservicios'=>$lineaservicios,
+			'selected_keys'=>$selected_keys,
 		));
 	}
 
@@ -132,8 +180,6 @@ class ContratoController extends Controller
 	 */
 	public function actionIndex($id)
 	{
-		//$model= Contrato::model()->findAll("usuario_id = $id");
-
 		$dataProvider=new CActiveDataProvider('Contrato', array(
 				'criteria'=>array(
 						'condition'=>"cliente_id=$id",

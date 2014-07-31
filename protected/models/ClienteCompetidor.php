@@ -1,25 +1,20 @@
 <?php
 
 /**
- * This is the model class for table "competidores".
+ * This is the model class for table "cliente_competidor".
  *
- * The followings are the available columns in table 'competidores':
- * @property integer $id
+ * The followings are the available columns in table 'cliente_competidor':
  * @property integer $cliente_id
- * @property string $nombre
- * @property integer $criticidad
- *
- * The followings are the available model relations:
- * @property Cliente $cliente
+ * @property integer $competidor_id
  */
-class Competidores extends CActiveRecord
+class ClienteCompetidor extends CActiveRecord
 {
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return 'competidores';
+		return 'cliente_competidor';
 	}
 
 	/**
@@ -30,12 +25,11 @@ class Competidores extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('cliente_id, criticidad', 'required'),
-			array('cliente_id, criticidad', 'numerical', 'integerOnly'=>true),
-			array('nombre', 'length', 'max'=>45),
+			array('cliente_id, competidor_id', 'required'),
+			array('cliente_id, competidor_id', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, cliente_id, nombre, criticidad', 'safe', 'on'=>'search'),
+			array('cliente_id, competidor_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -48,6 +42,7 @@ class Competidores extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'cliente' => array(self::BELONGS_TO, 'Cliente', 'cliente_id'),
+			'competidor' => array(self::BELONGS_TO, 'Competidor', 'competidor_id'),
 		);
 	}
 
@@ -57,10 +52,8 @@ class Competidores extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
 			'cliente_id' => 'Cliente',
-			'nombre' => 'Nombre',
-			'criticidad' => 'Criticidad',
+			'competidor_id' => 'Competidor',
 		);
 	}
 
@@ -82,10 +75,8 @@ class Competidores extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('id',$this->id);
 		$criteria->compare('cliente_id',$this->cliente_id);
-		$criteria->compare('nombre',$this->nombre,true);
-		$criteria->compare('criticidad',$this->criticidad);
+		$criteria->compare('competidor_id',$this->competidor_id);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -96,7 +87,7 @@ class Competidores extends CActiveRecord
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return Competidores the static model class
+	 * @return ClienteCompetidor the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{

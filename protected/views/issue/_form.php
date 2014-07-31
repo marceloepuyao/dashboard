@@ -24,11 +24,15 @@
 
 		<?php //echo $form->dropDownListRow($model, 'cliente_id', array('Something ...', '1', '2', '3', '4', '5')); ?>
 		
-		<?php echo $form->textFieldRow($model,'fecha'); ?>
+		<?php //echo $form->textFieldRow($model,'fecha'); ?>
 		
 		<?php echo $form->dropDownListRow($model, 'criticidad', array(1=>'Baja', 2=>'Media', 3=>'Alta')); ?>
 		<?php echo $form->dropDownListRow($model, 'solucionado', array(1=>'Pendiente', 2=>'Terminado')); ?>
 
+		<?php echo $form->labelEx($model, 'lineaservicios'); ?></p>
+	  	<?php echo CHtml::checkBoxList('lineaservicios', $selected_keys, $lineaservicios, array('separator'=>' ','template'=>'<span class="myItem" style="display:table;">{input} {label} </span>')); ?>
+		
+		
 		</br>
 		<?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>$model->isNewRecord ? 'Crear' : 'Guardar')); ?>
 		

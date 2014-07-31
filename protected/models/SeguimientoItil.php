@@ -77,30 +77,27 @@ class SeguimientoItil extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
-			'cliente_id' => 'Cliente',
 			'felicitaciones' => 'Felicitaciones',
 			'reclamos' => 'Reclamos',
 			'problemas' => 'Problemas',
 			'cambios' => 'Cambios',
-			'estado_cmdb' => 'Estado Cmdb',
+			'estado_cmdb' => 'Estado CMDB',
 			'incidentes' => 'Incidentes',
 			'requerimientos' => 'Requerimientos',
 			'backlog' => 'Backlog',
 			'indisponibilidad' => 'Indisponibilidad',
-			'sip' => 'Sip',
+			'sip' => 'SIP',
 			'reuniones' => 'Reuniones',
 			'minutas' => 'Minutas',
-			'reunion_servicio' => 'Reunion Servicio',
+			'reunion_servicio' => 'Reunión Servicio',
 			'informe' => 'Informe',
 			'facturado' => 'Facturado',
-			'facturacion_extra' => 'Facturacion Extra',
+			'facturacion_extra' => 'Facturación Extra',
 			'multas' => 'Multas',
-			'fecha' => 'Fecha',
 			'comentario' => 'Comentario',
 			'tipo_seguimiento' => 'Tipo Seguimiento',
-			'per_client' => 'Per Client',
-			'per_sm' => 'Per Sm',
+			'per_client' => 'Percepción Client',
+			'per_sm' => 'Percepción Sm',
 		);
 	}
 

@@ -44,10 +44,12 @@ $('.search-form form').submit(function(){
 			'value'=>'Usuario::model()->findByPk($data->usuario_id)["nombre"]." ".Usuario::model()->findByPk($data->usuario_id)["apellido"] ',
 		),
 		'industria',
-		'categoria',
-		'hq',
 		'kam',
-		'competidor',
+		'jp',
+		array(
+			'name'=>'competidor',
+			'value'=> 'implode(", ", array_keys(CHtml::listData($data->competidores, "nombre" , "id")));',
+		),
 		
 		array(
 			'class'=>'CButtonColumn',

@@ -18,4 +18,9 @@ $this->menu=array(
 
 <h2>Ficha de cliente: <?php echo $model->nombre; ?></h2>
 
-<?php $this->renderPartial('_form', array('model'=>$model, 'usuarios'=>$usuarios,)); ?>
+<?php $this->renderPartial('_form', array(
+		'model'=>$model, 
+		'usuarios'=>$usuarios,
+		'competidores'=>$competidores,
+		'selected_keys'=>$selected_keys
+)); ?>

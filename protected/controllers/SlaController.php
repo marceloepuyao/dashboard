@@ -1,6 +1,6 @@
 <?php
 
-class SeguimientoPercepcionController extends Controller
+class SlaController extends Controller
 {
 	/**
 	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
@@ -46,36 +46,30 @@ class SeguimientoPercepcionController extends Controller
 	}
 
 	/**
-	 * Displays a particular model.
-	 * @param integer $id the ID of the model to be displayed
-	 */
-	public function actionView($id)
-	{
-		$this->render('view',array(
-			'model'=>$this->loadModel($id),
-		));
-	}
-
-	/**
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
 	 */
-	public function actionCreate()
+	public function actionCreate($id)
 	{
-		$model=new SeguimientoPercepcion;
+		$model=new Sla;
+		$contrato = Contrato::model()->findByPk($id);
+		$cliente = $contrato->cliente;
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['SeguimientoPercepcion']))
+		if(isset($_POST['Sla']))
 		{
-			$model->attributes=$_POST['SeguimientoPercepcion'];
+			$model->attributes=$_POST['Sla'];
+			$model->contrato_id = $id;
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+				$this->redirect(array('contrato/view','id'=>$model->contrato_id));
 		}
 
 		$this->render('create',array(
 			'model'=>$model,
+			'contrato'=>$contrato,
+			'cliente'=>$cliente,
 		));
 	}
 
@@ -87,19 +81,23 @@ class SeguimientoPercepcionController extends Controller
 	public function actionUpdate($id)
 	{
 		$model=$this->loadModel($id);
+		$contrato = $model->contrato;
+		$cliente = $contrato->cliente;
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['SeguimientoPercepcion']))
+		if(isset($_POST['Sla']))
 		{
-			$model->attributes=$_POST['SeguimientoPercepcion'];
+			$model->attributes=$_POST['Sla'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+				$this->redirect(array('contrato/view','id'=>$model->contrato_id));
 		}
 
 		$this->render('update',array(
 			'model'=>$model,
+			'contrato'=>$contrato,
+			'cliente'=>$cliente,
 		));
 	}
 
@@ -110,6 +108,8 @@ class SeguimientoPercepcionController extends Controller
 	 */
 	public function actionDelete($id)
 	{
+		$model = $this->loadModel($id);
+		//$model->seguimientoSlas->delete();
 		$this->loadModel($id)->delete();
 
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
@@ -122,7 +122,7 @@ class SeguimientoPercepcionController extends Controller
 	 */
 	public function actionIndex()
 	{
-		$dataProvider=new CActiveDataProvider('SeguimientoPercepcion');
+		$dataProvider=new CActiveDataProvider('Sla');
 		$this->render('index',array(
 			'dataProvider'=>$dataProvider,
 		));
@@ -133,10 +133,10 @@ class SeguimientoPercepcionController extends Controller
 	 */
 	public function actionAdmin()
 	{
-		$model=new SeguimientoPercepcion('search');
+		$model=new Sla('search');
 		$model->unsetAttributes();  // clear any default values
-		if(isset($_GET['SeguimientoPercepcion']))
-			$model->attributes=$_GET['SeguimientoPercepcion'];
+		if(isset($_GET['Sla']))
+			$model->attributes=$_GET['Sla'];
 
 		$this->render('admin',array(
 			'model'=>$model,
@@ -147,12 +147,12 @@ class SeguimientoPercepcionController extends Controller
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
 	 * @param integer $id the ID of the model to be loaded
-	 * @return SeguimientoPercepcion the loaded model
+	 * @return Sla the loaded model
 	 * @throws CHttpException
 	 */
 	public function loadModel($id)
 	{
-		$model=SeguimientoPercepcion::model()->findByPk($id);
+		$model=Sla::model()->findByPk($id);
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;
@@ -160,11 +160,11 @@ class SeguimientoPercepcionController extends Controller
 
 	/**
 	 * Performs the AJAX validation.
-	 * @param SeguimientoPercepcion $model the model to be validated
+	 * @param Sla $model the model to be validated
 	 */
 	protected function performAjaxValidation($model)
 	{
-		if(isset($_POST['ajax']) && $_POST['ajax']==='seguimiento-percepcion-form')
+		if(isset($_POST['ajax']) && $_POST['ajax']==='sla-form')
 		{
 			echo CActiveForm::validate($model);
 			Yii::app()->end();

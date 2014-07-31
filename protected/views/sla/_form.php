@@ -1,13 +1,13 @@
 <?php
-/* @var $this ContratoController */
-/* @var $model Contrato */
+/* @var $this SlaController */
+/* @var $model Sla */
 /* @var $form CActiveForm */
 ?>
 
 <div class="form">
 
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
-	'id'=>'contrato-form',
+	'id'=>'sla-form',
 	// Please note: When you enable ajax validation, make sure the corresponding
 	// controller action is handling ajax validation correctly.
 	// There is a call to performAjaxValidation() commented in generated controller code.
@@ -15,31 +15,20 @@
 	'enableAjaxValidation'=>false,
 )); ?>
 
-	<p class="note"><span class="required">*</span> Campo requerido.</p>
-	
-	<?php echo $form->textFieldRow($model,'titulo',array('size'=>60,'maxlength'=>100)); ?>
+	<p class="note"><span class="required">*</span>Campo requerido.</p>
 
 	<?php echo $form->errorSummary($model); ?>
+	<?php echo $form->textFieldRow($model,'nombre',array('size'=>45,'maxlength'=>45)); ?>
+	<?php echo $form->textFieldRow($model,'objetivo'); ?>
+	<?php echo $form->textAreaRow($model,'descripcion',array('size'=>60,'maxlength'=>200)); ?>
+		
 
-	<?php echo $form->textFieldRow($model,'facturacion'); ?>
-	
-	<?php echo $form->textFieldRow($model,'inicio'); ?>
-	
-	<?php echo $form->textFieldRow($model,'fin'); ?>
-	
-	<?php echo $form->textFieldRow($model,'codigo_moebius',array('size'=>20,'maxlength'=>20)); ?>
-	
-	 <?php //echo $form->checkBoxListRow($model, 'lineaservicios', $lineaservicios, $selected_keys); ?>
-	  <?php echo $form->labelEx($model, 'lineaservicios'); ?></p>
-	  <?php echo CHtml::checkBoxList('lineaservicios', $selected_keys, $lineaservicios, array('separator'=>' ','template'=>'<span class="myItem" style="display:table;">{input} {label} </span>')); ?>
-		
-		
 	</br>
 	<?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>$model->isNewRecord ? 'Crear' : 'Guardar')); ?>
 
 	<?php $this->widget('bootstrap.widgets.TbButton', array(
 	    'label'=>'Cancelar',
-		 'url'=> array("contrato/index", 'id'=>$cliente->id),	
+		 'url'=> array("contrato/view", 'id'=>$contrato->id),	
 	    'type'=>'null', // null, 'primary', 'info', 'success', 'warning', 'danger' or 'inverse'
 	    'size'=>'small', // null, 'large', 'small' or 'mini'
 	)); ?>

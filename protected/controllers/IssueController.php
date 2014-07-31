@@ -68,11 +68,7 @@ class IssueController extends Controller
 		$model=new Issue;
 		
 		$cliente = Cliente::model()->findByPk($id);
-		$lineaserviciosmodel = LineaServicio::model()->findAll();
-		$lineaservicios = array();
-		foreach ($lineaserviciosmodel as $ls){
-			$lineaservicios[$ls->id]=$ls->nombre;		
-		}
+		$lineaservicios = CHtml::listData(LineaServicio::model()->findAll(), 'id', 'nombre');
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
@@ -80,15 +76,28 @@ class IssueController extends Controller
 		if(isset($_POST['Issue']))
 		{
 			$model->attributes=$_POST['Issue'];
+			$model->fecha = date("Y-m-d");
 			$model->cliente_id = $cliente->id;
-			if($model->save())
+			if($model->save()){
+				IssueLineaServicio::model()->deleteAll("issue_id = $model->id");
+				if(isset($_POST['lineaservicios'])){
+					$model->lineaservicios=$_POST['lineaservicios'];
+					foreach ($model->lineaservicios as $servicio){
+						$servicioissue= new IssueLineaServicio();
+						$servicioissue->issue_id = $model->id;
+						$servicioissue->linea_servicio_id = $servicio;
+						$servicioissue->save();
+					}
+				}
+				
 				$this->redirect(array('index','id'=>$cliente->id));
+			}
 		}
 
 		$this->render('create',array(
 			'model'=>$model,
 			'cliente'=>$cliente,
-			'lineaservicios'=>$lineaservicios
+			'lineaservicios'=>$lineaservicios,
 		));
 	}
 
@@ -101,11 +110,8 @@ class IssueController extends Controller
 	{
 		$model=$this->loadModel($id);
 		$cliente = $model->cliente;
-		$lineaserviciosmodel = LineaServicio::model()->findAll();
-		$lineaservicios = array();
-		foreach ($lineaserviciosmodel as $ls){
-			$lineaservicios[$ls->id]=$ls->nombre;		
-		}
+		$lineaservicios = CHtml::listData(LineaServicio::model()->findAll(), 'id', 'nombre');
+		$selected_keys = array_keys(CHtml::listData($model->lineaServicios, 'id' , 'id'));
 		
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
@@ -114,14 +120,26 @@ class IssueController extends Controller
 		{
 			$model->attributes=$_POST['Issue'];
 			$model->cliente_id = $cliente->id;
-			if($model->save())
+			if($model->save()){
+				IssueLineaServicio::model()->deleteAll("issue_id = $model->id");
+				if(isset($_POST['lineaservicios'])){
+					$model->lineaservicios=$_POST['lineaservicios'];
+					foreach ($model->lineaservicios as $servicio){
+						$servicioissue= new IssueLineaServicio();
+						$servicioissue->issue_id = $model->id;
+						$servicioissue->linea_servicio_id = $servicio;
+						$servicioissue->save();
+					}
+				}
 				$this->redirect(array('index','id'=>$cliente->id));
+			}
 		}
 
 		$this->render('update',array(
 			'model'=>$model,
 			'cliente'=>$cliente,
 			'lineaservicios'=>$lineaservicios,
+			'selected_keys' => $selected_keys,
 		));
 	}
 
@@ -167,20 +185,16 @@ class IssueController extends Controller
 	
 	public function actionMisIssues()
 	{
-		
 		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
 		$clientes = $usuario->clientes;
-		$issues = "(";
+		$issues = array();
 		foreach ($clientes as $cliente){
-			$issues .= $cliente->id.",";
+			$issues[] .= $cliente->id;
 		}
-		$issues .= "0)";
-		//die(var_dump($issues));
-			
-		
 		$dataProvider=new CActiveDataProvider('Issue', array(
 				'criteria'=>array(
-						'condition'=>"cliente_id IN $issues",
+						'condition'=>"cliente_id IN (".implode(",",$issues).")",
+						'condition'=>"solucionado = 1",
 				),
 				'countCriteria'=>array(
 						//'condition'=>'status=1',

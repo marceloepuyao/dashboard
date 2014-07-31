@@ -22,15 +22,28 @@ $this->menu=array(
 		'descripcion',
 		'fecha',
 		array(
+			'name'=> 'lineaservicios',
+			'value'=> 'implode(", ", array_keys(CHtml::listData($data->lineaServicios, "nombre" , "id")));'
+		),
+		array(
 			'name'=>'criticidad',
-			'value'=>'$data->criticidad==1?"Baja":($data->criticidad==2?"Media":3) ',
+			'filter'=>array('1'=>"Baja",'2'=>'Media','3'=>'Alta'),
+			'value'=>'$data->criticidad==1?"Baja":($data->criticidad==2?"Media":"Alta") ',
 		),
 		array(
 			'name'=>'solucionado',
+			'filter'=>array('1'=>"Pendiente",'2'=>'Terminado'),
 			'value'=>'$data->solucionado==1?"Pendiente":"Terminado" ',
 		),
 		array(
 			'class'=>'CButtonColumn',
 		),
 	),
+)); ?>
+
+<?php $this->widget('bootstrap.widgets.TbButton', array(
+	'url' => array('cliente/misclientes'),
+    'label'=>'Volver',
+    'type'=>'null', // null, 'primary', 'info', 'success', 'warning', 'danger' or 'inverse'
+    'size'=>'small', // null, 'large', 'small' or 'mini'
 )); ?>

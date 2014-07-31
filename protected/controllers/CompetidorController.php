@@ -1,6 +1,6 @@
 <?php
 
-class SeguimientoItilController extends Controller
+class CompetidorController extends Controller
 {
 	/**
 	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
@@ -45,16 +45,6 @@ class SeguimientoItilController extends Controller
 		);
 	}
 
-	/**
-	 * Displays a particular model.
-	 * @param integer $id the ID of the model to be displayed
-	 */
-	public function actionView($id)
-	{
-		$this->render('view',array(
-			'model'=>$this->loadModel($id),
-		));
-	}
 
 	/**
 	 * Creates a new model.
@@ -62,16 +52,16 @@ class SeguimientoItilController extends Controller
 	 */
 	public function actionCreate()
 	{
-		$model=new SeguimientoItil;
+		$model=new Competidor;
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['SeguimientoItil']))
+		if(isset($_POST['Competidor']))
 		{
-			$model->attributes=$_POST['SeguimientoItil'];
+			$model->attributes=$_POST['Competidor'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+				$this->redirect(array('index'));
 		}
 
 		$this->render('create',array(
@@ -91,11 +81,11 @@ class SeguimientoItilController extends Controller
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['SeguimientoItil']))
+		if(isset($_POST['Competidor']))
 		{
-			$model->attributes=$_POST['SeguimientoItil'];
+			$model->attributes=$_POST['Competidor'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+				$this->redirect(array('index'));
 		}
 
 		$this->render('update',array(
@@ -122,37 +112,27 @@ class SeguimientoItilController extends Controller
 	 */
 	public function actionIndex()
 	{
-		$dataProvider=new CActiveDataProvider('SeguimientoItil');
-		$this->render('index',array(
-			'dataProvider'=>$dataProvider,
-		));
-	}
-
-	/**
-	 * Manages all models.
-	 */
-	public function actionAdmin()
-	{
-		$model=new SeguimientoItil('search');
+		$model=new Competidor('search');
 		$model->unsetAttributes();  // clear any default values
-		if(isset($_GET['SeguimientoItil']))
-			$model->attributes=$_GET['SeguimientoItil'];
+		if(isset($_GET['Competidor']))
+			$model->attributes=$_GET['Competidor'];
 
-		$this->render('admin',array(
+		$this->render('index',array(
 			'model'=>$model,
 		));
 	}
+
 
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
 	 * @param integer $id the ID of the model to be loaded
-	 * @return SeguimientoItil the loaded model
+	 * @return Competidor the loaded model
 	 * @throws CHttpException
 	 */
 	public function loadModel($id)
 	{
-		$model=SeguimientoItil::model()->findByPk($id);
+		$model=Competidor::model()->findByPk($id);
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;
@@ -160,11 +140,11 @@ class SeguimientoItilController extends Controller
 
 	/**
 	 * Performs the AJAX validation.
-	 * @param SeguimientoItil $model the model to be validated
+	 * @param Competidor $model the model to be validated
 	 */
 	protected function performAjaxValidation($model)
 	{
-		if(isset($_POST['ajax']) && $_POST['ajax']==='seguimiento-itil-form')
+		if(isset($_POST['ajax']) && $_POST['ajax']==='competidor-form')
 		{
 			echo CActiveForm::validate($model);
 			Yii::app()->end();

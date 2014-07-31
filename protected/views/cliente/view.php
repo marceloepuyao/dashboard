@@ -35,7 +35,10 @@ $this->menu=array(
 		'jp',
 		'kam',
 		'arquitecto',
-		'competidor',
+		array(
+			'name'=>'competidor',
+			'value'=> $competidores!=null?implode(" ,  ",$competidores):"",
+		),
 	),
 )); ?>
 

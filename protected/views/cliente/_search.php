@@ -30,7 +30,6 @@
 	
 	<?php echo $form->textFieldRow($model,'arquitecto',array('size'=>45,'maxlength'=>45)); ?>
 	
-	<?php echo $form->textFieldRow($model,'competidor',array('size'=>60,'maxlength'=>255)); ?>
 
 	</br>
 	<?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=> 'Buscar')); ?>

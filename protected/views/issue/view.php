@@ -9,8 +9,8 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-	array('label'=>'Administrar Issues', 'url'=>array('index')),
-	array('label'=>'Crear Issue', 'url'=>array('create')),
+	array('label'=>'Administrar Issues', 'url'=>array('index', 'id'=>$cliente->id)),
+	array('label'=>'Crear Issue', 'url'=>array('create','id'=>$cliente->id)),
 	array('label'=>'Actualizar Issue', 'url'=>array('update', 'id'=>$model->id)),
 	array('label'=>'Eliminar Issue', 'url'=>'#', 'linkOptions'=>array('submit'=>array('delete','id'=>$model->id),'confirm'=>'Are you sure you want to delete this item?')),
 );
@@ -21,15 +21,25 @@ $this->menu=array(
 <?php $this->widget('bootstrap.widgets.TbDetailView', array(
 	'data'=>$model,
 	'attributes'=>array(
-		'linea_servicio_id',
+		array(
+			'name'=>'lineaservicios',
+			'value'=> implode(", ", array_keys(CHtml::listData($model->lineaServicios, "nombre" , "id"))),
+		),
 		array(
 			'name'=>'cliente_id',
 			'value'=> $cliente->nombre,
 		),
 		'descripcion',
 		'fecha',
-		'solucionado',
-		'criticidad',
+		array(
+			'name'=>'solucionado',
+			'value'=>$model->solucionado==1?"Pendiente":"Terminado" ,
+		),
+		array(
+			'name'=>'criticidad',
+			'value'=>$model->criticidad==1?"Baja":($model->criticidad==2?"Media":"Alta"),
+		),
+		
 	),
 )); ?>
 

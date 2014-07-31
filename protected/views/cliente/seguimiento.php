@@ -58,9 +58,3 @@ $this->breadcrumbs=array(
 		),
 	),
 )); ?>
-<?php $this->widget('bootstrap.widgets.TbButton', array(
-	'url' => array('sla/create'),
-    'label'=>'Crear SLA',
-    'type'=>'primary', // null, 'primary', 'info', 'success', 'warning', 'danger' or 'inverse'
-    'size'=>'small', // null, 'large', 'small' or 'mini'
-)); ?>

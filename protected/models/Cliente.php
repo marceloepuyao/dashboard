@@ -16,7 +16,6 @@
  * @property string $jp
  * @property string $kam
  * @property string $arquitecto
- * @property string $competidor
  *
  * The followings are the available model relations:
  * @property Usuario $usuario
@@ -27,6 +26,7 @@
  */
 class Cliente extends CActiveRecord
 {
+	public $competidor;
 	/**
 	 * @return string the associated database table name
 	 */
@@ -43,13 +43,13 @@ class Cliente extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('usuario_id', 'required'),
+			array('usuario_id, nombre', 'required'),
 			array('usuario_id, empleados, facturacion, categoria', 'numerical', 'integerOnly'=>true),
-			array('industria, nombre, hq, competidor', 'length', 'max'=>255),
+			array('industria, nombre, hq', 'length', 'max'=>255),
 			array('rut, jp, kam, arquitecto', 'length', 'max'=>45),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, usuario_id, industria, empleados, facturacion, categoria, nombre, rut, hq, jp, kam, arquitecto, competidor', 'safe', 'on'=>'search'),
+			array('id, usuario_id, industria, empleados, facturacion, categoria, nombre, rut, hq, jp, kam, arquitecto', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -62,7 +62,7 @@ class Cliente extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'usuario' => array(self::BELONGS_TO, 'Usuario', 'usuario_id'),
-			'competidores' => array(self::HAS_MANY, 'Competidores', 'cliente_id'),
+			'competidores' => array(self::MANY_MANY, 'Competidor', 'cliente_competidor(cliente_id, competidor_id)'),
 			'contratos' => array(self::HAS_MANY, 'Contrato', 'cliente_id'),
 			'ejecutivoses' => array(self::HAS_MANY, 'Ejecutivos', 'cliente_id'),
 			'seguimientoitil' => array(self::HAS_MANY, 'SeguimientoItil', 'cliente_id'),
@@ -79,16 +79,16 @@ class Cliente extends CActiveRecord
 			'id' => 'ID',
 			'usuario_id' => 'Usuario',
 			'industria' => 'Industria',
-			'empleados' => 'Empleados',
-			'facturacion' => 'Facturacion',
-			'categoria' => 'Categoria',
+			'empleados' => '#Empleados',
+			'facturacion' => 'Facturación',
+			'categoria' => 'Categoría',
 			'nombre' => 'Nombre',
 			'rut' => 'Rut',
-			'hq' => 'Hq',
-			'jp' => 'Jp',
-			'kam' => 'Kam',
+			'hq' => 'HQ',
+			'jp' => 'Jeje Proyecto',
+			'kam' => 'KAM',
 			'arquitecto' => 'Arquitecto',
-			'competidor' => 'Competidor',
+			'competidor'=> 'Competidores',
 		);
 	}
 
@@ -122,7 +122,6 @@ class Cliente extends CActiveRecord
 		$criteria->compare('jp',$this->jp,true);
 		$criteria->compare('kam',$this->kam,true);
 		$criteria->compare('arquitecto',$this->arquitecto,true);
-		$criteria->compare('competidor',$this->competidor,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

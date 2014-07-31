@@ -18,6 +18,7 @@
  */
 class Contrato extends CActiveRecord
 {
+	public $lineaservicios;
 	/**
 	 * @return string the associated database table name
 	 */
@@ -34,7 +35,7 @@ class Contrato extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('cliente_id', 'required'),
+			array('cliente_id, titulo', 'required'),
 			array('cliente_id, facturacion', 'numerical', 'integerOnly'=>true),
 			array('codigo_moebius', 'length', 'max'=>20),
 			array('titulo', 'length', 'max'=>100),
@@ -55,6 +56,7 @@ class Contrato extends CActiveRecord
 		return array(
 			'cliente' => array(self::BELONGS_TO, 'Cliente', 'cliente_id'),
 			'lineaServicios' => array(self::MANY_MANY, 'LineaServicio', 'linea_servicio_contrato(contrato_id, linea_servicio_id)'),
+			'sla' => array(self::HAS_MANY, 'Sla', 'contrato_id'),
 		);
 	}
 
@@ -66,11 +68,12 @@ class Contrato extends CActiveRecord
 		return array(
 			'id' => 'ID',
 			'cliente_id' => 'Cliente',
-			'facturacion' => 'Facturacion',
+			'facturacion' => 'Facturación',
 			'inicio' => 'Inicio',
 			'fin' => 'Fin',
 			'codigo_moebius' => 'Código Moebius',
 			'titulo' => 'Título',
+			'lineaservicios'=>'Servicios Contratados'
 		);
 	}
 
