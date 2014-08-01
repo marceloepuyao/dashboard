@@ -21,13 +21,12 @@ $this->breadcrumbs=array(
     )); ?>
     
     
-<?php $this->widget('bootstrap.widgets.TbButton', array(
+<?php /*$this->widget('bootstrap.widgets.TbButton', array(
 	'url'=>array('seguimiento/historico', 'id'=>$cliente->id),
     'label'=>'Ver Seguimiento Histórico',
     'type'=>'primary', // null, 'primary', 'info', 'success', 'warning', 'danger' or 'inverse'
     'size'=>'small', // null, 'large', 'small' or 'mini'
-)); ?>
-</br>
+)); */?>
 </br>
 <?php 
 if(!$seguimiento){
