@@ -122,8 +122,16 @@ class SeguimientoController extends Controller
 	public function actionUpdate($id)
 	{
 		$cliente = Cliente::model()->findByPk($id);
+		$fecha = date('YW');
+		
+		
+		
 		$this->render('update',array(
-				'cliente'=>$cliente,
+				'cliente'=>$cliente, 
+				'fecha'=>$fecha,
+				'lineaservicios'=> $lineaservicios,
+				'seguimientoItil'=> $seguimientoItil,
+				'sla'=>$sla,
 		));
 	}
 

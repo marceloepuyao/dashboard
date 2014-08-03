@@ -9,7 +9,7 @@ $this->breadcrumbs=array(
 
 ?>
 
-<h3>Seguimiento Itil </h3>
+<h3>Seguimiento ITIL </h3>
 <?php $this->widget('bootstrap.widgets.TbDetailView', array(
 	'data'=>$itil,
 	'attributes'=>array(

@@ -84,7 +84,7 @@ class Cliente extends CActiveRecord
 			'categoria' => 'Categoría',
 			'nombre' => 'Nombre',
 			'rut' => 'Rut',
-			'hq' => 'HQ',
+			'hq' => 'Casa matriz',
 			'jp' => 'Jeje Proyecto',
 			'kam' => 'KAM',
 			'arquitecto' => 'Arquitecto',

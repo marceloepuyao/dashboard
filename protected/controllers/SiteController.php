@@ -27,13 +27,32 @@ class SiteController extends Controller
 	 */
 	public function actionIndex()
 	{
-		// renders the view file 'protected/views/site/index.php'
-		// using the default layout 'protected/views/layouts/main.php'
 		if(Yii::app()->user->isGuest){
 			$this->redirect($this->createUrl('login'));
-		}else{
-			$this->render('index');
 		}
+		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
+		$cumplimiento_sla = Dashboard::getCumplimientoSla($usuario->id);
+		$this->render('index',array(
+					 	'cumplimiento_sla'=>$cumplimiento_sla,
+		));
+		
+	}
+	
+	public function actionSla()
+	{
+		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
+		$fechas = Dashboard::getFechas($usuario->id);
+		$this->render('sla', array(
+			'fechas'=>$fechas,
+		));
+	}
+	public function actionCumplimientoSlaAjax($fecha){
+		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
+		$cumplimiento_sla = Dashboard::getCumplimientoSla($usuario->id, $fecha);
+		
+		$this->renderPartial('_ajax', array(
+				'data'=>$cumplimiento_sla,
+		));
 	}
 
 	/**

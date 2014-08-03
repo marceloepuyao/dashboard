@@ -20,8 +20,9 @@
 	<?php echo $form->errorSummary($model); ?>
 	
 	<?php echo $form->textFieldRow($model,'nombre',array('size'=>60,'maxlength'=>255)); ?>
-	
-	<?php echo $form->dropDownListRow($model, 'usuario_id', $usuarios ); ?>
+	<?php if($usuarios){?>
+		<?php echo $form->dropDownListRow($model, 'usuario_id', $usuarios ); ?>
+	<?php }?>
 	
 	<?php echo $form->textFieldRow($model,'industria',array('size'=>60,'maxlength'=>255)); ?>
 
@@ -50,7 +51,7 @@
 
 	<?php $this->widget('bootstrap.widgets.TbButton', array(
 	    'label'=>'Cancelar',
-		 'url'=> array("cliente/index"),	
+		 'url'=> $usuarios==false?array("cliente/misclientes"):array("cliente/index"),	
 	    'type'=>'null', // null, 'primary', 'info', 'success', 'warning', 'danger' or 'inverse'
 	    'size'=>'small', // null, 'large', 'small' or 'mini'
 	)); ?>

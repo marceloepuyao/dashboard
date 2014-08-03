@@ -7,7 +7,6 @@ $this->pageTitle=Yii::app()->name;
 
 <h2>Dashboard Cliente</h2>
 
-<p>Aquí van dashboard de estado regiones </p>
 <?php
 
 	/* 
@@ -53,21 +52,9 @@ $this->pageTitle=Yii::app()->name;
 	}
 	//se obtienen todos los contratos de todos los clientes del usuario
 	
-	$SLAs = array();
-	foreach($contratos as $contrato){
-		$SLAs = Sla::model()->findAll("sla_id" == $contrato['id']);
-	}
-	//se obtienen todos los SLA de los contratos de los clientes del usuario
-
-	//contar SLAs
-	$totalSLAs = 0; //todos los SLA
-	$cumplimientoSLAs = 0; //% de cumplimiento acumulado de los SLA
-	foreach($SLAs as $SLA){
-		$totalSLAs += 1;
-		$cumplimientoSLAs += $SLA['objetivo']/100;
-	}
-	$slaCumplidos = $cumplimientoSLAs/$totalSLAs;
-	$slaPorCumplir = ($totalSLAs-$cumplimientoSLAs)/$totalSLAs;
+	
+	$slaCumplidos = $cumplimiento_sla;
+	$slaPorCumplir = 100 - $cumplimiento_sla;
 	/*
 	CUMPLIMIENTO DE SLAS, SEGUN LOS CLIENTES DEL USUARIO Y TODOS SUS CONTRATOS RESPECTIVOS - FIN
 	*/
@@ -141,7 +128,7 @@ $this->pageTitle=Yii::app()->name;
 				<a href="#"><div id="Issues-Cliente" style="width: 400; height: 300"></div> </a>
 			</td>
 			<td>
-				<a href="#"><div id="Cumplimiento-SLA" style="width: 400; height: 300"></div> </a>
+				<a href="<?php echo Yii::app()->baseUrl."/site/sla";?>"><div id="Cumplimiento-SLA" style="width: 400; height: 300"></div> </a>
 			</td>
 		</tr>
 		<tr>
@@ -167,14 +154,6 @@ $this->pageTitle=Yii::app()->name;
 <!--><script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script><!-->
 
 <!-->
-<?php
-	$baseUrl = Yii::app()->baseurl;
-	$cs = Yii::app()->getClientScript();
-	$cs->registerScriptFile($baseUrl.'/js/highcharts.js');
-	$cs->registerScriptFile($baseUrl.'/js/highcharts-more.js');
-	$cs->registerScriptFile($baseUrl.'/js/modules/exporting.js');
-	$cs->registerScriptFile($baseUrl.'/js/modules/solid-gauge.src.js');
-?>
 <script type="text/javascript">
 
 $(document).ready(function () {
@@ -284,6 +263,8 @@ $(document).ready(function () {
 
   // Load the Visualization API library and the piechart library.
   google.load('visualization', '1.0', {'packages':['corechart']});
+  google.load('visualization', '1', {packages:['gauge']});
+  
   google.setOnLoadCallback(drawChartIssuesCliente);
   google.setOnLoadCallback(drawChartCumplimientoSLA);
   google.setOnLoadCallback(drawChartPercepcionCliente);
@@ -310,20 +291,20 @@ $(document).ready(function () {
   }
   //este segundo chart es, de hecho, el primero en programarse en php más arribita
   function drawChartCumplimientoSLA(){
-  	var data2 = new google.visualization.DataTable();
-  	data2.addColumn('string', 'CumplidoSiNo');
-  	data2.addColumn('number', 'porcentaje');
-  	data2.addRows([
-  		['SLA Cumplido', parseFloat(<?php echo $slaCumplidos; ?>)],
-  		['SLA por Cumplir', parseFloat(<?php echo $slaPorCumplir; ?>)]
-  	]);
+	
+  var data2 = google.visualization.arrayToDataTable([
+	                                                    ['Label', 'Value'],
+	                                                    ['Tasa de SLA cumplido', parseFloat(<?php echo $slaCumplidos; ?>)] ]);
+  
+	                                          	
+	
   	var options2 = {
-  		'title': 'SLAs de los Clientes Cumplidos',
-  		'width': 400,
-  		'height': 300
+  		'title': 'Tasa de SLA cumplidos',
+  		'width': 200,
+  		'height': 200
   	};
 
-  	var chart2 = new google.visualization.PieChart(document.getElementById('Cumplimiento-SLA'));
+  	var chart2 = new google.visualization.Gauge(document.getElementById('Cumplimiento-SLA'));
   	chart2.draw(data2, options2);
 
 

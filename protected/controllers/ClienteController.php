@@ -32,7 +32,7 @@ class ClienteController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update', 'estado','admin','delete', 'misclientes','seguimiento'),
+				'actions'=>array('create','update', 'estado','admin','delete', 'misclientes','seguimiento','updatesm'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -124,6 +124,42 @@ class ClienteController extends Controller
 			'usuarios'=>$selectusuario,
 			'competidores'=>$competidores,
 		));
+	}
+	
+	public function actionUpdateSm($id)
+	{
+		$model=$this->loadModel($id);
+		$competidores = CHtml::listData(Competidor::model()->findAll(), 'id', 'nombre');
+		$selected_keys = array_keys(CHtml::listData($model->competidores, 'id' , 'id'));
+		$usuario_id = $model->usuario_id;
+		
+		if(isset($_POST['Cliente']))
+		{
+			$model->attributes=$_POST['Cliente'];
+			if(!$model->usuario_id){
+				$model->usuario_id = $usuario_id;
+			}
+			if($model->save()){
+				ClienteCompetidor::model()->deleteAll("cliente_id = $model->id");
+				if(isset($_POST['competidores'])){
+					$model->competidor=$_POST['competidores'];
+					foreach ($model->competidor as $competidor){
+						$clientecompetidor = new ClienteCompetidor();
+						$clientecompetidor->cliente_id = $model->id;
+						$clientecompetidor->competidor_id = $competidor;
+						$clientecompetidor->save();
+					}
+				}
+				$this->redirect(array('cliente/misclientes'));
+			}
+		}
+		
+		$this->render('updatesm',array(
+				'model'=>$model,
+				'competidores'=>$competidores,
+				'selected_keys' => $selected_keys,
+		));
+		
 	}
 
 	/**
@@ -238,9 +274,19 @@ class ClienteController extends Controller
 	public function actionMisClientes()
 	{
 		$clientes = Cliente::model()->findAll("usuario_id=". Yii::app()->user->id);
-		$dataProvider=new CActiveDataProvider('Cliente');
+		
+		$gridDataProvider = new CArrayDataProvider(array(
+				array('id'=>1, 'firstName'=>'Mark', 'lastName'=>'Otto', 'language'=>'CSS'),
+				array('id'=>2, 'firstName'=>'Jacob', 'lastName'=>'Thornton', 'language'=>'JavaScript'),
+				array('id'=>3, 'firstName'=>'Stu', 'lastName'=>'Dent', 'language'=>'HTML'),
+		));
+		foreach ($clientes as $cliente){
+			$arraycliente[]= array('id'=>$cliente->id, 'cliente'=>$cliente->nombre);
+		}
+		$dataProvider = new CArrayDataProvider($arraycliente);
+		
 		$this->render('misclientes',array(
-				'clientes'=>$clientes,
+				'dataProvider'=>$dataProvider,
 		));
 	}
 
