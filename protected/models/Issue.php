@@ -34,7 +34,7 @@ class Issue extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('cliente_id', 'required'),
+			array('cliente_id, lineaservicios', 'required'),
 			array('cliente_id, solucionado, criticidad', 'numerical', 'integerOnly'=>true),
 			array('descripcion, fecha', 'safe'),
 			// The following rule is used by search().

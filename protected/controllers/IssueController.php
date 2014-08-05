@@ -78,18 +78,15 @@ class IssueController extends Controller
 			$model->attributes=$_POST['Issue'];
 			$model->fecha = date("Y-m-d");
 			$model->cliente_id = $cliente->id;
+			$model->lineaservicios = isset($_POST['lineaservicios'])?$_POST['lineaservicios']:NULL;
 			if($model->save()){
 				IssueLineaServicio::model()->deleteAll("issue_id = $model->id");
-				if(isset($_POST['lineaservicios'])){
-					$model->lineaservicios=$_POST['lineaservicios'];
-					foreach ($model->lineaservicios as $servicio){
-						$servicioissue= new IssueLineaServicio();
-						$servicioissue->issue_id = $model->id;
-						$servicioissue->linea_servicio_id = $servicio;
-						$servicioissue->save();
-					}
+				foreach ($model->lineaservicios as $servicio){
+					$servicioissue= new IssueLineaServicio();
+					$servicioissue->issue_id = $model->id;
+					$servicioissue->linea_servicio_id = $servicio;
+					$servicioissue->save();
 				}
-				
 				$this->redirect(array('index','id'=>$cliente->id));
 			}
 		}
@@ -120,16 +117,14 @@ class IssueController extends Controller
 		{
 			$model->attributes=$_POST['Issue'];
 			$model->cliente_id = $cliente->id;
+			$model->lineaservicios = isset($_POST['lineaservicios'])?$_POST['lineaservicios']:NULL;
 			if($model->save()){
 				IssueLineaServicio::model()->deleteAll("issue_id = $model->id");
-				if(isset($_POST['lineaservicios'])){
-					$model->lineaservicios=$_POST['lineaservicios'];
-					foreach ($model->lineaservicios as $servicio){
-						$servicioissue= new IssueLineaServicio();
-						$servicioissue->issue_id = $model->id;
-						$servicioissue->linea_servicio_id = $servicio;
-						$servicioissue->save();
-					}
+				foreach ($model->lineaservicios as $servicio){
+					$servicioissue= new IssueLineaServicio();
+					$servicioissue->issue_id = $model->id;
+					$servicioissue->linea_servicio_id = $servicio;
+					$servicioissue->save();
 				}
 				$this->redirect(array('index','id'=>$cliente->id));
 			}
@@ -167,7 +162,7 @@ class IssueController extends Controller
 						'condition'=>"cliente_id=$id",
 				),
 				'countCriteria'=>array(
-						//'condition'=>'status=1',
+						'condition'=>"cliente_id=$id",
 						// 'order' and 'with' clauses have no meaning for the count query
 				),
 				'pagination'=>array(
@@ -197,7 +192,8 @@ class IssueController extends Controller
 						'condition'=>"solucionado = 1",
 				),
 				'countCriteria'=>array(
-						//'condition'=>'status=1',
+						'condition'=>"cliente_id IN (".implode(",",$issues).")",
+						'condition'=>"solucionado = 1",
 						// 'order' and 'with' clauses have no meaning for the count query
 				),
 				'pagination'=>array(

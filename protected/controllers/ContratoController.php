@@ -57,10 +57,6 @@ class ContratoController extends Controller
 				'criteria'=>array(
 						'condition'=>"contrato_id=$id",
 				),
-				'countCriteria'=>array(
-						//'condition'=>'status=1',
-						// 'order' and 'with' clauses have no meaning for the count query
-				),
 				'pagination'=>array(
 						'pageSize'=>100,
 				),
@@ -185,7 +181,7 @@ class ContratoController extends Controller
 						'condition'=>"cliente_id=$id",
 				),
 				'countCriteria'=>array(
-						//'condition'=>'status=1',
+						'condition'=>"cliente_id=$id",
 						// 'order' and 'with' clauses have no meaning for the count query
 				),
 				'pagination'=>array(

@@ -21,28 +21,26 @@ $this->breadcrumbs=array(
     )); ?>
     
     
-<?php /*$this->widget('bootstrap.widgets.TbButton', array(
-	'url'=>array('seguimiento/historico', 'id'=>$cliente->id),
-    'label'=>'Ver Seguimiento Histórico',
-    'type'=>'primary', // null, 'primary', 'info', 'success', 'warning', 'danger' or 'inverse'
-    'size'=>'small', // null, 'large', 'small' or 'mini'
-)); */?>
+</br>
+<p>Fecha Actual: <?php echo date('YW');?></p>
+<?php 
+if($seguimientoSemanal){
+	$this->widget('bootstrap.widgets.TbButton', array(
+		'url'=>array('seguimiento/updateSemanal', 'id'=>$cliente->id),
+		'label'=>'Editar Seguimiento Semanal: '.$seguimientoSemanal['fecha'],
+		'type'=>'primary', // null, 'primary', 'info', 'success', 'warning', 'danger' or 'inverse'
+		'size'=>'small', // null, 'large', 'small' or 'mini'
+	));
+}
+?>
 </br>
 <?php 
-if(!$seguimiento){
+if($seguimientoMensual){
 	$this->widget('bootstrap.widgets.TbButton', array(
-		'url'=>array('seguimiento/create', 'id'=>$cliente->id),
-		'label'=>'Generar Seguimiento',
-		'type'=>'primary', // null, 'primary', 'info', 'success', 'warning', 'danger' or 'inverse'
-		'size'=>'small', // null, 'large', 'small' or 'mini'
-	)); 
-	
-}else{
-	$this->widget('bootstrap.widgets.TbButton', array(
-		'url'=>array('seguimiento/update', 'id'=>$cliente->id),
-		'label'=>'Editar Seguimiento Semanal',
-		'type'=>'primary', // null, 'primary', 'info', 'success', 'warning', 'danger' or 'inverse'
-		'size'=>'small', // null, 'large', 'small' or 'mini'
+			'url'=>array('seguimiento/updateMensual', 'id'=>$cliente->id),
+			'label'=>'Editar Seguimiento Mensual: '.$seguimientoMensual['fecha'].' - '.($seguimientoMensual['fecha'] + 4),
+			'type'=>'primary', // null, 'primary', 'info', 'success', 'warning', 'danger' or 'inverse'
+			'size'=>'small', // null, 'large', 'small' or 'mini'
 	));
 }
 ?>

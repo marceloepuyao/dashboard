@@ -18,6 +18,7 @@
 <h3>Percepción</h3>
 <?php $this->widget('bootstrap.widgets.TbGridView', array(
     'id'=>'servicio-grid',
+	 'summaryText' => '',
     'dataProvider'=>$lineaservicios,
     'columns'=>array(
 		array(
@@ -27,12 +28,12 @@
 		array(
 			'name'=>'Percepción Cliente',
 			'type'=>'raw',
-			'value'=>'CHtml::textField("per_cliente[$data[id]]",0,array("style"=>"width:50px;"))',
+			'value'=>'CHtml::textField("per_cliente[$data[id]]",isset($data["per_cliente"])?$data["per_cliente"]:0,array("style"=>"width:50px;"))',
 		),
 		array(
 		'name'=>'Percepción SM',
 		'type'=>'raw',
-		'value'=>'CHtml::textField("per_sm[$data[id]]",0,array("style"=>"width:50px;"))',
+		'value'=>'CHtml::textField("per_sm[$data[id]]",isset($data["per_sm"])?$data["per_sm"]:0,array("style"=>"width:50px;"))',
 		),
 
 	)
@@ -41,6 +42,7 @@
 <h3>Seguimiento Itil</h3>
 <?php $this->widget('bootstrap.widgets.TbGridView', array(
     'id'=>'servicio-grid',
+	'summaryText' => '',	
     'dataProvider'=>$seguimientoItil,
     'columns'=>array(
 		array(
@@ -59,6 +61,7 @@
 <h3>SLA</h3>
 <?php $this->widget('bootstrap.widgets.TbGridView', array(
     'id'=>'servicio-grid',
+	'summaryText' => '',
     'dataProvider'=>$sla,
     'columns'=>array(
 		array(
@@ -76,7 +79,7 @@
 		array(
 			'name'=>'Valor',
 			'type'=>'raw',
-			'value'=>'CHtml::textField("sla[$data[id]]",0,array("style"=>"width:50px;"))',
+			'value'=>'CHtml::textField("sla[$data[id]]",isset($data["valor"])?$data["valor"]:0,array("style"=>"width:50px;"))',
 		),
 	)
 ));?>
