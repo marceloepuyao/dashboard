@@ -25,6 +25,34 @@ class Dashboard {
 		return count($valor)!=0?array_sum($valor)/count($valor):0;
 		
 	}
+
+	public static function getClientesSinIssuesActivos($userid, $fecha = null){
+
+		if(!$fecha)$fecha=date('YW');
+
+		$issuesClientes = Yii::app()->db->createCommand(" 	   SELECT i.id, i.cliente_id, i.descripcion, i.fecha, i.solucionado, i.criticidad
+															   FROM cliente cl, issue i 
+															   WHERE $userid = cl.usuario_id
+															   AND cl.id = i.cliente_id
+															   GROUP BY cl.id;")->queryAll();
+		$totalClientes = 0;
+		$clientesConIssues = 0;
+		//print_r($issuesClientes);
+		foreach ($issuesClientes as $issuesCliente){
+			$totalClientes++;
+			if ($issuesCliente['solucionado'] != 2){
+				$clientesConIssues++;
+				break;
+			}
+		}
+		if ($totalClientes!=0){
+			$porcentajeConIssues = $clientesConIssues/$totalClientes;
+			$porcentajeSinIssues = 100*($totalClientes-$clientesConIssues)/$totalClientes;
+		}
+		else $porcentajeSinIssues = 0;
+		return $porcentajeSinIssues;
+
+	}
 	
 	public static function getFechas($userid){
 		

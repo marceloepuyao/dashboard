@@ -32,8 +32,10 @@ class SiteController extends Controller
 		}
 		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
 		$cumplimiento_sla = Dashboard::getCumplimientoSla($usuario->id);
+		$porcentajeClientesSinIssues = Dashboard::getClientesSinIssuesActivos($usuario->id);
 		$this->render('index',array(
 					 	'cumplimiento_sla'=>$cumplimiento_sla,
+					 	'porcentajeClientesSinIssues'=>$porcentajeClientesSinIssues,
 		));
 		
 	}
@@ -54,7 +56,14 @@ class SiteController extends Controller
 				'data'=>$cumplimiento_sla,
 		));
 	}
+	public function actionClientesSinIssuesAjax($fecha){
+		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
+		$porcentajeClientesSinIssues = Dashboard::getClientesSinIssuesActivos($usuario->id, $fecha);
 
+		$this->renderPartial('_ajax', array(
+			'data'=>$porcentajeClientesSinIssues,
+		));
+	}
 	/**
 	 * This is the action to handle external exceptions.
 	 */

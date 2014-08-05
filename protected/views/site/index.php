@@ -54,6 +54,7 @@ $this->pageTitle=Yii::app()->name;
 	
 	
 	$slaCumplidos = $cumplimiento_sla;
+	$clientesSinIssues = $porcentajeClientesSinIssues;
 	$slaPorCumplir = 100 - $cumplimiento_sla;
 	/*
 	CUMPLIMIENTO DE SLAS, SEGUN LOS CLIENTES DEL USUARIO Y TODOS SUS CONTRATOS RESPECTIVOS - FIN
@@ -61,7 +62,7 @@ $this->pageTitle=Yii::app()->name;
 
 	/*
 	CLIENTES SIN ISSUES ACTIVOS, SEGÚN EL USUARIO - INICIO
-	*/
+	
 	$clientes = Cliente::model()->findAll("usuario_id" == $idUsuario);
 
 	$issues = array();
@@ -80,7 +81,7 @@ $this->pageTitle=Yii::app()->name;
 	$porcentajeConIssues = $clientesConIssues/$totalClientes;
 	$porcentajeSinIssues = ($totalClientes-$clientesConIssues)/$totalClientes;
 
-	/*
+	
 	CLIENTES SIN ISSUES ACTIVOS, SEGÚN EL USUARIO - FIN
 	*/
 
@@ -125,7 +126,7 @@ $this->pageTitle=Yii::app()->name;
 	<table align="center" cellpadding="0" cellspacing="0" >
 		<tr>
 			<td>
-				<a href="#"><div id="Issues-Cliente" style="width: 400; height: 300"></div> </a>
+				<a href="<?php echo Yii::app()->baseUrl."/site/issuesCliente";?>"><div id="Issues-Cliente" style="width: 400; height: 300"></div> </a>
 			</td>
 			<td>
 				<a href="<?php echo Yii::app()->baseUrl."/site/sla";?>"><div id="Cumplimiento-SLA" style="width: 400; height: 300"></div> </a>
@@ -233,7 +234,6 @@ $(document).ready(function () {
 	
 	    series: [{
 	        name: '',
-	        data: [<?=round(($clientesConIssues/$totalClientes)*100)?>],
 	        dataLabels: {
 	        	format: '<div style="text-align:center"><span style="font-size:25px;color:' + 
                     ((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}%</span><br/>' + 
@@ -272,20 +272,17 @@ $(document).ready(function () {
      // ... draw the chart...
 
   function drawChartIssuesCliente(){
-  	var data1 = new google.visualization.DataTable();
-  	data1.addColumn('string', 'conSinIssues');
-  	data1.addColumn('number', 'porcentaje');
-  	data1.addRows([
-  		['Sin Issues Activos',parseFloat(<?php echo $porcentajeSinIssues; ?>)],
-  		['Con Issues Activos',parseFloat(<?php echo $porcentajeConIssues; ?>)]
-  	]);
+  var data1 = google.visualization.arrayToDataTable([
+	                                                    ['Label', 'Value'],
+	                                                    ['Tasa de Clientes Sin Issues', parseFloat(<?php echo $clientesSinIssues;
+	                                                    	?>)] ]);
   	var options1 = {
-  		'title': 'Estado de Issues de Clientes',
-  		'width': 400,
-  		'height': 300
+  		'title': 'Tasa de Issues de Clientes',
+  		'width': 200,
+  		'height': 200
   	};
 
-  	var chart1 = new google.visualization.PieChart(document.getElementById('Issues-Cliente'));
+  	var chart1 = new google.visualization.Gauge(document.getElementById('Issues-Cliente'));
   	chart1.draw(data1, options1);
 
   }
