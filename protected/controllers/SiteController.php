@@ -89,7 +89,7 @@ class SiteController extends Controller
 		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
 		$clientes = Dashboard::getCumplimientoSlaPorCliente($usuario->id,$fecha);
 		$this->renderPartial('_ajax', array(
-				'data'=>json_parse($clientes)
+				'data'=>json_encode($clientes)
 		));
 	}
 

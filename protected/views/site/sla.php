@@ -3,13 +3,14 @@
 ?>
 
 <?php echo CHtml::dropDownList("fechas", "", $fechas);?>
-<table><tr><td>
+<table align="center"><tr><td>
 <div id="Cumplimiento-SLA" style="width: 400; height: 300">
 </div>
 </td></tr>
 <tr><td>
-<div id="Cumplimiento-SLA-Cliente" style="width: 900; height: 500">
+<div id="Cumplimiento-SLA-Cliente" style="width: 900; height: 500"></div>
 </td></tr>
+</table>
 
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script type="text/javascript">
@@ -39,7 +40,6 @@ function getDataClientes(fecha){
       success: function (data){
           if (data){
             data = JSON.parse(data);
-            alert(data);
             drawChartCumplimientoSLACliente(data);
           }
       },
@@ -79,9 +79,17 @@ function getData(fecha){
   }  
 
   function drawChartCumplimientoSLACliente(clientes){
-    alert(clientes);
+    var data = google.visualization.arrayToDataTable(clientes, true);
+    var options = {
+          title: 'Tasa de SLA Cumplidos por Cliente',
+          vAxis: {title: 'Clientes',  titleTextStyle: {color: 'black'}},
+          width: 900,
+          height: 500,
+          min: 0,
+          max: 100,
+    };
 
-    //var chart = new google.visualization.BarChart(document.getElementById('Cumplimiento-SLA-Cliente'));
-
+    var chart = new google.visualization.BarChart(document.getElementById('Cumplimiento-SLA-Cliente'));
+    chart.draw(data, options);
   }
   </script>

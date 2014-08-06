@@ -125,13 +125,18 @@ class Dashboard {
 														GROUP BY cl.id;")->queryAll();
 		$clientes = array();
 		foreach ($seguimientos_sla as $s_sla){
-			die(print_r($s_sla));
-			if (isset($clientes[$s_sla['nombre']]['total'])) $clientes[$s_sla['nombre']]['total'] = 0;
-			if (isset($clientes[$s_sla['nombre']]['cumplido'])) $clientes[$s_sla['nombre']]['cumplido'] = 0;
+			//die(print_r($seguimientos_sla));
+			if (!isset($clientes[$s_sla['nombre']]['total'])) $clientes[$s_sla['nombre']]['total'] = 0;
+			if (!isset($clientes[$s_sla['nombre']]['cumplido'])) $clientes[$s_sla['nombre']]['cumplido'] = 0;
 			$clientes[$s_sla['nombre']]['total']++;
 			$clientes[$s_sla['nombre']]['cumplido'] += $s_sla['valor'];
 		}
-		return $clientes;
+		$clientesValor = array();
+		foreach ($clientes as $k=>$c){
+			$valor = $c['cumplido']/($c['total']);
+			$clientesValor[] = array($k,$valor);
+		}
+		return $clientesValor;
 	}
 
 	
