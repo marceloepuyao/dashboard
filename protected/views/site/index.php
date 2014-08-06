@@ -56,69 +56,6 @@ $this->pageTitle=Yii::app()->name;
 	$slaCumplidos = $cumplimiento_sla;
 	$clientesSinIssues = $porcentajeClientesSinIssues;
 	$slaPorCumplir = 100 - $cumplimiento_sla;
-	/*
-	CUMPLIMIENTO DE SLAS, SEGUN LOS CLIENTES DEL USUARIO Y TODOS SUS CONTRATOS RESPECTIVOS - FIN
-	*/
-
-	/*
-	CLIENTES SIN ISSUES ACTIVOS, SEGÚN EL USUARIO - INICIO
-	
-	$clientes = Cliente::model()->findAll("usuario_id" == $idUsuario);
-
-	$issues = array();
-	$totalClientes = 0;
-	$clientesConIssues = 0;
-	foreach($clientes as $cliente){
-		$totalClientes += 1;
-		$issues = Issue::model()->findAll('cliente_id' == $cliente['id']);
-		foreach($issues as $issue){
-			if($issue['solucionado'] != 2){ 
-				$clientesConIssues += 1;
-				break;
-			}
-		}
-	}
-	$porcentajeConIssues = $clientesConIssues/$totalClientes;
-	$porcentajeSinIssues = ($totalClientes-$clientesConIssues)/$totalClientes;
-
-	
-	CLIENTES SIN ISSUES ACTIVOS, SEGÚN EL USUARIO - FIN
-	*/
-
-	/*
-	PERCEPCIONES CLIENTE (externo) Y SERVICE MANAGER (interno) - INICIO
-	*/
-	$clientes = Cliente::model()->findAll("usuario_id" == $idUsuario);
-
-	$contratos = array();
-	foreach($clientes as $cliente){
-		$contratos = Contrato::model()->findAll("cliente_id" == $cliente['id']);  
-	}
-	$lineaServicioContratos = array();
-	foreach($contratos as $contrato){
-		$lineasServicioContratos = LineaServicioContrato::model()->findAll("contrato_id" == $contrato['id']);
-	}
-	$seguimientoPercepciones = array();
-	foreach($lineasServicioContratos as $lineaServicioContrato){
-		$seguimientoPercepciones = SeguimientoPercepcion::model()->findAll('linea_servicio_contrato_id' == $lineaServicioContrato['id']);
-	}
-	$totalPercepciones = 0;
-	$percepcionCliente = 0;
-	$percepcionManager = 0;
-	foreach($seguimientoPercepciones as $seguimientoPercepcion){
-		$totalPercepciones += 1;
-		$percepcionCliente += $seguimientoPercepcion['per_cliente']/5;
-		$percepcionManager += $seguimientoPercepcion['per_sm']/5;
-	}
-	$totalPerCliente = $percepcionCliente/$totalPercepciones;
-	$contrarioPerCliente = ($totalPercepciones-$percepcionCliente)/$totalPercepciones;
-	$totalPerManager = $percepcionManager/$totalPercepciones;
-	$contrarioPerManager = ($totalPercepciones-$percepcionManager)/$totalPercepciones;
-
-	/*
-	
-	*/
-
 
 ?>
 
@@ -274,7 +211,7 @@ $(document).ready(function () {
   function drawChartIssuesCliente(){
   var data1 = google.visualization.arrayToDataTable([
 	                                                    ['Label', 'Value'],
-	                                                    ['Tasa de Clientes Sin Issues', parseFloat(<?php echo $clientesSinIssues;
+	                                                    ['Clientes Sin Issues', parseFloat(<?php echo $clientesSinIssues;
 	                                                    	?>)] ]);
   	var options1 = {
   		'title': 'Tasa de Issues de Clientes',
@@ -308,40 +245,38 @@ $(document).ready(function () {
   }  
 
   function drawChartPercepcionCliente(){
-  	var data3 = new google.visualization.DataTable();
-  	data3.addColumn('string', 'percepcion');
-  	data3.addColumn('number', 'porcentaje');
-  	data3.addRows([
-  		['Percepcion Cliente', parseFloat(<?php echo $totalPerCliente; ?>)],
-  		['', parseFloat(<?php echo $contrarioPerCliente; ?>)]
-  	]);
+  	var data3 = new google.visualization.arrayToDataTable([
+	                                                    ['Label', 'Value'],
+	                                                    ['Percepcion Clientes', parseFloat(<?php echo $percepcionCliente; ?>)] ]);
+
   	var options3 = {
-  		'title': 'Percepcion del Cliente',
-  		'width': 400,
-  		'height': 300
+  		'title': 'Percepcion del SM',
+  		'width': 200,
+  		'height': 200,
+  		'max': 5,
+  		'min': 1,
   	};
 
-  	var chart3 = new google.visualization.PieChart(document.getElementById('Percepcion-Externa'));
+  	var chart3 = new google.visualization.Gauge(document.getElementById('Percepcion-Externa'));
   	chart3.draw(data3, options3);
 
 
   }
 
   function drawChartPercepcionManager(){
-  	var data4 = new google.visualization.DataTable();
-  	data4.addColumn('string', 'percepcion');
-  	data4.addColumn('number', 'porcentaje');
-  	data4.addRows([
-  		['Percepcion Manager', parseFloat(<?php echo $totalPerManager; ?>)],
-  		['', parseFloat(<?php echo $contrarioPerManager; ?>)]
-  	]);
+  	var data4 = new google.visualization.arrayToDataTable([
+	                                                    ['Label', 'Value'],
+	                                                    ['Percepcion SM', parseFloat(<?php echo $percepcionSM; ?>)] ]);
+
   	var options4 = {
   		'title': 'Percepcion del SM',
-  		'width': 400,
-  		'height': 300
+  		'width': 200,
+  		'height': 200,
+  		'max': 5,
+  		'min': 1,
   	};
 
-  	var chart4 = new google.visualization.PieChart(document.getElementById('Percepcion-Interna'));
+  	var chart4 = new google.visualization.Gauge(document.getElementById('Percepcion-Interna'));
   	chart4.draw(data4, options4);
 
 

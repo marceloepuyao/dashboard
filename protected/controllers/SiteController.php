@@ -33,9 +33,13 @@ class SiteController extends Controller
 		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
 		$cumplimiento_sla = Dashboard::getCumplimientoSla($usuario->id);
 		$porcentajeClientesSinIssues = Dashboard::getClientesSinIssuesActivos($usuario->id);
+		$percepcionSM = Dashboard::getPercepcionSM($usuario->id);
+		$percepcionCliente = Dashboard::getPercepcionCliente($usuario->id);
 		$this->render('index',array(
 					 	'cumplimiento_sla'=>$cumplimiento_sla,
 					 	'porcentajeClientesSinIssues'=>$porcentajeClientesSinIssues,
+					 	'percepcionSM'=>$percepcionSM,
+					 	'percepcionCliente'=>$percepcionCliente,
 		));
 		
 	}
