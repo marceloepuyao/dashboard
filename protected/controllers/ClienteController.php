@@ -289,12 +289,7 @@ class ClienteController extends Controller
 	public function actionMisClientes()
 	{
 		$clientes = Cliente::model()->findAll("usuario_id=". Yii::app()->user->id);
-		
-		$gridDataProvider = new CArrayDataProvider(array(
-				array('id'=>1, 'firstName'=>'Mark', 'lastName'=>'Otto', 'language'=>'CSS'),
-				array('id'=>2, 'firstName'=>'Jacob', 'lastName'=>'Thornton', 'language'=>'JavaScript'),
-				array('id'=>3, 'firstName'=>'Stu', 'lastName'=>'Dent', 'language'=>'HTML'),
-		));
+		$arraycliente = array();
 		foreach ($clientes as $cliente){
 			$arraycliente[]= array('id'=>$cliente->id, 'cliente'=>$cliente->nombre);
 		}
