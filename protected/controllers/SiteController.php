@@ -32,6 +32,10 @@ class SiteController extends Controller
 						'actions'=>array('Index','sla', 'cumplimientoslaajax'),
 						'users'=>array('@'),
 				),
+				array('allow', // allow authenticated user to perform 'create' and 'update' actions
+						'actions'=>array('Index','sla', 'cumplimientoslaporclienteajax'),
+						'users'=>array('@'),
+				),
 				array('allow', // allow admin user to perform 'admin' and 'delete' actions
 						'actions'=>array('generarsemanal','borrarsemanal','generarmensual','borrarmensual','admin'),
 						'expression'=>'Yii::app()->user->isAdmin()',
