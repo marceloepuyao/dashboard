@@ -333,6 +333,9 @@ class SeguimientoController extends Controller
 				ON m.max_fecha = fecha
 				WHERE cliente_id = $clienteId ")->queryRow();
 		
+		if(!$itilRawData)
+			return array();
+		
 		$labels = SeguimientoItil::model()->attributeLabels();
 		$n = 0;
 		foreach ($itilRawData as $i=>$dataitil){

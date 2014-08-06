@@ -29,23 +29,18 @@ class Dashboard {
 	public static function getClientesSinIssuesActivos($userid, $fecha = null){
 
 		if(!$fecha)$fecha=date('YW');
+		
+		$clientes = Cliente::model()->findAllByAttributes(array("usuario_id"=>$userid));
+		$totalClientes =  Cliente::model()->countByAttributes(array("usuario_id"=>$userid));
 
-		$issuesClientes = Yii::app()->db->createCommand(" 	   SELECT i.id, i.cliente_id, i.descripcion, i.fecha, i.solucionado, i.criticidad
-															   FROM cliente cl, issue i 
-															   WHERE $userid = cl.usuario_id
-															   AND cl.id = i.cliente_id
-															   GROUP BY cl.id;")->queryAll();
-		$totalClientes = 0;
 		$clientesConIssues = 0;
-		foreach ($issuesClientes as $issuesCliente){
-			$totalClientes++;
-			if ($issuesCliente['solucionado'] != 2){
+		foreach ($clientes as $cliente){
+		$issuesActivos =  Issue::model()->countByAttributes(array("cliente_id"=>$cliente->id, 'solucionado'=> 1 ));
+			if($issuesActivos>0)
 				$clientesConIssues++;
-				break;
-			}
 		}
+		
 		if ($totalClientes!=0){
-			$porcentajeConIssues = $clientesConIssues/$totalClientes;
 			$porcentajeSinIssues = 100*($totalClientes-$clientesConIssues)/$totalClientes;
 		}
 		else $porcentajeSinIssues = 0;
@@ -70,7 +65,12 @@ class Dashboard {
 			$totalPercepciones++;
 			$percepcionManager += $seguimientoPercepcion['per_sm']/5;
 		}
-		$totalPerManager = $percepcionManager/$totalPercepciones*5;
+		if ($totalPercepciones!=0){
+			$totalPerManager = $percepcionManager/$totalPercepciones*5;
+		}else{
+			return 0;
+		}
+		
 		if ($totalPerManager<1) $totalPerManager = 1;
 		return $totalPerManager;
 	}
@@ -92,7 +92,12 @@ class Dashboard {
 			$totalPercepciones++;
 			$percepcionCliente += $seguimientoPercepcion['per_cliente']/5;
 		}
-		$totalPerCliente = $percepcionCliente/$totalPercepciones*5;
+		if ($totalPercepciones!=0){
+			$totalPerCliente = $percepcionCliente/$totalPercepciones*5;
+		}else{
+			return 0;
+		}
+		
 		if ($totalPerCliente<1) $totalPerCliente = 1;
 		return $totalPerCliente;
 	}
@@ -101,7 +106,7 @@ class Dashboard {
 	
 	public static function getFechas($userid){
 		
-		return array("201431", "201430","201429", "201428");
+		return array("201432","201431", "201430","201429", "201428");
 		
 	}
 	
