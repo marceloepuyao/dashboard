@@ -76,11 +76,19 @@ class SiteController extends Controller
 	public function actionCumplimientoSlaAjax($fecha){
 		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
 		$cumplimiento_sla = Dashboard::getCumplimientoSla($usuario->id, $fecha);
-		
 		$this->renderPartial('_ajax', array(
 				'data'=>$cumplimiento_sla,
 		));
 	}
+
+	public function actionCumplimientoSlaPorClienteAjax($fecha){
+		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
+		$clientes = Dashboard::getCumplimientoSlaPorCliente($usuario->id,$fecha);
+		$this->renderPartial('_ajax', array(
+				'data'=>json_parse($clientes)
+		));
+	}
+
 	public function actionClientesSinIssuesAjax($fecha){
 		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
 		$porcentajeClientesSinIssues = Dashboard::getClientesSinIssuesActivos($usuario->id, $fecha);

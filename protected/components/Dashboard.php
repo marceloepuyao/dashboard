@@ -6,6 +6,9 @@ class Dashboard {
 	 *
 	 * @return Array array con la estructura del dropdown.
 	 */
+
+	//FUNCIONES DEL DASHBOARD EN /SITE/INDEX.PHP - INICIO
+
 	public static function getCumplimientoSla($userid, $fecha = null){
 		
 		if(!$fecha)$fecha=date('YW');
@@ -63,15 +66,16 @@ class Dashboard {
 		$percepcionManager = 0;
 		foreach($seguimientoPercepciones as $seguimientoPercepcion){
 			$totalPercepciones++;
-			$percepcionManager += $seguimientoPercepcion['per_sm']/5;
+			if ($seguimientoPercepcion['per_sm']>=4){
+				$percepcionManager ++;
+			}
 		}
 		if ($totalPercepciones!=0){
-			$totalPerManager = $percepcionManager/$totalPercepciones*5;
+			$totalPerManager = $percepcionManager/$totalPercepciones*100;
 		}else{
 			return 0;
 		}
 		
-		if ($totalPerManager<1) $totalPerManager = 1;
 		return $totalPerManager;
 	}
 
@@ -90,18 +94,42 @@ class Dashboard {
 		$percepcionCliente = 0;
 		foreach($seguimientoPercepciones as $seguimientoPercepcion){
 			$totalPercepciones++;
-			$percepcionCliente += $seguimientoPercepcion['per_cliente']/5;
+			if ($seguimientoPercepcion['per_cliente']>=4){
+				$percepcionCliente ++;
+			}
 		}
 		if ($totalPercepciones!=0){
-			$totalPerCliente = $percepcionCliente/$totalPercepciones*5;
+			$totalPerCliente = $percepcionCliente/$totalPercepciones*100;
 		}else{
 			return 0;
 		}
 		
-		if ($totalPerCliente<1) $totalPerCliente = 1;
 		return $totalPerCliente;
 	}
 
+	//FUNCIONES DEL DASHBOARD EN /SITE/INDEX.PHP - FIN
+
+	//FUNCIONES DEL DASHBOARD DE CADA PÁGINA - INICIO
+
+	public static function getCumplimientoSlaPorCliente($userid, $fecha = null){
+		
+		if(!$fecha)$fecha=date('YW');
+		
+		$seguimientos_sla = Yii::app()->db->createCommand(" SELECT ss.id, ss.sla_id, ss.valor, ss.fecha, cl.nombre
+												FROM seguimiento_sla ss, sla s, contrato c, cliente cl  
+												WHERE 	c.cliente_id = cl.id AND 
+														cl.usuario_id = $userid AND 
+														s.contrato_id = c.id AND
+														ss.sla_id = s.id AND
+														ss.fecha = $fecha
+														GROUP BY cl.id;")->queryAll();
+		$clientes = array();
+		foreach ($seguimientos_sla as $s_sla){
+			$clientes[$s_sla['nombre']]['total']++;
+			$clientes[$s_sla['nombre']]['cumplido'] += $s_sla['valor'];
+		}
+		return $clientes;
+	}
 
 	
 	public static function getFechas($userid){

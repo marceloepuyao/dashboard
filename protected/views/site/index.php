@@ -247,14 +247,12 @@ $(document).ready(function () {
   function drawChartPercepcionCliente(){
   	var data3 = new google.visualization.arrayToDataTable([
 	                                                    ['Label', 'Value'],
-	                                                    ['Percepcion Clientes', parseFloat(<?php echo $percepcionCliente; ?>)] ]);
+	                                                    ['Satisfacción Clientes', parseFloat(<?php echo $percepcionCliente; ?>)] ]);
 
   	var options3 = {
   		'title': 'Percepcion del SM',
   		'width': 200,
-  		'height': 200,
-  		'max': 5,
-  		'min': 1,
+  		'height': 200
   	};
 
   	var chart3 = new google.visualization.Gauge(document.getElementById('Percepcion-Externa'));
@@ -266,14 +264,12 @@ $(document).ready(function () {
   function drawChartPercepcionManager(){
   	var data4 = new google.visualization.arrayToDataTable([
 	                                                    ['Label', 'Value'],
-	                                                    ['Percepcion SM', parseFloat(<?php echo $percepcionSM; ?>)] ]);
+	                                                    ['Satisfacción SM', parseFloat(<?php echo $percepcionSM; ?>)] ]);
 
   	var options4 = {
   		'title': 'Percepcion del SM',
   		'width': 200,
-  		'height': 200,
-  		'max': 5,
-  		'min': 1,
+  		'height': 200
   	};
 
   	var chart4 = new google.visualization.Gauge(document.getElementById('Percepcion-Interna'));
