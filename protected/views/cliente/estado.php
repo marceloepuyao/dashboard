@@ -8,39 +8,116 @@ $this->breadcrumbs=array(
 Cliente: 
 <select id="clients" onchange="changeClient()">
 	<?php foreach ($clientes as $cl){?>
-  <option value="<?php echo $cl['id'];?>"><?php echo $cl['nombre'];?></option>
+  <option value="<?php echo $cl['id'];?>" <?php echo $cl['id']==$cliente->id?"selected":"";?> ><?php echo $cl['nombre'];?></option>
   <?php }?>
 </select>
 
 
-<p>Último Estado Cliente: <?php echo $cliente->nombre?> </p>
+<h2>Último Estado Cliente: <?php echo $cliente->nombre?> </h2>
 
-<h2>Resumen</h2>
- Percepción del Cliente: <?php //echo $seguimientoitil[0]->per_client;?>
- <br>
- Percepción Interna: <?php //echo $seguimientoitil[0]->per_sm;?>
-  <br>
+<h4> Resumen: </h4>
 
-  <br>
- Issues Activos: 
+
+
+<h4> Percepción: </h4>
  
- <?php 
- $cs = Yii::app()->getClientScript();
-	$cs->registerScript('id', " 
-						function changeClient(){
-								var client = $('#clients').val();
-								window.location.replace('estado?id='+ client);
-							}
+ <?php $this->widget('bootstrap.widgets.TbGridView', array(
+    'id'=>'servicio-grid',
+	 'summaryText' => '',
+    'dataProvider'=>$seguimientopercepcion,
+    'columns'=>array(
+		array(
+			'name'=>'Líneas de Servicio',
+			'value'=> '$data["nombre"]',
+		),
+		array(
+			'name'=>'Percepción Cliente',
+			'value'=>'isset($data["per_cliente"])?$data["per_cliente"]:0',
+		),
+		array(
+		'name'=>'Percepción SM',
+		'value'=>'isset($data["per_sm"])?$data["per_sm"]:0',
+		),
 
-						$( document ).ready(function() {
+	)
+));?>
 
-							function changeClient(){
-								var client = $('#clients').val();
-								window.location.replace('estado?id='+ client);
-							}
-						});	
-								");
-?>
+<h4>ITIL</h4>
+<?php $this->widget('bootstrap.widgets.TbGridView', array(
+    'id'=>'servicio-grid',
+	'summaryText' => '',	
+    'dataProvider'=>$seguimientopercepcion,
+    'columns'=>array(
+		array(
+			'name'=>'KPI',
+			'value'=> '$data["nombre"]',
+		),
+		array(
+			'name'=>'Valor',
+			'value'=>'isset($data["valor"])?$data["valor"]:0',
+		),
+
+	)
+)); ?>
+
+
+<h4>SLA</h4>
+<?php $this->widget('bootstrap.widgets.TbGridView', array(
+    'id'=>'servicio-grid',
+	'summaryText' => '',
+    'dataProvider'=>$seguimientosla,
+    'columns'=>array(
+		array(
+			'name'=>'Contrato',
+			'value'=> 'Contrato::model()->findByPk($data["contrato_id"])->titulo',
+		),
+		array(
+			'name'=>'SLA',
+			'value'=> '$data["nombre"]',
+		),
+		array(
+			'name'=>'Objetivo(%)',
+			'value'=> '$data["objetivo"]',
+		),
+		array(
+			'name'=>'Valor',
+			'value'=>'isset($data["valor"])?$data["valor"]:0',
+		),
+	)
+));?>
+
+<h4>Issues</h4>
+<?php $this->widget('bootstrap.widgets.TbGridView', array(
+	'id'=>'issue-grid',
+	'dataProvider'=>$issues,
+	'columns'=>array(
+		'descripcion',
+		'fecha',
+		array(
+			'name'=> 'lineaservicios',
+			'value'=> 'implode(", ", array_keys(CHtml::listData($data->lineaServicios, "nombre" , "id")));'
+		),
+		array(
+			'name'=>'criticidad',
+			'filter'=>array('1'=>"Baja",'2'=>'Media','3'=>'Alta'),
+			'value'=>'$data->criticidad==1?"Baja":($data->criticidad==2?"Media":"Alta") ',
+		),
+		array(
+			'name'=>'solucionado',
+			'filter'=>array('1'=>"Pendiente",'2'=>'Terminado'),
+			'value'=>'$data->solucionado==1?"Pendiente":"Terminado" ',
+		),
+	),
+)); ?>
+
+ 
+<script type="text/javascript">
+function changeClient(){
+	var client = $('#clients').val();
+	window.location.replace('estado?id='+ client);
+}
+
+</script>
  
  
  

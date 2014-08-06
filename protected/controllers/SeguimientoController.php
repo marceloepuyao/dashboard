@@ -2,6 +2,23 @@
 
 class SeguimientoController extends Controller
 {
+	public function accessRules()
+	{
+		return array(
+				array('allow', // allow authenticated user to perform 'create' and 'update' actions
+						'actions'=>array('Index','updatemensual', 'updatesemanal'),
+						'users'=>array('@'),
+				),
+				array('allow', // allow admin user to perform 'admin' and 'delete' actions
+						'actions'=>array('generarsemanal','borrarsemanal','generarmensual','borrarmensual','admin'),
+						'expression'=>'Yii::app()->user->isAdmin()',
+				),
+				array('deny',  // deny all users
+						'users'=>array('*'),
+				),
+		);
+	}
+	
 	public function actionGenerarSemanal()
 	{
 		$fecha = date('YW');
@@ -61,7 +78,7 @@ class SeguimientoController extends Controller
 	}
 	
 	
-	
+	/*
 	public function actionCreate($id)
 	{
 		$cliente = Cliente::model()->findByPk($id);
@@ -77,7 +94,6 @@ class SeguimientoController extends Controller
 		    ),
 		));
 		$itil = new SeguimientoItil();
-		$itil->attributeLabels();
 		$arrayitil = array();
 		$i = 1;
 		foreach ($itil->attributeLabels() as $j=>$ia){
@@ -147,21 +163,7 @@ class SeguimientoController extends Controller
 				'seguimientoItil'=> $seguimientoItil,
 				'sla'=>$sla,
 		));
-	}
-
-	public function actionDelete()
-	{
-		$this->render('delete');
-	}
-
-	public function actionHistorico($id)
-	{
-		$cliente = Cliente::model()->findByPk($id);
-		$this->render('historico',array(
-				'cliente'=>$cliente, 
-		));
-		
-	}
+	}*/
 
 	public function actionIndex($id)
 	{
@@ -197,14 +199,7 @@ class SeguimientoController extends Controller
 		$cliente = Cliente::model()->findByPk($id);
 		$fecha = date('YW');
 
-		$serviciosRawData = Yii::app()->db->createCommand("select ls.id, ls.nombre, sp.per_cliente as per_cliente, sp.per_sm as per_sm , lsc.id as linea_servicio_contrato_id, sp.id as seguimiento_id from seguimiento_percepcion sp, linea_servicio ls, linea_servicio_contrato lsc, contrato c where lsc.id = sp.linea_servicio_contrato_id AND c.cliente_id = $cliente->id AND lsc.contrato_id = c.id AND ls.id = lsc.linea_servicio_id AND sp.fecha = $fecha  GROUP BY ls.id;")->queryAll();
-		//die(var_dump($serviciosRawData));
-		$lineaservicios=new CArrayDataProvider($serviciosRawData, array(
-				'id'=>'id',
-				'pagination'=>array(
-						'pageSize'=>100,
-				),
-		));
+		$lineaservicios = $this->getUltimoPercepcion($cliente->id);
 		
 		if(isset($_POST['per_cliente'])){
 			$per_cliente = $_POST['per_cliente'];
@@ -229,39 +224,36 @@ class SeguimientoController extends Controller
 	{
 		$cliente = Cliente::model()->findByPk($id);
 		$fecha = date('YW');
+				
+		$sla=$this->getUltimoSla($cliente->id);
+		$itil = $this->getUltimoItil($cliente->id);
 		
-		$serviciosRawData = Yii::app()->db->createCommand("select ls.*, sp.per_cliente, sp.per_sm from seguimiento_percepcion sp, linea_servicio ls, linea_servicio_contrato lsc, contrato c where lsc.id = sp.linea_servicio_contrato_id AND c.cliente_id = $cliente->id AND lsc.contrato_id = c.id AND ls.id = lsc.linea_servicio_id AND sp.fecha = $fecha  GROUP BY ls.id;")->queryAll();
-		$lineaservicios=new CArrayDataProvider($serviciosRawData, array(
-				'id'=>'id',
-				'pagination'=>array(
-						'pageSize'=>100,
-				),
-		));
-		
-		$slasRawData = Yii::app()->db->createCommand("select s.id, s.nombre, s.objetivo, s.descripcion, s.contrato_id, ss.valor from sla s, contrato c , seguimiento_sla ss where c.cliente_id = $cliente->id AND s.contrato_id = c.id AND ss.sla_id = s.id group by s.id;")->queryAll();
-		$sla=new CArrayDataProvider($slasRawData, array(
-				'id'=>'id',
-				'pagination'=>array(
-						'pageSize'=>100,
-				),
-		));
-		
-		
-		$this->render('update',array(
+		if(isset($_POST['itil'])){
+			$seg_itil = $_POST['itil'];
+			$seg_sla = $_POST['sla'];
+			
+			foreach ($seg_sla as $h=>$ss){
+				$seguimientoSla = SeguimientoSla::model()->findByPk($h);
+				$seguimientoSla->valor = $ss;
+				$seguimientoSla->save();
+			}
+			
+			$seguimientoI = SeguimientoItil::model()->findByPk($itilRawData['id']);
+			foreach ($seg_itil as $g=>$si){
+				$seguimientoI->{$itil->rawData[($g)]['column']}= $si;
+			}
+			$seguimientoI->save();
+			$this->redirect(array('seguimiento/index','id'=>$cliente->id));
+		}
+			
+		$this->render('updateMensual',array(
 				'cliente'=>$cliente,
 				'fecha'=>$fecha,
-				'lineaservicios'=> $lineaservicios,
-				//'seguimientoItil'=> $seguimientoItil,
+				'itil'=> $itil,
 				'sla'=>$sla,
 		));
 		
 	}
-
-	public function actionView()
-	{
-		$this->render('view');
-	}
-	
 	
 	public function actionAdmin()
 	{
@@ -309,4 +301,76 @@ class SeguimientoController extends Controller
 		);
 	}
 	*/
+	public function getUltimoSla($clienteId){
+		$slasRawData = Yii::app()->db->createCommand("  SELECT s.id, s.nombre, s.objetivo, s.descripcion, s.contrato_id, ss.valor, ss.fecha, ss.id as seguimiento_sla_id
+				FROM sla s, contrato c , seguimiento_sla ss
+				JOIN ( SELECT MAX(ssla.fecha) AS max_fecha
+				FROM seguimiento_sla ssla
+				) m
+				ON m.max_fecha = ss.fecha
+				WHERE c.cliente_id = $clienteId AND
+				s.contrato_id = c.id AND
+				ss.sla_id = s.id
+				group by s.id")->queryAll();
+		
+				$sla=new CArrayDataProvider($slasRawData, array(
+						'id'=>'id',
+						'pagination'=>array(
+								'pageSize'=>100,
+						),
+				));
+				
+				return $sla;
+	}
+	public function getUltimoItil($clienteId){
+		
+		$itilRawData = Yii::app()->db->createCommand("  SELECT *
+				FROM seguimiento_itil
+				JOIN ( SELECT MAX(fecha) AS max_fecha
+				FROM seguimiento_itil
+				WHERE cliente_id = $clienteId
+				) m
+				ON m.max_fecha = fecha
+				WHERE cliente_id = $clienteId ")->queryRow();
+		
+		$labels = SeguimientoItil::model()->attributeLabels();
+		$n = 0;
+		foreach ($itilRawData as $i=>$dataitil){
+			if(isset($labels[$i]))
+				$vertical[] = array("id"=> (string)$n++, "nombre"=>$labels[$i], "valor"=>$dataitil, 'column'=>$i);
+		}
+		$itil=new CArrayDataProvider($vertical, array(
+				'id'=>'id',
+				'pagination'=>array(
+						'pageSize'=>100,
+				),
+		));
+		
+		return $itil;
+	}
+	public function getUltimoPercepcion($clienteId){
+		
+		$serviciosRawData = Yii::app()->db->createCommand(" SELECT ls.id, ls.nombre, sp.per_cliente as per_cliente, sp.per_sm as per_sm , lsc.id as linea_servicio_contrato_id, sp.id as seguimiento_id, sp.fecha
+															FROM  linea_servicio ls, linea_servicio_contrato lsc, contrato c, seguimiento_percepcion sp
+															INNER JOIN (  SELECT MAX(ssp.fecha) AS max_fecha
+																	FROM seguimiento_percepcion ssp, linea_servicio lss, linea_servicio_contrato lscc, contrato cc
+																	WHERE lscc.id = ssp.linea_servicio_contrato_id AND 
+																	cc.cliente_id = $clienteId AND 
+																	lscc.contrato_id = cc.id AND 
+																	lss.id = lscc.linea_servicio_id
+															) m
+															ON m.max_fecha = sp.fecha 
+															WHERE lsc.id = sp.linea_servicio_contrato_id AND 
+																c.cliente_id = $clienteId AND 
+																lsc.contrato_id = c.id AND 
+																ls.id = lsc.linea_servicio_id;")->queryAll();
+		//die(var_dump($serviciosRawData));
+		$lineaservicios=new CArrayDataProvider($serviciosRawData, array(
+				'id'=>'id',
+				'pagination'=>array(
+						'pageSize'=>100,
+				),
+		));
+		return $lineaservicios;
+	}
 }

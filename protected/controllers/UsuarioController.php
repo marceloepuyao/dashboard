@@ -27,16 +27,8 @@ class UsuarioController extends Controller
 	public function accessRules()
 	{
 		return array(
-			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view'),
-				'users'=>array('*'),
-			),
-			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update'),
-				'users'=>array('@'),
-			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions'=>array('admin','delete'),
+				'actions'=>array('index','admin','delete','view','create','update','ssm', 'sm'),
 				 'expression'=>'Yii::app()->user->isAdmin()',
 			),
 			array('deny',  // deny all users
@@ -142,6 +134,41 @@ class UsuarioController extends Controller
 
 		$this->render('index',array(
 			'model'=>$model,
+		));
+	}
+	public function actionSsm()
+	{
+		$usuariosSsm=new CActiveDataProvider('Usuario', array(
+				'criteria'=>array(
+						'condition'=>'perfil_id = 2',
+				),
+				'pagination'=>array(
+						'pageSize'=>40,
+				),
+		));
+		
+		
+		$this->render('ssm',array(
+				'usuariosSsm'=>$usuariosSsm,
+		));
+	}
+	
+	public function actionSm($id)
+	{
+		$ssm = Usuario::model()->findByPk($id);
+		$sms = new CActiveDataProvider('Usuario', array(
+				'criteria'=>array(
+						'condition'=>'perfil_id = 3',
+				),
+				'pagination'=>array(
+						'pageSize'=>40,
+				),
+		));
+	
+	
+		$this->render('sm',array(
+				'ssm'=> $ssm,
+				'sms'=>$sms,
 		));
 	}
 

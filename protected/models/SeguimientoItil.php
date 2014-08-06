@@ -95,8 +95,7 @@ class SeguimientoItil extends CActiveRecord
 			'facturacion_extra' => 'Facturación Extra',
 			'multas' => 'Multas',
 			'comentario' => 'Comentario',
-			'tipo_seguimiento' => 'Tipo Seguimiento',
-			'per_client' => 'Percepción Client',
+			'per_client' => 'Percepción Cliente',
 			'per_sm' => 'Percepción Sm',
 		);
 	}

@@ -27,16 +27,12 @@ class ClienteController extends Controller
 	public function accessRules()
 	{
 		return array(
-			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view'),
-				'users'=>array('*'),
-			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update', 'estado','admin','delete', 'misclientes','seguimiento','updatesm'),
+				'actions'=>array('update', 'estado', 'misclientes','seguimiento','updatesm'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions'=>array(),
+				'actions'=>array('index','view', 'create','delete'),
 				'expression'=>'Yii::app()->user->isAdmin()',
 			),
 			array('deny',  // deny all users
@@ -66,21 +62,40 @@ class ClienteController extends Controller
 	public function actionEstado($id = null)
 	{
 		$model=new Cliente;
-		$clientes = Cliente::model()->findAll();
-		$nombres = array();
-		foreach ($clientes as $cl){
-			$nombres[] = $cl->nombre;
-			$cliente = $cl;
-		}
+		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
+		
+		$clientes = $usuario->clientes;
+		$nombres = CHtml::listData($clientes, 'id', 'nombre');
+		
 		if($id){
-			$cliente = Cliente::model()->findAllByPk($id);
+			$cliente = Cliente::model()->findByPk($id);
+		}else{
+			$cliente = Cliente::model()->find();
 		}
+		
+		$seguimiento = new SeguimientoController($this->id);
+		$seguimientoitil = $seguimiento->getUltimoItil($cliente->id);
+		$seguimientosla = $seguimiento->getUltimoSla($cliente->id);
+		$seguimientopercepcion = $seguimiento->getUltimoPercepcion($cliente->id);		
+		$issues = new CActiveDataProvider('Issue', array(
+				'criteria'=>array(
+						'condition'=>"cliente_id=$cliente->id",
+				),
+				'pagination'=>array(
+						'pageSize'=>100,
+				),
+		));
+		//$cumplimientosla = Dashboard::getCumplimientoSla($userid)
+		
 		$this->render('estado',array(
 				'model'=>$model,
 				'nombres'=>$nombres,
 				'clientes'=>$clientes,
 				'cliente'=>$cliente,
-				'seguimientoitil'=>$cliente->seguimientoitil,
+				'seguimientoitil'=>$seguimientoitil,
+				'seguimientosla' =>$seguimientosla,
+				'seguimientopercepcion' => $seguimientopercepcion,
+				'issues'=>$issues,
 		));
 	}
 

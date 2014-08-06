@@ -40,7 +40,7 @@
     								array('label'=>'Competidores', 'url'=>array('/competidor/index'),'visible'=>Yii::app()->user->isAdmin()),
     								array('label'=>'Línea de Servicios', 'url'=>array('/lineaServicio/index'), 'visible'=>Yii::app()->user->isAdmin()),
     								array('label'=>'Seguimientos', 'url'=>array('/seguimiento/admin'), 'visible'=>Yii::app()->user->isAdmin()),
-    								array('label'=>'SM', 'url'=>'#', 'visible'=>Yii::app()->user->isAdmin()),
+    								array('label'=>'SSM', 'url'=>array('/usuario/ssm'), 'visible'=>Yii::app()->user->isAdmin()),
 									'---',
     								array('label'=>'Logout', 'url'=>array('/site/logout')),
     						)),
