@@ -139,7 +139,35 @@ class Dashboard {
 		return $clientesValor;
 	}
 
-	
+	public static function getClientesSinIssuesActivosPorCliente($userid, $fecha = null){
+		
+		if(!$fecha)$fecha=date('YW');
+		
+		$issuesActivosPorCliente = Yii::app()->db->createCommand(" SELECT cl.nombre, i.solucionado, i.id, i.cliente_id
+																FROM issue i, cliente cl  
+																WHERE 	i.cliente_id = cl.id AND 
+																cl.usuario_id = $userid AND 
+																GROUP BY cl.id;")->queryAll();
+
+		die(print_r($issuesActivosPorCliente));
+		/*
+		$clientes = array();
+		foreach ($seguimientos_sla as $s_sla){
+			//die(print_r($seguimientos_sla));
+			if (!isset($clientes[$s_sla['nombre']]['total'])) $clientes[$s_sla['nombre']]['total'] = 0;
+			if (!isset($clientes[$s_sla['nombre']]['cumplido'])) $clientes[$s_sla['nombre']]['cumplido'] = 0;
+			$clientes[$s_sla['nombre']]['total']++;
+			$clientes[$s_sla['nombre']]['cumplido'] += $s_sla['valor'];
+		}
+		$clientesValor = array();
+		foreach ($clientes as $k=>$c){
+			$valor = $c['cumplido']/($c['total']);
+			$clientesValor[] = array($k,$valor);
+		}
+		return $clientesValor;
+		*/
+	}
+
 	public static function getFechas($userid){
 		
 		return array("201432","201431", "201430","201429", "201428");
