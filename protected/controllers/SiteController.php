@@ -53,8 +53,14 @@ class SiteController extends Controller
 		}
 		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
 		$cumplimiento_sla = Dashboard::getCumplimientoSla($usuario->id);
+		$porcentajeClientesSinIssues = Dashboard::getClientesSinIssuesActivos($usuario->id);
+		$percepcionSM = Dashboard::getPercepcionSM($usuario->id);
+		$percepcionCliente = Dashboard::getPercepcionCliente($usuario->id);
 		$this->render('index',array(
 					 	'cumplimiento_sla'=>$cumplimiento_sla,
+					 	'porcentajeClientesSinIssues'=>$porcentajeClientesSinIssues,
+					 	'percepcionSM'=>$percepcionSM,
+					 	'percepcionCliente'=>$percepcionCliente,
 		));
 		
 	}
@@ -75,7 +81,14 @@ class SiteController extends Controller
 				'data'=>$cumplimiento_sla,
 		));
 	}
+	public function actionClientesSinIssuesAjax($fecha){
+		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
+		$porcentajeClientesSinIssues = Dashboard::getClientesSinIssuesActivos($usuario->id, $fecha);
 
+		$this->renderPartial('_ajax', array(
+			'data'=>$porcentajeClientesSinIssues,
+		));
+	}
 	/**
 	 * This is the action to handle external exceptions.
 	 */
