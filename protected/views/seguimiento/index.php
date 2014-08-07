@@ -44,8 +44,12 @@ if($seguimientoMensual){
 	));
 }
 ?>
-
 </br>
 </br>
 </br>
-</br>
+<?php $this->widget('bootstrap.widgets.TbButton', array(
+	'url' => array('cliente/misclientes'),
+    'label'=>'Volver',
+    'type'=>'null', // null, 'primary', 'info', 'success', 'warning', 'danger' or 'inverse'
+    'size'=>'small', // null, 'large', 'small' or 'mini'
+)); ?>

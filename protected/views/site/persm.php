@@ -28,8 +28,9 @@ $("#fechas").on("change",function(){
 	
 });
 function start(){
-	getData("201428");
-  getDataClientes("201428");
+	var fecha = $("#fechas option:selected").text();	
+	getData(fecha);
+  getDataClientes(fecha);
 }
 
 function getDataClientes(fecha){

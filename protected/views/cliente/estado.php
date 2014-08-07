@@ -46,7 +46,7 @@ Cliente:
 <?php $this->widget('bootstrap.widgets.TbGridView', array(
     'id'=>'servicio-grid',
 	'summaryText' => '',	
-    'dataProvider'=>$seguimientopercepcion,
+    'dataProvider'=>$seguimientoitil,
     'columns'=>array(
 		array(
 			'name'=>'KPI',

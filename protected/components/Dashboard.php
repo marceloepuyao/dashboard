@@ -13,7 +13,7 @@ class Dashboard {
 		
 		if(!$fecha)$fecha=date('YW');
 		
-		$seguimientos_sla = Yii::app()->db->createCommand(" SELECT ss.id, ss.sla_id, ss.valor, ss.fecha
+		$seguimientos_sla = Yii::app()->db->createCommand(" SELECT ss.id, ss.sla_id, ss.valor, ss.fecha, cl.id as clid
 												FROM seguimiento_sla ss, sla s, contrato c, cliente cl  
 												WHERE 	c.cliente_id = cl.id AND 
 														cl.usuario_id = $userid AND 
@@ -222,7 +222,14 @@ class Dashboard {
 
 	public static function getFechas($userid){
 		
-		return array("201432","201431", "201430","201429", "201428");
-		
+		$seguimientoSemanal = Yii::app()->db->createCommand("SELECT sp.fecha
+				FROM seguimiento_percepcion sp, linea_servicio ls, linea_servicio_contrato lsc, contrato c, cliente cl
+				WHERE lsc.id = sp.linea_servicio_contrato_id AND
+				c.cliente_id = cl.id AND
+				cl.usuario_id = $userid AND
+				lsc.contrato_id = c.id AND
+				ls.id = lsc.linea_servicio_id
+				GROUP BY sp.fecha DESC limit 1;")->queryRow();
+		return $seguimientoSemanal;
 	}	
 }

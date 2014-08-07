@@ -204,7 +204,7 @@ class SeguimientoController extends Controller
 		if(isset($_POST['per_cliente'])){
 			$per_cliente = $_POST['per_cliente'];
 			$per_sm = $_POST['per_sm'];
-			foreach ($serviciosRawData as $sc){
+			foreach ($lineaservicios->rawData as $sc){
 				$seguimientoPercepcion = SeguimientoPercepcion::model()->findByPk($sc['seguimiento_id']);
 				$seguimientoPercepcion->linea_servicio_contrato_id = $sc['linea_servicio_contrato_id'];
 				$seguimientoPercepcion->per_cliente = $per_cliente[$sc['linea_servicio_contrato_id']];
@@ -227,6 +227,7 @@ class SeguimientoController extends Controller
 				
 		$sla=$this->getUltimoSla($cliente->id);
 		$itil = $this->getUltimoItil($cliente->id);
+		$itilRawData = $this->getItilRawData($cliente->id);
 		
 		if(isset($_POST['itil'])){
 			$seg_itil = $_POST['itil'];
@@ -324,15 +325,7 @@ class SeguimientoController extends Controller
 	}
 	public function getUltimoItil($clienteId){
 		
-		$itilRawData = Yii::app()->db->createCommand("  SELECT *
-				FROM seguimiento_itil
-				JOIN ( SELECT MAX(fecha) AS max_fecha
-				FROM seguimiento_itil
-				WHERE cliente_id = $clienteId
-				) m
-				ON m.max_fecha = fecha
-				WHERE cliente_id = $clienteId ")->queryRow();
-		
+		$itilRawData = $this->getItilRawData($clienteId);
 		if(!$itilRawData)
 			return array();
 		
@@ -347,10 +340,21 @@ class SeguimientoController extends Controller
 				'pagination'=>array(
 						'pageSize'=>100,
 				),
-		));
-		
+		));		
 		return $itil;
 	}
+	public function getItilRawData($clienteId){
+		
+		return $itilRawData = Yii::app()->db->createCommand("  SELECT *
+				FROM seguimiento_itil
+				JOIN ( SELECT MAX(fecha) AS max_fecha
+				FROM seguimiento_itil
+				WHERE cliente_id = $clienteId
+				) m
+				ON m.max_fecha = fecha
+				WHERE cliente_id = $clienteId ")->queryRow();
+	}
+	
 	public function getUltimoPercepcion($clienteId){
 		
 		$serviciosRawData = Yii::app()->db->createCommand(" SELECT ls.id, ls.nombre, sp.per_cliente as per_cliente, sp.per_sm as per_sm , lsc.id as linea_servicio_contrato_id, sp.id as seguimiento_id, sp.fecha
