@@ -139,33 +139,28 @@ class Dashboard {
 		return $clientesValor;
 	}
 
-	public static function getClientesSinIssuesActivosPorCliente($userid, $fecha = null){
+	public static function getClientesSinIssuesActivosPorCliente($userid){
 		
-		if(!$fecha)$fecha=date('YW');
 		
-		$issuesActivosPorCliente = Yii::app()->db->createCommand(" SELECT cl.nombre, i.solucionado, i.id, i.cliente_id
+		$issuesActivosClientes = Yii::app()->db->createCommand(" SELECT cl.nombre, i.solucionado
 																FROM issue i, cliente cl  
 																WHERE 	i.cliente_id = cl.id AND 
-																cl.usuario_id = $userid AND 
-																GROUP BY cl.id;")->queryAll();
-
-		die(print_r($issuesActivosPorCliente));
-		/*
-		$clientes = array();
-		foreach ($seguimientos_sla as $s_sla){
-			//die(print_r($seguimientos_sla));
-			if (!isset($clientes[$s_sla['nombre']]['total'])) $clientes[$s_sla['nombre']]['total'] = 0;
-			if (!isset($clientes[$s_sla['nombre']]['cumplido'])) $clientes[$s_sla['nombre']]['cumplido'] = 0;
-			$clientes[$s_sla['nombre']]['total']++;
-			$clientes[$s_sla['nombre']]['cumplido'] += $s_sla['valor'];
+																cl.usuario_id = $userid 
+																;")->queryAll();
+		//SE BUSCAN LOS ISSUES ACTIVOS POR CLIENTE !!!!
+		$issuesActivosPorCliente = array();
+		foreach ($issuesActivosClientes as $issues){
+			if (!isset($issuesActivosPorCliente[$issues['nombre']]['total'])) $issuesActivosPorCliente[$issues['nombre']]['total'] = 0;
+			if (!isset($issuesActivosPorCliente[$issues['nombre']]['solucionado'])) $issuesActivosPorCliente[$issues['nombre']]['solucionado'] = 0;
+			$issuesActivosPorCliente[$issues['nombre']]['total']++;
+			if ($issues['solucionado'] == 2) $issuesActivosPorCliente[$issues['nombre']]['solucionado']++;
 		}
-		$clientesValor = array();
-		foreach ($clientes as $k=>$c){
-			$valor = $c['cumplido']/($c['total']);
-			$clientesValor[] = array($k,$valor);
+		$issuesClientesPorcentaje = array();
+		foreach ($issuesActivosPorCliente as $k=>$i){
+			$valor = round(100*$i['solucionado']/($i['total']));
+			$issuesClientesPorcentaje[] = array($k, $valor);
 		}
-		return $clientesValor;
-		*/
+		return $issuesClientesPorcentaje;
 	}
 
 	public static function getFechas($userid){

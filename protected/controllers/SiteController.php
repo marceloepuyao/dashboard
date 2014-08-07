@@ -37,7 +37,7 @@ class SiteController extends Controller
 						'users'=>array('@'),
 				),
 				array('allow', // allow authenticated user to perform 'create' and 'update' actions
-						'actions'=>array('Index','sla', 'issuesactivosporcliente'),
+						'actions'=>array('Index','issuescliente', 'issuesactivosporcliente'),
 						'users'=>array('@'),
 				),
 				array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -72,6 +72,21 @@ class SiteController extends Controller
 		));
 		
 	}
+
+	public function actionissuescliente(){
+		if(Yii::app()->user->isGuest){
+			$this->redirect($this->createUrl('login'));
+		}
+		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
+		$porcentajeClientesSinIssues = Dashboard::getClientesSinIssuesActivos($usuario->id);
+		$issuesClientesDetalle = Dashboard::getClientesSinIssuesActivosPorCliente($usuario->id);
+		//lo que en verdad se obtiene es la tasa de issues solucionados de cada cliente
+		$this->render('issuescliente',array(
+			'porcentajeClientesSinIssues'=>$porcentajeClientesSinIssues,
+			'issuesClientesDetalle'=>$issuesClientesDetalle
+		));
+
+	}
 	
 	public function actionSla()
 	{
@@ -103,6 +118,14 @@ class SiteController extends Controller
 
 		$this->renderPartial('_ajax', array(
 			'data'=>$porcentajeClientesSinIssues,
+		));
+	}
+
+	public function actionClientesSinIssuesPorClienteAjax($fecha){
+		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
+		$issuesActivosPorCliente = Dashboard::getClientesSinIssuesActivosPorCliente($usuario->id, $fecha);
+		$this->renderPartial('_ajax', array(
+			'data'=>json_encode($issuesActivosPorCliente),
 		));
 	}
 	/**

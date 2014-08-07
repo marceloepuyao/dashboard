@@ -1,59 +1,57 @@
 <?php
-
+$clientesSinIssues = $porcentajeClientesSinIssues;
+$detalleIssuesClientes = $issuesClientesDetalle;
 ?>
 
-<?php echo CHtml::dropDownList("fechas", "", $fechas);?>
-
+<table align="center"><tr><td>
 <div id="Issues-Cliente" style="width: 400; height: 300">
 </div>
+</td></tr>
+<tr><td>
+<div id="Issues-Cliente-Detalle" style="width: 900; height: 500"></div>
+</td></tr>
+</table>
+
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script type="text/javascript">
 
 // Load the Visualization API library and the piechart library.
 google.load('visualization', '1.0', {'packages':['corechart']});
 google.load('visualization', '1', {packages:['gauge']});
+google.setOnLoadCallback(drawChartIssuesCliente);
+google.setOnLoadCallback(drawChartIssuesClienteDetalle);
 
-google.setOnLoadCallback(start);
+function drawChartIssuesCliente(){
+  var data1 = google.visualization.arrayToDataTable([
+                                                      ['Label', 'Value'],
+                                                      ['Clientes Sin Issues', parseFloat(<?php echo $clientesSinIssues;
+                                                        ?>)] ]);
+    var options1 = {
+      'title': 'Tasa de Issues de Clientes',
+      'width': 200,
+      'height': 200
+    };
 
-$("#fechas").on("change",function(){
-	var fecha = $("#fechas option:selected").text();	
-	getData(fecha);
-	
-});
-function start(){
-	getData("201431");
+    var chart1 = new google.visualization.Gauge(document.getElementById('Issues-Cliente'));
+    chart1.draw(data1, options1);
+
 }
 
 
-function getData(fecha){
-	$.ajax({
-        url: 'ClientesSinIssuesAjax',
-		data: {'fecha':fecha},
-        async: false,
-        success: function(data){
-            if(data){
-				data = data;
-				drawChartIssuesCliente(data);
-            }
-        },
-    });
+  function drawChartIssuesClienteDetalle(){
 	
-
-  }
-  //este segundo chart es, de hecho, el primero en programarse en php más arribita
-  function drawChartIssuesCliente(tasa){
-	
-  var data1 = google.visualization.arrayToDataTable([
-	                                                    ['Label', 'Value'],
-	                                                    ['Tasa de Clientes Sin Issues', parseFloat(tasa)]]);
+    var data = google.visualization.arrayToDataTable(<?php $json = json_encode($detalleIssuesClientes); echo $json;?>, true);
   
-  	var options1 = {
-  		'title': 'Tasa de Clientes Sin Issues Activos',
-  		'width': 200,
-  		'height': 200
-  	};
+    var options = {
+          title: 'Tasa de Issues Cumplidos por Cliente',
+          vAxis: {title: 'Clientes',  titleTextStyle: {color: 'black'}},
+          width: 900,
+          height: 500,
+          min: 0,
+          max: 100,
+    };
 
-  	var chart1 = new google.visualization.Gauge(document.getElementById('Issues-Cliente'));
-  	chart1.draw(data1, options1);
+  	var chart = new google.visualization.BarChart(document.getElementById('Issues-Cliente-Detalle'));
+  	chart.draw(data, options);
   }  
   </script>
