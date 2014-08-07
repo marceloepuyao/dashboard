@@ -172,17 +172,11 @@ class IssueController extends Controller
 		$clientes = $usuario->clientes;
 		$issues = array();
 		foreach ($clientes as $cliente){
-			$issues[] .= $cliente->id;
+			$issues[] = $cliente->id;
 		}
 		$dataProvider=new CActiveDataProvider('Issue', array(
 				'criteria'=>array(
-						'condition'=>"cliente_id IN (".implode(",",$issues).")",
-						'condition'=>"solucionado = 1",
-				),
-				'countCriteria'=>array(
-						'condition'=>"cliente_id IN (".implode(",",$issues).")",
-						'condition'=>"solucionado = 1",
-						// 'order' and 'with' clauses have no meaning for the count query
+						'condition'=>"cliente_id IN (".implode(",",$issues).") AND solucionado = 1",	
 				),
 				'pagination'=>array(
 						'pageSize'=>20,

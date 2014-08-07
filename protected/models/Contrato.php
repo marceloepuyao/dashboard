@@ -59,6 +59,12 @@ class Contrato extends CActiveRecord
 			'sla' => array(self::HAS_MANY, 'Sla', 'contrato_id'),
 		);
 	}
+	
+	public function beforeDelete(){
+		foreach($this->sla as $c)
+			$c->delete();
+		return parent::beforeDelete();
+	}
 
 	/**
 	 * @return array customized attribute labels (name=>label)

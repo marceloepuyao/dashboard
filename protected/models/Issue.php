@@ -56,6 +56,11 @@ class Issue extends CActiveRecord
 					
 		);
 	}
+	
+	public function beforeDelete(){
+		IssueLineaServicio::model()->deleteAll("issue_id = $this->id");
+		return parent::beforeDelete();
+	}
 
 	/**
 	 * @return array customized attribute labels (name=>label)

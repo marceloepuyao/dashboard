@@ -70,7 +70,10 @@ class ClienteController extends Controller
 		if($id){
 			$cliente = Cliente::model()->findByPk($id);
 		}else{
-			$cliente = Cliente::model()->find();
+			$cliente = Cliente::model()->findByAttributes(array("usuario_id"=>$usuario->id));
+		}
+		if(!$cliente){
+			$this->redirect(array('misclientes'));
 		}
 		
 		$seguimiento = new SeguimientoController($this->id);

@@ -91,6 +91,20 @@ class Cliente extends CActiveRecord
 			'competidor'=> 'Competidores',
 		);
 	}
+	
+	public function beforeDelete(){
+		ClienteCompetidor::model()->deleteAll("cliente_id = $this->id");		
+		foreach($this->contratos as $c)
+			$c->delete();
+		
+		foreach($this->seguimientoitil as $c)
+			$c->delete();
+		
+		foreach($this->issues as $c)
+			$c->delete();
+		
+		return parent::beforeDelete();
+	}
 
 	/**
 	 * Retrieves a list of models based on the current search/filter conditions.
