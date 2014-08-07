@@ -4,11 +4,11 @@
 
 <?php echo CHtml::dropDownList("fechas", "", $fechas);?>
 <table align="center"><tr><td>
-<div id="Cumplimiento-SLA" style="width: 400; height: 300">
+<div id="Percepcion-Interna" style="width: 400; height: 300">
 </div>
 </td></tr>
 <tr><td>
-<div id="Cumplimiento-SLA-Cliente" style="width: 900; height: 500"></div>
+<div id="Percepcion-Interna-Cliente" style="width: 900; height: 500"></div>
 </td></tr>
 </table>
 
@@ -24,7 +24,7 @@ google.setOnLoadCallback(start);
 $("#fechas").on("change",function(){
 	var fecha = $("#fechas option:selected").text();	
 	getData(fecha);
-  getDataClientes(fecha);
+  //getDataClientes(fecha);
 	
 });
 function start(){
@@ -34,13 +34,13 @@ function start(){
 
 function getDataClientes(fecha){
   $.ajax({
-        url: 'CumplimientoSlaPorClienteAjax',
+        url: 'percepcionSMporClienteAjax',
     data: {'fecha':fecha},
       async: false,
       success: function (data){
           if (data){
             data = JSON.parse(data);
-            drawChartCumplimientoSLACliente(data);
+            drawChartPercepcionSMporCliente(data);
           }
       },
     });
@@ -48,40 +48,38 @@ function getDataClientes(fecha){
 
 function getData(fecha){
 	$.ajax({
-        url: 'cumplimientoSlaAjax',
+        url: 'percepcionSMAjax',
 		data: {'fecha':fecha},
         async: false,
         success: function(data){
             if(data){
 				data = data;
-				drawChartCumplimientoSLA(data);
+				drawChartPercepcionSM(data);
             }
         },
     });
-	
-
   }
 
-  function drawChartCumplimientoSLA(tasa){
+  function drawChartPercepcionSM(tasa){
 	
   var data2 = google.visualization.arrayToDataTable([
 	                                                    ['Label', 'Value'],
-	                                                    ['Tasa de SLA cumplido', parseFloat(tasa)]]);
+	                                                    ['Satisfacción SM', parseFloat(tasa)]]);
   
   	var options2 = {
-  		'title': 'Tasa de SLA cumplidos',
+  		'title': 'Satisfacción según SM',
   		'width': 200,
   		'height': 200,
   	};
 
-  	var chart2 = new google.visualization.Gauge(document.getElementById('Cumplimiento-SLA'));
+  	var chart2 = new google.visualization.Gauge(document.getElementById('Percepcion-Interna'));
   	chart2.draw(data2, options2);
   }  
 
-  function drawChartCumplimientoSLACliente(clientes){
+  function drawChartPercepcionSMporCliente(clientes){
     var data = google.visualization.arrayToDataTable(clientes, true);
     var options = {
-          title: 'Tasa de SLA Cumplidos por Cliente',
+          title: 'Satisfacción según SM por Cliente',
           vAxis: {title: 'Clientes',  titleTextStyle: {color: 'black'}},
           width: 900,
           height: 500,
@@ -89,7 +87,7 @@ function getData(fecha){
           max: 100,
     };
 
-    var chart = new google.visualization.BarChart(document.getElementById('Cumplimiento-SLA-Cliente'));
+    var chart = new google.visualization.BarChart(document.getElementById('Percepcion-Interna-Cliente'));
     chart.draw(data, options);
   }
   </script>

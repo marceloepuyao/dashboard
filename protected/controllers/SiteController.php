@@ -37,6 +37,22 @@ class SiteController extends Controller
 						'users'=>array('@'),
 				),
 				array('allow', // allow authenticated user to perform 'create' and 'update' actions
+						'actions'=>array('Index','persm', 'PercepcionSMAjax'),
+						'users'=>array('@'),
+				),
+				array('allow', // allow authenticated user to perform 'create' and 'update' actions
+						'actions'=>array('Index','persm', 'PercepcionSMporClienteAjax'),
+						'users'=>array('@'),
+				),
+				array('allow', // allow authenticated user to perform 'create' and 'update' actions
+						'actions'=>array('Index','percl', 'PercepcionClienteAjax'),
+						'users'=>array('@'),
+				),
+				array('allow', // allow authenticated user to perform 'create' and 'update' actions
+						'actions'=>array('Index','percl', 'PercepcionClientePorClienteAjax'),
+						'users'=>array('@'),
+				),
+				array('allow', // allow authenticated user to perform 'create' and 'update' actions
 						'actions'=>array('Index','issuescliente', 'issuesactivosporcliente'),
 						'users'=>array('@'),
 				),
@@ -96,6 +112,16 @@ class SiteController extends Controller
 			'fechas'=>$fechas,
 		));
 	}
+
+	public function actionPersm()
+	{
+		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
+		$fechas = Dashboard::getFechas($usuario->id);
+		$this->render('persm', array(
+			'fechas'=>$fechas,
+		));
+	}
+
 	public function actionCumplimientoSlaAjax($fecha){
 		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
 		$cumplimiento_sla = Dashboard::getCumplimientoSla($usuario->id, $fecha);
@@ -128,6 +154,39 @@ class SiteController extends Controller
 			'data'=>json_encode($issuesActivosPorCliente),
 		));
 	}
+
+	public function actionPercepcionSMAjax($fecha){
+		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
+		$percepcion_sm = Dashboard::getPercepcionSM($usuario->id, $fecha);
+		$this->renderPartial('_ajax', array(
+				'data'=>$percepcion_sm,
+		));
+	}
+
+	public function actionPercepcionSMporClienteAjax($fecha){
+		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
+		$percepcion_sm_clientes = Dashboard::getPercepcionSMporCliente($usuario->id,$fecha);
+		$this->renderPartial('_ajax', array(
+				'data'=>json_encode($percepcion_sm_clientes)
+		));
+	}
+
+	public function actionPercepcionClienteAjax($fecha){
+		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
+		$percepcion_clientes = Dashboard::getPercepcionCliente($usuario->id, $fecha);
+		$this->renderPartial('_ajax', array(
+				'data'=>$percepcion_clientes,
+		));
+	}
+
+	public function actionPercepcionClienteporClienteAjax($fecha){
+		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
+		$percepcion_sm_clientes = Dashboard::getPercepcionClientePorCliente($usuario->id,$fecha);
+		$this->renderPartial('_ajax', array(
+				'data'=>json_encode($percepcion_clientes_clientes)
+		));
+	}
+
 	/**
 	 * This is the action to handle external exceptions.
 	 */

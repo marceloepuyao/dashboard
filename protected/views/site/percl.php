@@ -4,11 +4,11 @@
 
 <?php echo CHtml::dropDownList("fechas", "", $fechas);?>
 <table align="center"><tr><td>
-<div id="Cumplimiento-SLA" style="width: 400; height: 300">
+<div id="Percepcion-Externa" style="width: 400; height: 300">
 </div>
 </td></tr>
 <tr><td>
-<div id="Cumplimiento-SLA-Cliente" style="width: 900; height: 500"></div>
+<div id="Percepcion-Externa-Cliente" style="width: 900; height: 500"></div>
 </td></tr>
 </table>
 
@@ -34,13 +34,13 @@ function start(){
 
 function getDataClientes(fecha){
   $.ajax({
-        url: 'CumplimientoSlaPorClienteAjax',
+        url: 'PercepcionClienteporClienteAjax',
     data: {'fecha':fecha},
       async: false,
       success: function (data){
           if (data){
             data = JSON.parse(data);
-            drawChartCumplimientoSLACliente(data);
+            drawChartPercepcionClientePorCliente(data);
           }
       },
     });
@@ -48,13 +48,13 @@ function getDataClientes(fecha){
 
 function getData(fecha){
 	$.ajax({
-        url: 'cumplimientoSlaAjax',
+        url: 'PercepcionCliente',
 		data: {'fecha':fecha},
         async: false,
         success: function(data){
             if(data){
 				data = data;
-				drawChartCumplimientoSLA(data);
+				drawChartPercepcionCliente(data);
             }
         },
     });
@@ -62,26 +62,26 @@ function getData(fecha){
 
   }
 
-  function drawChartCumplimientoSLA(tasa){
+  function drawChartPercepcionCliente(tasa){
 	
   var data2 = google.visualization.arrayToDataTable([
 	                                                    ['Label', 'Value'],
-	                                                    ['Tasa de SLA cumplido', parseFloat(tasa)]]);
+	                                                    ['Tasa Satisfacción Clientes', parseFloat(tasa)]]);
   
   	var options2 = {
-  		'title': 'Tasa de SLA cumplidos',
+  		'title': 'Tasa Satisfacción Cliente',
   		'width': 200,
   		'height': 200,
   	};
 
-  	var chart2 = new google.visualization.Gauge(document.getElementById('Cumplimiento-SLA'));
+  	var chart2 = new google.visualization.Gauge(document.getElementById('Percepcion-Interna'));
   	chart2.draw(data2, options2);
   }  
 
-  function drawChartCumplimientoSLACliente(clientes){
+  function drawChartPercepcionClientePorCliente(clientes){
     var data = google.visualization.arrayToDataTable(clientes, true);
     var options = {
-          title: 'Tasa de SLA Cumplidos por Cliente',
+          title: 'Tasa de Satisfacción de Cada Cliente',
           vAxis: {title: 'Clientes',  titleTextStyle: {color: 'black'}},
           width: 900,
           height: 500,
@@ -89,7 +89,7 @@ function getData(fecha){
           max: 100,
     };
 
-    var chart = new google.visualization.BarChart(document.getElementById('Cumplimiento-SLA-Cliente'));
+    var chart = new google.visualization.BarChart(document.getElementById('Percepcion-Interna-Cliente'));
     chart.draw(data, options);
   }
   </script>
