@@ -25,6 +25,7 @@ $this->pageTitle=Yii::app()->name;
 ?>
 
 <div id="contents">
+<?php $fechaActual = date('Y-W'); echo $fechaActual;?>
 	<table align="center" cellpadding="0" cellspacing="0" >
 		<tr>
 			<td>
