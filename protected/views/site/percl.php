@@ -28,13 +28,14 @@ $("#fechas").on("change",function(){
 	
 });
 function start(){
-	getData("201428");
-  getDataClientes("201428");
+  var fecha = $("#fechas option:selected").text();  
+  getData(fecha);
+  getDataClientes(fecha);
 }
 
 function getDataClientes(fecha){
   $.ajax({
-        url: 'PercepcionClienteporClienteAjax',
+        url: 'PercepcionClientePorClienteAjax',
     data: {'fecha':fecha},
       async: false,
       success: function (data){
@@ -48,7 +49,7 @@ function getDataClientes(fecha){
 
 function getData(fecha){
 	$.ajax({
-        url: 'PercepcionCliente',
+        url: 'PercepcionClienteAjax',
 		data: {'fecha':fecha},
         async: false,
         success: function(data){
@@ -74,7 +75,7 @@ function getData(fecha){
   		'height': 200,
   	};
 
-  	var chart2 = new google.visualization.Gauge(document.getElementById('Percepcion-Interna'));
+  	var chart2 = new google.visualization.Gauge(document.getElementById('Percepcion-Externa'));
   	chart2.draw(data2, options2);
   }  
 
@@ -89,7 +90,7 @@ function getData(fecha){
           max: 100,
     };
 
-    var chart = new google.visualization.BarChart(document.getElementById('Percepcion-Interna-Cliente'));
+    var chart = new google.visualization.BarChart(document.getElementById('Percepcion-Externa-Cliente'));
     chart.draw(data, options);
   }
   </script>

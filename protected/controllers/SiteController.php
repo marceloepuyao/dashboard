@@ -122,6 +122,15 @@ class SiteController extends Controller
 		));
 	}
 
+	public function actionPercl()
+	{
+		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
+		$fechas = Dashboard::getFechas($usuario->id);
+		$this->render('percl', array(
+			'fechas'=>$fechas,
+		));
+	}
+
 	public function actionCumplimientoSlaAjax($fecha){
 		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
 		$cumplimiento_sla = Dashboard::getCumplimientoSla($usuario->id, $fecha);
@@ -179,9 +188,9 @@ class SiteController extends Controller
 		));
 	}
 
-	public function actionPercepcionClienteporClienteAjax($fecha){
+	public function actionPercepcionClientePorClienteAjax($fecha){
 		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
-		$percepcion_sm_clientes = Dashboard::getPercepcionClientePorCliente($usuario->id,$fecha);
+		$percepcion_clientes_clientes = Dashboard::getPercepcionClientePorCliente($usuario->id,$fecha);
 		$this->renderPartial('_ajax', array(
 				'data'=>json_encode($percepcion_clientes_clientes)
 		));

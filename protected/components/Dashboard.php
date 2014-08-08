@@ -169,14 +169,14 @@ class Dashboard {
 
 		if(!$fecha)$fecha=date('YW');
 
-		$seguimientoPercepcionesCliente = Yii::app()->db->createCommand("SELECT sp.per_sm, sp.fecha, cl.nombre
+		$seguimientoPercepcionesCliente = Yii::app()->db->createCommand("SELECT sp.per_sm, sp.fecha, cl.nombre, sp.id
 																  FROM cliente cl, contrato c, linea_servicio_contrato lsc, seguimiento_percepcion sp
 																  WHERE $userid = cl.usuario_id
 																  AND cl.id = c.cliente_id
 																  AND c.id = lsc.contrato_id
 																  AND lsc.id = sp.linea_servicio_contrato_id
 																  AND $fecha = sp.fecha
-																  GROUP BY cl.id;")->queryAll();
+																  GROUP BY sp.id;")->queryAll();
 		$percepcionesSM = array();
 		foreach ($seguimientoPercepcionesCliente as $percepciones){
 			if (!isset($percepcionesSM[$percepciones['nombre']]['total'])) $percepcionesSM[$percepciones['nombre']]['total'] = 0;
@@ -196,32 +196,31 @@ class Dashboard {
 
 		if(!$fecha)$fecha=date('YW');
 
-		$seguimientoPercepciones = Yii::app()->db->createCommand("SELECT sp.id, sp.linea_servicio_contrato_id, sp.per_cliente, sp.per_sm, sp.fecha, sp.tipo_seguimiento
+		$seguimientoPercepciones = Yii::app()->db->createCommand("SELECT sp.id, sp.per_cliente, sp.fecha, cl.nombre
 																  FROM cliente cl, contrato c, linea_servicio_contrato lsc, seguimiento_percepcion sp
 																  WHERE $userid = cl.usuario_id
 																  AND cl.id = c.cliente_id
 																  AND c.id = lsc.contrato_id
 																  AND lsc.id = sp.linea_servicio_contrato_id
 																  AND sp.fecha = $fecha
-																  GROUP BY lsc.id;")->queryAll();
+																  GROUP BY sp.id;")->queryAll();
 		$percepcionesClientes = array();
 		foreach ($seguimientoPercepciones as $percepciones){
 			if (!isset($percepcionesClientes[$percepciones['nombre']]['total'])) $percepcionesClientes[$percepciones['nombre']]['total'] = 0;
 			if (!isset($percepcionesClientes[$percepciones['nombre']]['per_cliente'])) $percepcionesClientes[$percepciones['nombre']]['per_cliente'] = 0;
 			$percepcionesClientes[$percepciones['nombre']]['total']++;
-			if ($percepciones['per_cliente'] >= 4) $percepcionesClientes[$percepciones['nombre']]['per_sm']++;
+			if ($percepciones['per_cliente'] >= 4) $percepcionesClientes[$percepciones['nombre']]['per_cliente']++;
 		}
 		$percepcionesClientePorClientesPorcentaje = array();
 		foreach ($percepcionesClientes as $k=>$psm){
 			$valor = round(100*$psm['per_cliente']/($psm['total']));
-			$percepcionesSMClientesPorcentaje[] = array($k, $valor);
+			$percepcionesClientePorClientesPorcentaje[] = array($k, $valor);
 		}
 		return $percepcionesClientePorClientesPorcentaje;
 	}
 
 
 	public static function getFechas($userid){
-		
 		$seguimientoSemanal = Yii::app()->db->createCommand("SELECT sp.fecha
 				FROM seguimiento_percepcion sp, linea_servicio ls, linea_servicio_contrato lsc, contrato c, cliente cl
 				WHERE lsc.id = sp.linea_servicio_contrato_id AND
