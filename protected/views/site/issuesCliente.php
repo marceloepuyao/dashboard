@@ -1,6 +1,7 @@
 <?php
 $clientesSinIssues = $porcentajeClientesSinIssues;
 $detalleIssuesClientes = $issuesClientesDetalle;
+$detalleIssuesServicios = $issuesServiciosDetalle;
 ?>
 
 <table align="center"><tr><td>
@@ -22,6 +23,7 @@ google.load('visualization', '1.0', {'packages':['corechart']});
 google.load('visualization', '1', {packages:['gauge']});
 google.setOnLoadCallback(drawChartIssuesCliente);
 google.setOnLoadCallback(drawChartIssuesClienteDetalle);
+google.setOnLoadCallback(drawChartIssuesServicioDetalle);
 
 function drawChartIssuesCliente(){
   var data1 = google.visualization.arrayToDataTable([
@@ -41,7 +43,7 @@ function drawChartIssuesCliente(){
 
 
   function drawChartIssuesClienteDetalle(){
-	
+  
     var data = google.visualization.arrayToDataTable(<?php $json = json_encode($detalleIssuesClientes); echo $json;?>, true);
   
     var options = {
@@ -53,7 +55,22 @@ function drawChartIssuesCliente(){
           max: 100,
     };
 
-  	var chart = new google.visualization.BarChart(document.getElementById('Issues-Cliente-Detalle'));
-  	chart.draw(data, options);
+    var chart = new google.visualization.BarChart(document.getElementById('Issues-Cliente-Detalle'));
+    chart.draw(data, options);
+  }  
+
+  function drawChartIssuesServicioDetalle(){
+  
+    var data2 = google.visualization.arrayToDataTable(<?php $json = json_encode($detalleIssuesServicios); echo $json;?>, true);
+  
+    var options2 = {
+          title: 'Issues Activos por Servicio',
+          vAxis: {title: 'Servicios',  titleTextStyle: {color: 'black'}},
+          width: 900,
+          height: 500,
+    };
+
+    var chart = new google.visualization.BarChart(document.getElementById('Issues-Servicio-Detalle'));
+    chart.draw(data2, options2);
   }  
   </script>
