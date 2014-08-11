@@ -29,36 +29,8 @@ class SiteController extends Controller
 						'users'=>array('*'),
 				),
 				array('allow', // allow authenticated user to perform 'create' and 'update' actions
-						'actions'=>array('Index','sla', 'cumplimientoslaajax'),
+						'actions'=>array('Index','sla', 'cumplimientoslaajax','cumplimientoslaporclienteajax', 'persm', 'PercepcionSMAjax','PercepcionSMporClienteAjax' ,'percl', 'PercepcionClienteAjax','PercepcionClientePorClienteAjax','issuescliente', 'issuesactivosporcliente'),
 						'users'=>array('@'),
-				),
-				array('allow', // allow authenticated user to perform 'create' and 'update' actions
-						'actions'=>array('Index','sla', 'cumplimientoslaporclienteajax'),
-						'users'=>array('@'),
-				),
-				array('allow', // allow authenticated user to perform 'create' and 'update' actions
-						'actions'=>array('Index','persm', 'PercepcionSMAjax'),
-						'users'=>array('@'),
-				),
-				array('allow', // allow authenticated user to perform 'create' and 'update' actions
-						'actions'=>array('Index','persm', 'PercepcionSMporClienteAjax'),
-						'users'=>array('@'),
-				),
-				array('allow', // allow authenticated user to perform 'create' and 'update' actions
-						'actions'=>array('Index','percl', 'PercepcionClienteAjax'),
-						'users'=>array('@'),
-				),
-				array('allow', // allow authenticated user to perform 'create' and 'update' actions
-						'actions'=>array('Index','percl', 'PercepcionClientePorClienteAjax'),
-						'users'=>array('@'),
-				),
-				array('allow', // allow authenticated user to perform 'create' and 'update' actions
-						'actions'=>array('Index','issuescliente', 'issuesactivosporcliente'),
-						'users'=>array('@'),
-				),
-				array('allow', // allow admin user to perform 'admin' and 'delete' actions
-						'actions'=>array('generarsemanal','borrarsemanal','generarmensual','borrarmensual','admin'),
-						'expression'=>'Yii::app()->user->isAdmin()',
 				),
 				array('deny',  // deny all users
 						'users'=>array('*'),
@@ -89,7 +61,7 @@ class SiteController extends Controller
 		
 	}
 
-	public function actionissuescliente(){
+	public function actionIssuesCliente(){
 		if(Yii::app()->user->isGuest){
 			$this->redirect($this->createUrl('login'));
 		}
@@ -99,7 +71,7 @@ class SiteController extends Controller
 		//lo que en verdad se obtiene es la tasa de issues solucionados de cada cliente
 		$this->render('issuescliente',array(
 			'porcentajeClientesSinIssues'=>$porcentajeClientesSinIssues,
-			'issuesClientesDetalle'=>$issuesClientesDetalle
+			'issuesClientesDetalle'=>$issuesClientesDetalle,
 		));
 
 	}
