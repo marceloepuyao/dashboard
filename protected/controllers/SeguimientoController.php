@@ -214,7 +214,7 @@ class SeguimientoController extends Controller
 			$this->redirect(array('seguimiento/index','id'=>$cliente->id));
 		}
 	
-		$this->render('updateSemanal',array(
+		$this->render('updatesemanal',array(
 				'cliente'=>$cliente, 
 				'fecha'=>$fecha,
 				'lineaservicios'=> $lineaservicios,
@@ -247,7 +247,7 @@ class SeguimientoController extends Controller
 			$this->redirect(array('seguimiento/index','id'=>$cliente->id));
 		}
 			
-		$this->render('updateMensual',array(
+		$this->render('updatemensual',array(
 				'cliente'=>$cliente,
 				'fecha'=>$fecha,
 				'itil'=> $itil,
@@ -326,9 +326,17 @@ class SeguimientoController extends Controller
 	public function getUltimoItil($clienteId){
 		
 		$itilRawData = $this->getItilRawData($clienteId);
-		if(!$itilRawData)
-			return array();
-		
+		if(!$itilRawData){
+			$itil=new CArrayDataProvider(array(), array(
+					'id'=>'id',
+					'pagination'=>array(
+							'pageSize'=>100,
+					),
+			));
+			return $itil;
+			
+		}
+
 		$labels = SeguimientoItil::model()->attributeLabels();
 		$n = 0;
 		foreach ($itilRawData as $i=>$dataitil){

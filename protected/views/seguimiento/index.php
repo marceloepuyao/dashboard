@@ -26,7 +26,7 @@ $this->breadcrumbs=array(
 <?php 
 if($seguimientoSemanal){
 	$this->widget('bootstrap.widgets.TbButton', array(
-		'url'=>array('seguimiento/updateSemanal', 'id'=>$cliente->id),
+		'url'=>array('seguimiento/updatesemanal', 'id'=>$cliente->id),
 		'label'=>'Editar Seguimiento Semanal: '.$seguimientoSemanal['fecha'],
 		'type'=>'primary', // null, 'primary', 'info', 'success', 'warning', 'danger' or 'inverse'
 		'size'=>'small', // null, 'large', 'small' or 'mini'
@@ -37,7 +37,7 @@ if($seguimientoSemanal){
 <?php 
 if($seguimientoMensual){
 	$this->widget('bootstrap.widgets.TbButton', array(
-			'url'=>array('seguimiento/updateMensual', 'id'=>$cliente->id),
+			'url'=>array('seguimiento/updatemensual', 'id'=>$cliente->id),
 			'label'=>'Editar Seguimiento Mensual: '.$seguimientoMensual['fecha'].' - '.($seguimientoMensual['fecha'] + 4),
 			'type'=>'primary', // null, 'primary', 'info', 'success', 'warning', 'danger' or 'inverse'
 			'size'=>'small', // null, 'large', 'small' or 'mini'
