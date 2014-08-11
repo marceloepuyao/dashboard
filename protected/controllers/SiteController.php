@@ -29,7 +29,7 @@ class SiteController extends Controller
 						'users'=>array('*'),
 				),
 				array('allow', // allow authenticated user to perform 'create' and 'update' actions
-						'actions'=>array('Index','sla', 'cumplimientoslaajax','cumplimientoslaporclienteajax', 'persm', 'PercepcionSMAjax','PercepcionSMporClienteAjax' ,'percl', 'PercepcionClienteAjax','PercepcionClientePorClienteAjax','issuescliente', 'issuesactivosporcliente'),
+						'actions'=>array('Index','sla', 'cumplimientoslaajax','cumplimientoslaporclienteajax', 'persm', 'PercepcionSMAjax','PercepcionSMporClienteAjax' ,'percl', 'PercepcionClienteAjax','PercepcionClientePorClienteAjax','issuescliente', 'issuesactivosporcliente', 'IssuesActivosPorServicio'),
 						'users'=>array('@'),
 				),
 				array('deny',  // deny all users
@@ -122,7 +122,6 @@ class SiteController extends Controller
 	public function actionClientesSinIssuesAjax($fecha){
 		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
 		$porcentajeClientesSinIssues = Dashboard::getClientesSinIssuesActivos($usuario->id, $fecha);
-
 		$this->renderPartial('_ajax', array(
 			'data'=>$porcentajeClientesSinIssues,
 		));
@@ -135,6 +134,15 @@ class SiteController extends Controller
 			'data'=>json_encode($issuesActivosPorCliente),
 		));
 	}
+
+	public function actionIssuesActivosPorServicio(){
+		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
+		$issuesAbiertosPorServicio = Dashboard::getIssuesActivosPorServicio($usuario->id);
+		$this->renderPartial('_ajax', array(
+			'data'=>json_encode($issuesAbiertosPorServicio),
+		));
+	}
+
 
 	public function actionPercepcionSMAjax($fecha){
 		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
