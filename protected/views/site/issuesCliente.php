@@ -4,11 +4,13 @@ $detalleIssuesClientes = $issuesClientesDetalle;
 ?>
 
 <table align="center"><tr><td>
-<div id="Issues-Cliente" style="width: 400; height: 300">
-</div>
+<div id="Issues-Cliente" style="width: 400; height: 300"></div>
 </td></tr>
 <tr><td>
 <div id="Issues-Cliente-Detalle" style="width: 900; height: 500"></div>
+</td></tr>
+<tr><td>
+<div id="Issues-Servicio-Detalle" style="width: 900; height: 500"></div>
 </td></tr>
 </table>
 

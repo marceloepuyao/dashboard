@@ -165,6 +165,32 @@ class Dashboard {
 		return $issuesClientesPorcentaje;
 	}
 
+	public static function getClientesSinIssuesActivosPorServicio($userid){
+		
+		
+		$issuesActivosClientes = Yii::app()->db->createCommand(" SELECT i.solucionado, ls.nombre
+																FROM issue i, cliente cl, issue_linea_servicio ils, linea_servicio ls
+																WHERE 	i.cliente_id = cl.id AND 
+																cl.usuario_id = $userid AND
+																ils.issue_id = i.id AND
+																ils.linea_servicio_id = ls.id
+																;")->queryAll();
+		//SE BUSCAN LOS ISSUES ACTIVOS POR CLIENTE !!!!
+		$issuesActivosPorServicio = array();
+		foreach ($issuesActivosPorServicio as $issues){
+			if (!isset($issuesActivosPorServicio[$issues['nombre']]['total'])) $issuesActivosPorServicio[$issues['nombre']]['total'] = 0;
+			if (!isset($issuesActivosPorServicio[$issues['nombre']]['solucionado'])) $issuesActivosPorServicio[$issues['nombre']]['solucionado'] = 0;
+			$issuesActivosPorServicio[$issues['nombre']]['total']++;
+			if ($issues['solucionado'] == 2) $issuesActivosPorServicio[$issues['nombre']]['solucionado']++;
+		}
+		$issuesClientesPorcentaje = array();
+		foreach ($issuesActivosPorServicio as $k=>$i){
+			$valor = round(100*$i['solucionado']/($i['total']));
+			$issuesClientesPorcentaje[] = array($k, $valor);
+		}
+		return $issuesClientesPorcentaje;
+	}
+
 	public static function getPercepcionSMporCliente($userid, $fecha = null){
 
 		if(!$fecha)$fecha=date('YW');
