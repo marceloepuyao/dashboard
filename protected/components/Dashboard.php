@@ -141,7 +141,7 @@ class Dashboard {
 		return $clientesValor;
 	}
 
-	public static function getClientesSinIssuesActivosPorCliente($userid){
+	public static function getClientesConIssuesActivosPorCliente($userid){
 		
 		
 		$issuesActivosClientes = Yii::app()->db->createCommand(" SELECT cl.nombre, i.solucionado
@@ -152,17 +152,37 @@ class Dashboard {
 		//SE BUSCAN LOS ISSUES ACTIVOS POR CLIENTE !!!!
 		$issuesActivosPorCliente = array();
 		foreach ($issuesActivosClientes as $issues){
-			if (!isset($issuesActivosPorCliente[$issues['nombre']]['total'])) $issuesActivosPorCliente[$issues['nombre']]['total'] = 0;
-			if (!isset($issuesActivosPorCliente[$issues['nombre']]['solucionado'])) $issuesActivosPorCliente[$issues['nombre']]['solucionado'] = 0;
-			$issuesActivosPorCliente[$issues['nombre']]['total']++;
-			if ($issues['solucionado'] == 2) $issuesActivosPorCliente[$issues['nombre']]['solucionado']++;
+			if (!isset($issuesActivosPorCliente[$issues['nombre']]['abierto'])) $issuesActivosPorCliente[$issues['nombre']]['abierto'] = 0;
+			if ($issues['solucionado'] != 2) $issuesActivosPorCliente[$issues['nombre']]['abierto']++;
 		}
-		$issuesClientesPorcentaje = array();
+		$issuesClientes = array();
 		foreach ($issuesActivosPorCliente as $k=>$i){
-			$valor = round(100*$i['solucionado']/($i['total']));
-			$issuesClientesPorcentaje[] = array($k, $valor);
+			$issuesClientes[] = array($k, $i['abierto']);
 		}
-		return $issuesClientesPorcentaje;
+		return $issuesClientes;
+	}
+
+	public static function getIssuesActivosPorServicio($userid){
+		
+		
+		$issuesActivosServicios = Yii::app()->db->createCommand(" SELECT i.solucionado, ls.nombre
+																FROM issue i, cliente cl, issue_linea_servicio ils, linea_servicio ls
+																WHERE 	i.cliente_id = cl.id AND 
+																cl.usuario_id = $userid AND
+																ils.issue_id = i.id AND
+																ils.linea_servicio_id = ls.id
+																;")->queryAll();
+		//SE BUSCAN LOS ISSUES ACTIVOS POR CLIENTE !!!!
+		$issuesActivosPorServicio = array();
+		foreach ($issuesActivosServicios as $issues){
+			if (!isset($issuesActivosPorServicio[$issues['nombre']]['abierto'])) $issuesActivosPorServicio[$issues['nombre']]['abierto'] = 0;
+			if ($issues['solucionado'] != 2) $issuesActivosPorServicio[$issues['nombre']]['abierto']++;
+		}
+		$issuesServicios = array();
+		foreach ($issuesActivosPorServicio as $k=>$i){
+			$issuesServicios[] = array($k, $i['abierto']); //número de issues según servicio
+		}
+		return $issuesServicios;
 	}
 
 	public static function getPercepcionSMporCliente($userid, $fecha = null){
