@@ -28,7 +28,7 @@
 		array(
 			'name'=>'Valor',
 			'type'=>'raw',
-			'value'=>'CHtml::textField("itil[$data[id]]",isset($data["valor"])?$data["valor"]:0,array("style"=>"width:50px;"))',
+			'value'=>'CHtml::numberField("itil[$data[id]]",isset($data["valor"])?$data["valor"]:0,array("style"=>"width:50px;"))',
 		),
 
 	)

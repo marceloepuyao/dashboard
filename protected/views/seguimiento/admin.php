@@ -26,10 +26,13 @@ $this->menu=array(
 		),
 		array(
 		'class'=>'CButtonColumn',
-		'template'=>'{delete}',
+		'template'=>'{update}{delete}',
 		'buttons'=>array(
 				'delete'=>array(
 						'url'=>'$this->grid->controller->createUrl("/seguimiento/borrarsemanal", array("fecha"=>$data["fecha"]))',
+				),
+				'update'=>array(
+					'url'=>'$this->grid->controller->createUrl("/seguimiento/regenerarsemanal", array("fecha"=>$data["fecha"]))',
 				),
 		),
 ),
@@ -47,10 +50,13 @@ $this->menu=array(
 		),
 		array(
 			'class'=>'CButtonColumn',
-			'template'=>'{delete}',
+			'template'=>'{update}{delete}',
 			'buttons'=>array(
 					'delete'=>array(
 							'url'=>'$this->grid->controller->createUrl("/seguimiento/borrarmensual", array("fecha"=>$data["fecha"]))',
+					),
+					'update'=>array(
+							'url'=>'$this->grid->controller->createUrl("/seguimiento/regenerarmensual", array("fecha"=>$data["fecha"]))',
 					),
 			),
 		),

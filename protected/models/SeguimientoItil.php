@@ -26,8 +26,7 @@
  * @property integer $fecha
  * @property string $comentario
  * @property integer $tipo_seguimiento
- * @property integer $per_client
- * @property integer $per_sm
+
  *
  * The followings are the available model relations:
  * @property Cliente $cliente
@@ -50,12 +49,12 @@ class SeguimientoItil extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('cliente_id, per_client, per_sm', 'required'),
-			array('cliente_id, felicitaciones, reclamos, problemas, cambios, estado_cmdb, incidentes, requerimientos, backlog, indisponibilidad, sip, reuniones, minutas, reunion_servicio, informe, facturado, facturacion_extra, multas, fecha, tipo_seguimiento, per_client, per_sm', 'numerical', 'integerOnly'=>true),
+			array('cliente_id', 'required'),
+			array('cliente_id, felicitaciones, reclamos, problemas, cambios, estado_cmdb, incidentes, requerimientos, backlog, indisponibilidad, sip, reuniones, minutas, reunion_servicio, informe, facturado, facturacion_extra, multas, fecha, tipo_seguimiento,', 'numerical', 'integerOnly'=>true),
 			array('comentario', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, cliente_id, felicitaciones, reclamos, problemas, cambios, estado_cmdb, incidentes, requerimientos, backlog, indisponibilidad, sip, reuniones, minutas, reunion_servicio, informe, facturado, facturacion_extra, multas, fecha, comentario, tipo_seguimiento, per_client, per_sm', 'safe', 'on'=>'search'),
+			array('id, cliente_id, felicitaciones, reclamos, problemas, cambios, estado_cmdb, incidentes, requerimientos, backlog, indisponibilidad, sip, reuniones, minutas, reunion_servicio, informe, facturado, facturacion_extra, multas, fecha, comentario, tipo_seguimiento', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -95,8 +94,6 @@ class SeguimientoItil extends CActiveRecord
 			'facturacion_extra' => 'Facturación Extra',
 			'multas' => 'Multas',
 			'comentario' => 'Comentario',
-			'per_client' => 'Percepción Cliente',
-			'per_sm' => 'Percepción Sm',
 		);
 	}
 
@@ -140,8 +137,6 @@ class SeguimientoItil extends CActiveRecord
 		$criteria->compare('fecha',$this->fecha);
 		$criteria->compare('comentario',$this->comentario,true);
 		$criteria->compare('tipo_seguimiento',$this->tipo_seguimiento);
-		$criteria->compare('per_client',$this->per_client);
-		$criteria->compare('per_sm',$this->per_sm);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

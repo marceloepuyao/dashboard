@@ -1,25 +1,26 @@
 <?php
 
 /**
- * This is the model class for table "linea_servicio_contrato".
+ * This is the model class for table "seguimiento_percepcion_general".
  *
- * The followings are the available columns in table 'linea_servicio_contrato':
+ * The followings are the available columns in table 'seguimiento_percepcion_general':
  * @property integer $id
- * @property integer $contrato_id
- * @property integer $linea_servicio_id
+ * @property integer $cliente_id
+ * @property integer $per_cliente
+ * @property integer $per_sm
+ * @property integer $fecha
  *
  * The followings are the available model relations:
- * @property LineaServicio $lineaServicio
- * @property Contrato $contrato
+ * @property Cliente $cliente
  */
-class LineaServicioContrato extends CActiveRecord
+class SeguimientoPercepcionGeneral extends CActiveRecord
 {
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return 'linea_servicio_contrato';
+		return 'seguimiento_percepcion_general';
 	}
 
 	/**
@@ -30,11 +31,11 @@ class LineaServicioContrato extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('contrato_id, linea_servicio_id', 'required'),
-			array('contrato_id, linea_servicio_id', 'numerical', 'integerOnly'=>true),
+			array('cliente_id', 'required'),
+			array('cliente_id, per_cliente, per_sm, fecha', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, contrato_id, linea_servicio_id', 'safe', 'on'=>'search'),
+			array('id, cliente_id, per_cliente, per_sm, fecha', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -46,15 +47,8 @@ class LineaServicioContrato extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'lineaServicio' => array(self::BELONGS_TO, 'LineaServicio', 'linea_servicio_id'),
-			'contrato' => array(self::BELONGS_TO, 'Contrato', 'contrato_id'),
+			'cliente' => array(self::BELONGS_TO, 'Cliente', 'cliente_id'),
 		);
-	}
-	
-	public function beforeDelete(){
-		SeguimientoPercepcion::model()->deleteAll("linea_servicio_contrato_id = $this->id");
-
-		return parent::beforeDelete();
 	}
 
 	/**
@@ -64,8 +58,10 @@ class LineaServicioContrato extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'contrato_id' => 'Contrato',
-			'linea_servicio_id' => 'Linea Servicio',
+			'cliente_id' => 'Cliente',
+			'per_cliente' => 'Per Cliente',
+			'per_sm' => 'Per Sm',
+			'fecha' => 'Fecha',
 		);
 	}
 
@@ -88,8 +84,10 @@ class LineaServicioContrato extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id',$this->id);
-		$criteria->compare('contrato_id',$this->contrato_id);
-		$criteria->compare('linea_servicio_id',$this->linea_servicio_id);
+		$criteria->compare('cliente_id',$this->cliente_id);
+		$criteria->compare('per_cliente',$this->per_cliente);
+		$criteria->compare('per_sm',$this->per_sm);
+		$criteria->compare('fecha',$this->fecha);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -100,7 +98,7 @@ class LineaServicioContrato extends CActiveRecord
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return LineaServicioContrato the static model class
+	 * @return SeguimientoPercepcionGeneral the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{

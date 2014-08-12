@@ -140,7 +140,8 @@ class UsuarioController extends Controller
 	{
 		$usuariosSsm=new CActiveDataProvider('Usuario', array(
 				'criteria'=>array(
-						'condition'=>'perfil_id = 2',
+						'condition'=>'perfil_id = 2 OR perfil_id = 1',
+						'order'=>'perfil_id ASC',
 				),
 				'pagination'=>array(
 						'pageSize'=>40,
@@ -156,19 +157,53 @@ class UsuarioController extends Controller
 	public function actionSm($id)
 	{
 		$ssm = Usuario::model()->findByPk($id);
-		$sms = new CActiveDataProvider('Usuario', array(
-				'criteria'=>array(
-						'condition'=>'perfil_id = 3',
-				),
+		
+		$selected = CHtml::listData(SsmSm::model()->findAll("ssm_id = $ssm->id"), "sm_id", "sm_id");
+		
+		$smsRawData = Yii::app()->db->createCommand("
+				SELECT 	u.id, 
+						u.nombre, 
+						u.apellido, 
+						u.email, 
+						if((SELECT count(*) FROM ssm_sm WHERE ssm_id = $ssm->id AND  sm_id = u.id)> 0 , 1, 0) as selected
+				FROM usuario u
+				WHERE u.perfil_id = 3")->queryAll();
+		
+		$sms =new CArrayDataProvider($smsRawData, array(
+				'id'=>'id',
 				'pagination'=>array(
-						'pageSize'=>40,
+						'pageSize'=>100,
 				),
 		));
-	
-	
+		
+		if(isset($_POST["sm"])){
+			$selected_sms = $_POST["sm"];
+			unset($selected_sms[0]);
+			if($guardarsms = array_diff(array_keys($selected_sms), $selected)){
+				foreach ($guardarsms as $guardarsm){
+					$ssm_sm = new SsmSm();
+					$ssm_sm->ssm_id = $ssm->id;
+					$ssm_sm->sm_id = $guardarsm;
+					$ssm_sm->save();
+				}
+			}
+			
+			if($borrarsms = array_diff($selected, array_keys($selected_sms))){
+				foreach ($borrarsms as $borrarsm){
+					$borrar = SsmSm::model()->find("ssm_id = $ssm->id AND sm_id = $borrarsm");
+					$borrar->delete();
+				}
+				
+			}
+			
+			$this->redirect(array('ssm'));
+			
+		}
+		
 		$this->render('sm',array(
 				'ssm'=> $ssm,
 				'sms'=>$sms,
+				'selected'=> $selected,
 		));
 	}
 

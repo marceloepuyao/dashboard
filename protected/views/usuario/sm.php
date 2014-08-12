@@ -26,12 +26,16 @@ $this->breadcrumbs=array(
     	array(
 			'name'=>'',
 			'type'=>'raw',
-			'value'=>'CHtml::checkBox("sm[$data->id]", false)',
+			'value'=>'CHtml::checkBox("sm[$data[id]]", $data["selected"])',
 
 		),
-		'nombre',
+		array(
+    		'name'=>'nombre',
+    		'value'=>'$data["nombre"]." ".$data["apellido"]',
+    	),
 	)
 ));?>
+<?php echo CHtml::hiddenField('sm[0]', 0);?>
 <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Guardar')); ?>
 
 	<?php $this->widget('bootstrap.widgets.TbButton', array(

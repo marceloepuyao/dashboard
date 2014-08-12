@@ -19,6 +19,10 @@ $this->breadcrumbs=array(
     		'name'=>'nombre',
     		'value'=>'$data->nombre." ".$data->apellido',
     	),
+    		array(
+    				'name'=>'perfil_id',
+    				'value'=>'$data->perfil_id==1?"Admin":"SSM"',
+    		),
 		array
 		(
 			'class'=>'CButtonColumn',

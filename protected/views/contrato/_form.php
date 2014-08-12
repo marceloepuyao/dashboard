@@ -23,9 +23,15 @@
 
 	<?php echo $form->textFieldRow($model,'facturacion'); ?>
 	
-	<?php echo $form->textFieldRow($model,'inicio'); ?>
 	
-	<?php echo $form->textFieldRow($model,'fin'); ?>
+	<?php echo $form->labelEx($model,'inicio'); ?>
+	<?php echo $form->dateField($model,'inicio'); ?>
+	<?php echo $form->error($model,'inicio'); ?>
+	</br>
+	
+	<?php echo $form->labelEx($model,'fin'); ?>
+	<?php echo $form->dateField($model,'fin'); ?>
+	<?php echo $form->error($model,'fin'); ?>
 	
 	<?php echo $form->textFieldRow($model,'codigo_moebius',array('size'=>20,'maxlength'=>20)); ?>
 	

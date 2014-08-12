@@ -28,14 +28,35 @@
 		array(
 			'name'=>'Percepción Cliente',
 			'type'=>'raw',
-			'value'=>'CHtml::textField("per_cliente[$data[linea_servicio_contrato_id]]",isset($data["per_cliente"])?$data["per_cliente"]:0,array("style"=>"width:50px;"))',
+			'value'=>'CHtml::numberField("per_cliente[$data[linea_servicio_contrato_id]]",isset($data["per_cliente"])?$data["per_cliente"]:0,array("style"=>"width:50px;", "type"=>"number", "min"=>0, "max"=>5))',
 		),
 		array(
-		'name'=>'Percepción SM',
-		'type'=>'raw',
-		'value'=>'CHtml::textField("per_sm[$data[linea_servicio_contrato_id]]",isset($data["per_sm"])?$data["per_sm"]:0,array("style"=>"width:50px;"))',
+			'name'=>'Percepción SM',
+			'type'=>'raw',
+			'value'=>'CHtml::numberField("per_sm[$data[linea_servicio_contrato_id]]",isset($data["per_sm"])?$data["per_sm"]:0,array("style"=>"width:50px;", "type"=>"number", "min"=>0, "max"=>5))',
 		),
+	)
+));?>
 
+<?php $this->widget('bootstrap.widgets.TbGridView', array(
+    'id'=>'servicio-grid',
+	 'summaryText' => '',
+    'dataProvider'=>$percepcionGeneral,
+    'columns'=>array(
+		array(
+			'name'=>'',
+			'value'=> '"Percepción General"',
+		),
+		array(
+			'name'=>'Percepción Cliente',
+			'type'=>'raw',
+			'value'=>'CHtml::numberField("per_general[per_cliente]",isset($data["per_cliente"])?$data["per_cliente"]:0,array("style"=>"width:50px;", "type"=>"number", "min"=>0, "max"=>5))',
+		),
+		array(
+			'name'=>'Percepción SM',
+			'type'=>'raw',
+			'value'=>'CHtml::numberField("per_general[per_sm]",isset($data["per_sm"])?$data["per_sm"]:0,array("style"=>"width:50px;", "type"=>"number", "min"=>0, "max"=>5))',
+		),
 	)
 ));?>
 	

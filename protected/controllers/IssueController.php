@@ -28,8 +28,12 @@ class IssueController extends Controller
 	{
 		return array(
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update', 'misissues','delete','index','view'),
+				'actions'=>array('create','update', 'misissues','index','view'),
 				'users'=>array('@'),
+			),
+			array('allow', // allow admin user to perform 'admin' and 'delete' actions
+					'actions'=>array('delete'),
+					'expression'=>'Yii::app()->user->isAdmin()',
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
@@ -70,6 +74,7 @@ class IssueController extends Controller
 			$model->attributes=$_POST['Issue'];
 			$model->fecha = date("Y-m-d");
 			$model->cliente_id = $cliente->id;
+			$model->solucionado = 1;
 			$model->lineaservicios = isset($_POST['lineaservicios'])?$_POST['lineaservicios']:NULL;
 			if($model->save()){
 				IssueLineaServicio::model()->deleteAll("issue_id = $model->id");

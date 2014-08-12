@@ -28,8 +28,12 @@ class ContratoController extends Controller
 	{
 		return array(
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update','delete','index','view'),
+				'actions'=>array('create','update','index','view'),
 				'users'=>array('@'),
+			),
+			array('allow', // allow admin user to perform 'admin' and 'delete' actions
+					'actions'=>array('delete'),
+					'expression'=>'Yii::app()->user->isAdmin()',
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
@@ -80,18 +84,18 @@ class ContratoController extends Controller
 		if(isset($_POST['Contrato']))
 		{
 			$model->attributes=$_POST['Contrato'];
-			
+			$model->lineaservicios = isset($_POST['lineaservicios'])?$_POST['lineaservicios']:NULL;
 			$model->cliente_id = $cliente->id;
 			if($model->save()){
-				if(isset($_POST['lineaservicios'])){
-					$model->lineaservicios=$_POST['lineaservicios'];
-					foreach ($model->lineaservicios as $servicio){
-						$serviciocontrato = new LineaServicioContrato();
-						$serviciocontrato->contrato_id = $model->id;
-						$serviciocontrato->linea_servicio_id = $servicio;
-						$serviciocontrato->save();
-					}
+				
+				$model->lineaservicios=$_POST['lineaservicios'];
+				foreach ($model->lineaservicios as $servicio){
+					$serviciocontrato = new LineaServicioContrato();
+					$serviciocontrato->contrato_id = $model->id;
+					$serviciocontrato->linea_servicio_id = $servicio;
+					$serviciocontrato->save();
 				}
+				
 				
 				$this->redirect(array('view','id'=>$model->id));
 			}
@@ -126,16 +130,21 @@ class ContratoController extends Controller
 		if(isset($_POST['Contrato']))
 		{
 			$model->attributes=$_POST['Contrato'];
+			$model->lineaservicios = isset($_POST['lineaservicios'])?$_POST['lineaservicios']:NULL;
+			
 			if($model->save()){
-				LineaServicioContrato::model()->deleteAll("contrato_id = $model->id");
-				if(isset($_POST['lineaservicios'])){
-					$model->lineaservicios=$_POST['lineaservicios'];
-					foreach ($model->lineaservicios as $servicio){
-						$serviciocontrato = new LineaServicioContrato();
-						$serviciocontrato->contrato_id = $model->id;
-						$serviciocontrato->linea_servicio_id = $servicio;
-						$serviciocontrato->save();
-					}
+				$serviciosContratados = CHtml::listData(LineaServicioContrato::model()->findAll("contrato_id = $model->id"), 'linea_servicio_id', 'linea_servicio_id');;
+				$serviciosborrar = array_diff($serviciosContratados, $model->lineaservicios);
+				foreach ($serviciosborrar as $servicio){
+					if($borrar = LineaServicioContrato::model()->find("linea_servicio_id = $servicio AND contrato_id = $model->id"))
+						$borrar->delete();
+				}
+				$servicioscrear = array_diff($model->lineaservicios,$serviciosContratados);
+				foreach ($servicioscrear as $servicio){
+					$serviciocontrato = new LineaServicioContrato();
+					$serviciocontrato->contrato_id = $model->id;
+					$serviciocontrato->linea_servicio_id = $servicio;
+					$serviciocontrato->save();
 				}
 				$this->redirect(array('view','id'=>$model->id));
 			}
