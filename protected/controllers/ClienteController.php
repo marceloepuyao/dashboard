@@ -61,8 +61,6 @@ class ClienteController extends Controller
 	 */
 	public function actionEstado($id = null)
 	{
-		
-		
 		$model=new Cliente;
 		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
 		

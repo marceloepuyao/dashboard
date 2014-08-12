@@ -192,7 +192,8 @@ class SeguimientoController extends Controller
 				$seguimientoPercepcion->per_sm = $per_sm[$sc['linea_servicio_contrato_id']];
 				$seguimientoPercepcion->save();
 			}
-			$seguimientoPercepcionGeneral = SeguimientoPercepcionGeneral::model()->findByPk($percepcionGeneral->getData()[0]['id']);
+			$datapercepcionGeneral = $percepcionGeneral->getData();
+			$seguimientoPercepcionGeneral = SeguimientoPercepcionGeneral::model()->findByPk($datapercepcionGeneral[0]['id']);
 			$seguimientoPercepcionGeneral->per_sm = $per_general["per_sm"];
 			$seguimientoPercepcionGeneral->per_cliente = $per_general["per_cliente"];
 			$seguimientoPercepcionGeneral->save();
