@@ -67,7 +67,7 @@ class SiteController extends Controller
 		}
 		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
 		$porcentajeClientesSinIssues = Dashboard::getClientesSinIssuesActivos($usuario->id);
-		$issuesClientesDetalle = Dashboard::getClientesSinIssuesActivosPorCliente($usuario->id);
+		$issuesClientesDetalle = Dashboard::getClientesConIssuesActivosPorCliente($usuario->id);
 		$issuesServiciosDetalle = Dashboard::getIssuesActivosPorServicio($usuario->id);
 		//lo que en verdad se obtiene es la tasa de issues solucionados de cada cliente
 		$this->render('issuescliente',array(

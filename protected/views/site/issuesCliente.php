@@ -47,12 +47,10 @@ function drawChartIssuesCliente(){
     var data = google.visualization.arrayToDataTable(<?php $json = json_encode($detalleIssuesClientes); echo $json;?>, true);
   
     var options = {
-          title: 'Tasa de Issues Cumplidos por Cliente',
-          vAxis: {title: 'Clientes',  titleTextStyle: {color: 'black'}},
+          title: 'Issues Activos por Cliente',
+          vAxis: {title: 'Clientes',  titleTextStyle: {color: 'black'}, format:'0'},
           width: 900,
-          height: 500,
-          min: 0,
-          max: 100,
+          height: 300,
     };
 
     var chart = new google.visualization.BarChart(document.getElementById('Issues-Cliente-Detalle'));
@@ -67,7 +65,7 @@ function drawChartIssuesCliente(){
           title: 'Issues Activos por Servicio',
           vAxis: {title: 'Servicios',  titleTextStyle: {color: 'black'}},
           width: 900,
-          height: 500,
+          height: 300,
     };
 
     var chart = new google.visualization.BarChart(document.getElementById('Issues-Servicio-Detalle'));
