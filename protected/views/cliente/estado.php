@@ -17,6 +17,22 @@ Cliente:
 
 <h4> Resumen: </h4>
 
+<?php $this->widget('bootstrap.widgets.TbGridView', array(
+    'id'=>'resumen-grid',
+	 'summaryText' => '',
+    'dataProvider'=>$resumen,
+    'columns'=>array(
+		array(
+			'header'=>'',
+			'value'=>'$data["nombre"]',
+		),
+		array(
+			'header'=>'',
+			'value'=>'$data["valor"]',
+		),
+	),
+));?>
+
 
 
 <h4> Percepción: </h4>

@@ -79,7 +79,30 @@ class ClienteController extends Controller
 		$seguimiento = new SeguimientoController($this->id);
 		$seguimientoitil = $seguimiento->getUltimoItil($cliente->id);
 		$seguimientosla = $seguimiento->getUltimoSla($cliente->id);
-		$seguimientopercepcion = $seguimiento->getUltimoPercepcion($cliente->id);		
+		$seguimientopercepcion = $seguimiento->getUltimoPercepcion($cliente->id);	
+		
+		$resumen_array = array();
+		
+		if($seguimientopercepciondata = $seguimientopercepcion->getData()){
+			$fechapercepcion = $seguimientopercepciondata[0]["fecha"];
+			$seguimientopercepcionGeneral = SeguimientoPercepcionGeneral::model()->find("cliente_id = $cliente->id AND fecha = $fechapercepcion ");
+			$per_general_cliente = $seguimientopercepcionGeneral->per_cliente;
+			$per_general_sm = $seguimientopercepcionGeneral->per_sm;
+			$resumen_array = array(array("id"=>1, "nombre"=>"Percepción Cliente", "valor"=>$per_general_cliente), array("id"=>1,"nombre"=>"Percepcion SM", "valor"=>$per_general_sm));
+			
+		}
+		
+		if($seguimientosladata = $seguimientosla->getData()){
+			$fechasla = $seguimientosladata[0]["fecha"];
+		}
+		
+		$resumen = new CArrayDataProvider($resumen_array, array(
+				'id'=>'id',
+				'pagination'=>array(
+						'pageSize'=>100,
+				),
+		));
+		
 		$issues = new CActiveDataProvider('Issue', array(
 				'criteria'=>array(
 						'condition'=>"cliente_id=$cliente->id",
@@ -99,6 +122,7 @@ class ClienteController extends Controller
 				'seguimientosla' =>$seguimientosla,
 				'seguimientopercepcion' => $seguimientopercepcion,
 				'issues'=>$issues,
+				'resumen'=>$resumen,
 		));
 	}
 
