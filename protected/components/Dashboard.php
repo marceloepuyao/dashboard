@@ -185,6 +185,34 @@ class Dashboard {
 		return $issuesServicios;
 	}
 
+	public static function getIssuesHistoricosPorClienteSegunServicio($userid, $servicio){
+
+		$issuesHistoricosServicios = Yii::app()->db->createCommand("SELECT cl.nombre, i.descripcion, i.solucionado
+																	FROM cliente cl, issue i, issue_linea_servicio ils, linea_servicio ls
+																	WHERE 	i.cliente_id = cl.id AND 
+																	cl.usuario_id = $userid AND
+																	ils.issue_id = i.id AND
+																	ils.linea_servicio_id = ls.id AND
+																	ls.nombre = '$servicio'
+																	")->queryAll();
+		//la idea es que se realice un foreach con los nombres de cada servicio y se realice esta query para cada uno
+		$issuesHistoricosClientes = array();
+		foreach($issuesHistoricosServicios as $issues){
+			if (!isset($issuesHistoricosClientes[$issues['descripcion']][$issues['nombre']])) $issuesHistoricosClientes[$issues['descripcion']][$issues['nombre']] = 0; 
+			$issuesHistoricosClientes[$issues['descripcion']][$issues['nombre']]++;
+		}
+		$issuesHistoricos = array();
+		foreach ($issuesHistoricosClientes as $descripcion=>$clienteValor){
+			foreach ($clienteValor as $nombre=>$valor){
+				$issuesHistoricos[$descripcion][$nombre] = $valor;
+			}
+		}
+		//die(print_r($issuesHistoricos));
+		$issuesHistoricos[] = array('Issue', '');
+
+
+	}
+
 	public static function getPercepcionSMporCliente($userid, $fecha = null){
 
 		if(!$fecha)$fecha=date('YW');

@@ -69,7 +69,8 @@ class SiteController extends Controller
 		$porcentajeClientesSinIssues = Dashboard::getClientesSinIssuesActivos($usuario->id);
 		$issuesClientesDetalle = Dashboard::getClientesConIssuesActivosPorCliente($usuario->id);
 		$issuesServiciosDetalle = Dashboard::getIssuesActivosPorServicio($usuario->id);
-		//lo que en verdad se obtiene es la tasa de issues solucionados de cada cliente
+		//$a = Dashboard::getIssuesHistoricosPorClienteSegunServicio($usuario->id, 'Preventa');
+		//no sé cómo iterar dentro del render, por lo que las queries por servicio se harán directamente en el php issuecliente.php
 		$this->render('issuescliente',array(
 			'porcentajeClientesSinIssues'=>$porcentajeClientesSinIssues,
 			'issuesClientesDetalle'=>$issuesClientesDetalle,
