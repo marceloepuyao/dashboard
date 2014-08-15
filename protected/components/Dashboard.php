@@ -194,21 +194,30 @@ class Dashboard {
 																	ils.issue_id = i.id AND
 																	ils.linea_servicio_id = ls.id AND
 																	ls.nombre = '$servicio'
+																	ORDER BY i.descripcion
 																	")->queryAll();
 		//la idea es que se realice un foreach con los nombres de cada servicio y se realice esta query para cada uno
-		$issuesHistoricosClientes = array();
-		foreach($issuesHistoricosServicios as $issues){
-			if (!isset($issuesHistoricosClientes[$issues['descripcion']][$issues['nombre']])) $issuesHistoricosClientes[$issues['descripcion']][$issues['nombre']] = 0; 
-			$issuesHistoricosClientes[$issues['descripcion']][$issues['nombre']]++;
-		}
 		$issuesHistoricos = array();
-		foreach ($issuesHistoricosClientes as $descripcion=>$clienteValor){
-			foreach ($clienteValor as $nombre=>$valor){
-				$issuesHistoricos[$descripcion][$nombre] = $valor;
-			}
+		$clientes = array();
+		$issues = array();
+		//die(print_r($issuesHistoricosServicios));
+
+		foreach ($issuesHistoricosServicios as $ihs){
+			if (!in_array($ihs['nombre'], $clientes)) $clientes[] = $ihs['nombre'];
 		}
-		//die(print_r($issuesHistoricos));
-		$issuesHistoricos[] = array('Issue', '');
+		die(print_r($issuesHistoricosServicios));
+		//se obtienen todos los clientes que irán al gráfico de cada servicio
+		
+		$issuesHistoricos[0] = array('Issue');
+		foreach ($clientes as $c=>$v){
+			array_push($issuesHistoricos[0], $v);
+		}
+		//die(print_r($issuesHistoricos[0]));
+		foreach($issuesHistoricosServicios as $ihs){
+
+		}
+		die(print_r($issuesHistoricosServicios));
+
 
 
 	}

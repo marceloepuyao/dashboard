@@ -2,6 +2,8 @@
 $clientesSinIssues = $porcentajeClientesSinIssues;
 $detalleIssuesClientes = $issuesClientesDetalle;
 $detalleIssuesServicios = $issuesServiciosDetalle;
+
+$a = Dashboard::getIssuesHistoricosPorClienteSegunServicio(1, 'Preventa');
 ?>
 
 <table align="center"><tr><td>
