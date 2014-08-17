@@ -36,7 +36,7 @@ class Dashboard {
 		
 		$usuario = Usuario::model()->findByPk($userid);
 		
-		$clientes = $usuario->clientes;
+		$clientes = $usuario->getClientes();
 		$cumplimientoSla = array();
 		foreach ($clientes as $cliente){
 			
@@ -64,7 +64,7 @@ class Dashboard {
 	
 		$usuario = Usuario::model()->findByPk($userid);
 	
-		$clientes = $usuario->clientes;
+		$clientes = $usuario->getClientes();
 		$cumplimientoSla = array();
 		foreach ($clientes as $cliente){
 				
@@ -83,7 +83,7 @@ class Dashboard {
 	
 		$usuario = Usuario::model()->findByPk($userid);
 	
-		$clientes = $usuario->clientes;
+		$clientes = $usuario->getClientes();
 		$cumplimientoSla = array();
 		foreach ($clientes as $cliente){
 			$cumplimiento = array();
@@ -99,31 +99,28 @@ class Dashboard {
 	
 	///////////////////////////////ISSUES//////////////////////////////////////////////////////////////////////////////////
 
+	
 	public static function getClientesSinIssuesActivos($userid, $fecha = null){
 
 		if(!$fecha)$fecha=date('YW');
 		
-		$clientes = Cliente::model()->findAllByAttributes(array("usuario_id"=>$userid));
-		$totalClientes =  Cliente::model()->countByAttributes(array("usuario_id"=>$userid));
-
+		$usuario = Usuario::model()->findByPk($userid);
+		$clientes = $usuario->getClientes();
+		
 		$clientesConIssues = 0;
 		foreach ($clientes as $cliente){
-		$issuesActivos =  Issue::model()->countByAttributes(array("cliente_id"=>$cliente->id, 'solucionado'=> 1 ));
+			$issuesActivos = Issue::model()->countByAttributes(array("cliente_id"=>$cliente->id, 'solucionado'=> 1 ));
 			if($issuesActivos>0)
 				$clientesConIssues++;
 		}
 		
-		if ($totalClientes!=0){
-			$porcentajeSinIssues = 100*($totalClientes-$clientesConIssues)/$totalClientes;
-		}
-		else $porcentajeSinIssues = 0;
-		return $porcentajeSinIssues;
+		return count($clientes)?(100*(count($clientes) - $clientesConIssues)/count($clientes)):0;
 
 	}
 	public static function getClientesConIssuesActivosPorCliente($userid){
 		
 		$usuario =Usuario::model()->findByPk($userid);
-		$clientes = $usuario->clientes;
+		$clientes = $usuario->getClientes();
 		
 		$issuesActivosPorCliente = array();
 		foreach ($clientes as $cliente){
@@ -135,11 +132,12 @@ class Dashboard {
 	public static function getIssuesActivosPorServicio($userid){
 	
 		$usuario = Usuario::model()->findByPk($userid);
+		$clientessql = $usuario->getClientesSql();
 		
 		$lineasdeservicio = Yii::app()->db->createCommand(" 
 				SELECT ls.nombre, SUM(IF(i.solucionado = 1, 1 , 0)) as solucionado
 				FROM linea_servicio ls, issue_linea_servicio ils, cliente cl, issue i
-				WHERE 	cl.usuario_id = $usuario->id AND
+				WHERE 	cl.id IN $clientessql AND
 						cl.id = i.cliente_id AND
 						ils.issue_id = i.id AND
 						ils.linea_servicio_id = ls.id
@@ -156,11 +154,14 @@ class Dashboard {
 	}
 	
 	public static function getIssuesHistoricosPorClienteSegunServicio($userid, $servicio){
+		
+		$usuario = Usuario::model()->findByPk($userid);
+		$clientessql = $usuario->getClientesSql();
 	
 		$issuesHistoricosServicios = Yii::app()->db->createCommand("SELECT cl.nombre, i.descripcion, i.solucionado
 				FROM cliente cl, issue i, issue_linea_servicio ils, linea_servicio ls
 				WHERE 	i.cliente_id = cl.id AND
-				cl.usuario_id = $userid AND
+				cl.id IN $clientessql AND
 				ils.issue_id = i.id AND
 				ils.linea_servicio_id = ls.id AND
 				ls.nombre = '$servicio'
@@ -203,10 +204,13 @@ class Dashboard {
 	public static function getPercepcionGeneralSMporUsuario($userid, $fecha = null){
 		if(!$fecha)$fecha=date('YW');
 		
+		$usuario = Usuario::model()->findByPk($userid);
+		$clientessql = $usuario->getClientesSql();
+
 		$seguimientoPercepciones = Yii::app()->db->createCommand("
 				SELECT spg.* 
 				FROM seguimiento_percepcion_general spg, cliente c
-				WHERE 	c.usuario_id = $userid AND
+				WHERE 	c.id IN $clientessql AND
 						c.id = spg.cliente_id	AND
 				spg.fecha = $fecha	
 				")->queryAll();
@@ -233,7 +237,7 @@ class Dashboard {
 	
 		$usuario = Usuario::model()->findByPk($userid);
 		$fechas = Dashboard::getFechas($userid);
-		$clientes = $usuario->clientes;
+		$clientes = $usuario->getClientes();
 		$per_general_sm = array();
 		foreach ($clientes as $cliente){
 			$per_sm = array();
@@ -260,7 +264,7 @@ class Dashboard {
 			$fecha = Dashboard::getFechaUltima($userid);
 		
 		$usuario = Usuario::model()->findByPk($userid);
-		$clientes = $usuario->clientes;
+		$clientes = $usuario->getClientes();
 		$per_general_sm = array();
 		foreach ($clientes as $cliente){
 			$per_general_sm[$cliente->nombre] = Dashboard::getPercepcionGeneralSMPorCliente($cliente->id, $fecha);
@@ -273,10 +277,13 @@ class Dashboard {
 	public static function getPercepcionSMporCliente($userid, $fecha = null){
 	
 		if(!$fecha)$fecha=date('YW');
+		
+		$usuario = Usuario::model()->findByPk($userid);
+		$clientessql = $usuario->getClientesSql();
 	
 		$seguimientoPercepcionesCliente = Yii::app()->db->createCommand("SELECT sp.per_sm, sp.fecha, cl.nombre, sp.id
 				FROM cliente cl, contrato c, linea_servicio_contrato lsc, seguimiento_percepcion sp
-				WHERE $userid = cl.usuario_id
+				WHERE cl.id IN $clientessql
 				AND cl.id = c.cliente_id
 				AND c.id = lsc.contrato_id
 				AND lsc.id = sp.linea_servicio_contrato_id
@@ -308,10 +315,13 @@ class Dashboard {
 	public static function getPercepcionGeneralClientePorUsuario($userid, $fecha = null){
 		if(!$fecha)$fecha=date('YW');
 		
+		$usuario = Usuario::model()->findByPk($userid);
+		$clientessql = $usuario->getClientesSql();
+		
 		$seguimientoPercepciones = Yii::app()->db->createCommand("
 				SELECT spg.*
 				FROM seguimiento_percepcion_general spg, cliente c
-				WHERE 	c.usuario_id = $userid AND
+				WHERE 	c.id IN $clientessql AND
 				c.id = spg.cliente_id AND
 				spg.fecha = $fecha
 				")->queryAll();
@@ -339,7 +349,7 @@ class Dashboard {
 	
 		$usuario = Usuario::model()->findByPk($userid);
 		$fechas = Dashboard::getFechas($userid);
-		$clientes = $usuario->clientes;
+		$clientes = $usuario->getClientes();
 		$per_general_cliente = array();
 		foreach ($clientes as $cliente){
 			$per_cliente = array();
@@ -368,7 +378,7 @@ class Dashboard {
 			$fecha = Dashboard::getFechaUltima($userid);
 	
 		$usuario = Usuario::model()->findByPk($userid);
-		$clientes = $usuario->clientes;
+		$clientes = $usuario->getClientes();
 		$per_general_cliente = array();
 		foreach ($clientes as $cliente){
 			$per_general_cliente[$cliente->nombre] = Dashboard::getPercepcionGeneralClientePorCliente($cliente->id, $fecha);
@@ -380,10 +390,13 @@ class Dashboard {
 	public static function getPercepcionCliente($userid, $fecha = null){
 
 		if(!$fecha)$fecha=date('YW');
+		
+		$usuario = Usuario::model()->findByPk($userid);
+		$clientessql = $usuario->getClientesSql();
 
 		$seguimientoPercepciones = Yii::app()->db->createCommand("SELECT sp.id, sp.linea_servicio_contrato_id, sp.per_cliente, sp.per_sm, sp.fecha, sp.tipo_seguimiento
 																  FROM cliente cl, contrato c, linea_servicio_contrato lsc, seguimiento_percepcion sp
-																  WHERE $userid = cl.usuario_id
+																  WHERE cl.id IN $clientessql
 																  AND cl.id = c.cliente_id
 																  AND c.id = lsc.contrato_id
 																  AND lsc.id = sp.linea_servicio_contrato_id
@@ -441,11 +454,12 @@ class Dashboard {
 
 
 	public static function getFechas($userid){
+		$usuario = Usuario::model()->findByPk($userid);
+		$clientessql = $usuario->getClientesSql();
 		$seguimientoSemanal = Yii::app()->db->createCommand("SELECT sp.fecha
 				FROM seguimiento_percepcion sp, linea_servicio ls, linea_servicio_contrato lsc, contrato c, cliente cl
 				WHERE lsc.id = sp.linea_servicio_contrato_id AND
-				c.cliente_id = cl.id AND
-				cl.usuario_id = $userid AND
+				c.cliente_id IN $clientessql AND
 				lsc.contrato_id = c.id AND
 				ls.id = lsc.linea_servicio_id
 				GROUP BY sp.fecha;")->queryAll();
@@ -453,11 +467,12 @@ class Dashboard {
 	}	
 	
 	public static function getFechasMensual($userid){
+		$usuario = Usuario::model()->findByPk($userid);
+		$clientessql = $usuario->getClientesSql();
 		$fechamensual = Yii::app()->db->createCommand("SELECT sp.fecha
 				FROM seguimiento_itil sp, cliente cl
 				WHERE 
-				sp.cliente_id = cl.id AND
-				cl.usuario_id = $userid
+				sp.cliente_id IN $clientessql
 				GROUP BY sp.fecha;")->queryAll();
 		return $fechamensual;
 	}

@@ -63,8 +63,8 @@ class ClienteController extends Controller
 	{
 		$model=new Cliente;
 		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
-		
-		$clientes = $usuario->clientes;
+	
+		$clientes = $usuario->getClientes();
 		$nombres = CHtml::listData($clientes, 'id', 'nombre');
 		
 		if($id){
@@ -330,7 +330,10 @@ class ClienteController extends Controller
 	
 	public function actionMisClientes()
 	{
-		$clientes = Cliente::model()->findAll("usuario_id=". Yii::app()->user->id);
+		$usuario =  Usuario::model()->findByPk(Yii::app()->user->id);
+		
+		$clientes = $usuario->getClientes();//
+		//$clientes = Cliente::model()->findAll("usuario_id=". Yii::app()->user->id);
 		$arraycliente = array();
 		foreach ($clientes as $cliente){
 			$arraycliente[]= array('id'=>$cliente->id, 'cliente'=>$cliente->nombre);

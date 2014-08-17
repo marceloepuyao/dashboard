@@ -174,7 +174,7 @@ class IssueController extends Controller
 	public function actionMisIssues()
 	{
 		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
-		$clientes = $usuario->clientes;
+		$clientes = $usuario->getClientes();
 		$issues = array();
 		foreach ($clientes as $cliente){
 			$issues[] = $cliente->id;

@@ -2,7 +2,8 @@
 /* @var $this SeguimientoController */
 
 $this->breadcrumbs=array(
-	'Seguimiento'=>array('seguimiento/index', 'id'=>$cliente->id),
+	'Mis Clientes' =>array('cliente/misclientes'),
+	'Seguimiento: '.$cliente->nombre =>array('seguimiento/index', 'id'=>$cliente->id),
 	'Actualizar Seguimiento Semanal: '.$fecha,
 );
 ?>

@@ -66,7 +66,7 @@ class SiteController extends Controller
 	public function actionSla()
 	{
 		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
-		$clientes = CHtml::listData($usuario->clientes, "id", "nombre");
+		$clientes = CHtml::listData($usuario->getClientes(), "id", "nombre");
 		
 		$cumplimientoSlaPorCliente = Dashboard::getCumplimientoSlaPorCliente($usuario->id);		
 		$cumplimientoSlaHistoricoPorCliente = Dashboard::getCumplimientoSlaHistoricoPorCliente($usuario->id);

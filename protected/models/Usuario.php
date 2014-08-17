@@ -122,4 +122,33 @@ class Usuario extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+	public function getClientes()
+	{
+		if(Yii::app()->user->isAdmin() || Yii::app()->user->isSSM() ){
+			return Cliente::model()->findAllBySql("
+					SELECT c.* 
+					FROM cliente c, ssm_sm sm 
+					WHERE 	c.usuario_id = $this->id OR
+							(sm.ssm_id = $this->id AND c.usuario_id = sm.sm_id )
+					GROUP by c.id");
+		}elseif(Yii::app()->user->isSM){
+			return $this->clientes;	
+		}	
+	}
+	public function getClientesSql()
+	{
+		if(Yii::app()->user->isAdmin() || Yii::app()->user->isSSM() ){
+			$clientes =  Cliente::model()->findAllBySql("
+					SELECT c.*
+					FROM cliente c, ssm_sm sm
+					WHERE 	c.usuario_id = $this->id OR
+					(sm.ssm_id = $this->id AND c.usuario_id = sm.sm_id )
+					GROUP by c.id");
+		}elseif(Yii::app()->user->isSM){
+			$clientes =  $this->clientes;
+		}
+		$clientes_array = CHtml::listData($clientes, "id", "nombre");
+		return "(".implode(", ",array_keys($clientes_array)).")";
+	}
+	
 }
