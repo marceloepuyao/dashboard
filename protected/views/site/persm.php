@@ -64,7 +64,9 @@ $(function () {
             }
         },
         yAxis: {
+        	allowDecimals: false,
             min: 0,
+            max: 5,
             title: {
                 text: 'Percepción',
                 align: 'high'

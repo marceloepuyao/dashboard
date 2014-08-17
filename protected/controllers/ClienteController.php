@@ -100,7 +100,7 @@ class ClienteController extends Controller
 			$resumen_array = array(
 					array("id"=>1, "nombre"=>"Percepción Cliente", "valor"=>$per_general_cliente), 
 					array("id"=>2, "nombre"=>"Percepcion SM", "valor"=>$per_general_sm),
-					array("id"=>3, "nombre"=>"Cumplimiento SLA", "valor"=>(Dashboard::getCumplimientoSlaClienteID($cliente->id, $fechaitil)*100)."%"),
+					array("id"=>3, "nombre"=>"Cumplimiento SLA", "valor"=>(Dashboard::getCumplimientoSlaClienteID($cliente->id, $fechaitil))."%"),
 					array("id"=>4, "nombre"=>"Issues Activos", "valor"=>Issue::model()->countByAttributes(array("cliente_id"=>$cliente->id, "solucionado"=>1)))
 			);
 			
