@@ -1,94 +1,108 @@
 <?php
-
+$this->breadcrumbs=array(
+		'Percepcion Externa',
+);
 ?>
 
-<?php echo CHtml::dropDownList("fechas", "", $fechas);?>
-<table align="center"><tr><td>
-<div id="Percepcion-Interna" style="width: 400; height: 300">
-</div>
-</td></tr>
-<tr><td>
-<div id="Percepcion-Interna-Cliente" style="width: 900; height: 500"></div>
-</td></tr>
-</table>
+<?php //echo CHtml::dropDownList("fechas", "", $fechas);?>
 
-<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script src="<?php echo Yii::app()->baseUrl;?>/js/highcharts/highcharts.js"></script>
+<script src="<?php echo Yii::app()->baseUrl;?>/js/highcharts/highcharts-more.js"></script>
+<script src="<?php echo Yii::app()->baseUrl;?>/js/highcharts/modules/solid-gauge.src.js"></script>
+
+
+<div id="Satisfaccion-SM" style="width: 700px; height: 500px; margin:0 auto 0 auto;"></div>
+<div id="Percepcion-General-Interna-Historico" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+
+
+
 <script type="text/javascript">
-
-// Load the Visualization API library and the piechart library.
-google.load('visualization', '1.0', {'packages':['corechart']});
-google.load('visualization', '1', {packages:['gauge']});
-
-google.setOnLoadCallback(start);
-
-$("#fechas").on("change",function(){
-	var fecha = $("#fechas option:selected").text();	
-	getData(fecha);
-  //getDataClientes(fecha);
-	
-});
-function start(){
-	var fecha = $("#fechas option:selected").text();	
-	getData(fecha);
-  getDataClientes(fecha);
-}
-
-function getDataClientes(fecha){
-  $.ajax({
-        url: 'percepcionSMporClienteAjax',
-    data: {'fecha':fecha},
-      async: false,
-      success: function (data){
-          if (data){
-            data = JSON.parse(data);
-            drawChartPercepcionSMporCliente(data);
-          }
-      },
-    });
-}
-
-function getData(fecha){
-	$.ajax({
-        url: 'percepcionSMAjax',
-		data: {'fecha':fecha},
-        async: false,
-        success: function(data){
-            if(data){
-				data = data;
-				drawChartPercepcionSM(data);
+$(function () {
+    $('#Percepcion-General-Interna-Historico').highcharts({
+        chart: {
+            type: 'line'
+        },
+        title: {
+            text: 'Percepcion General Interna Histórica'
+        },
+        subtitle: {
+            text: ''
+        },
+        xAxis: {
+            categories: <?php echo json_encode($fechas);?>
+        },
+        yAxis: {
+            title: {
+                text: 'Percepción Externa General'
             }
         },
+        plotOptions: {
+            line: {
+                dataLabels: {
+                    enabled: true
+                },
+                enableMouseTracking: false
+            }
+        },
+        series: <?php echo $persmgeneralhistorica;?>
     });
-  }
+    
+    $('#Satisfaccion-SM').highcharts({
+        chart: {
+            type: 'bar'
+        },
+        title: {
+            text: 'Percepcion General Interna por Cliente '
+        },
+        subtitle: {
+            text: 'fecha : <?php echo end($fechas);?> '
+        },
+        xAxis: {
+            categories: <?php echo json_encode(array_keys($satisfaccionsm));?>,
+            title: {
+                text: null
+            }
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: 'Percepción',
+                align: 'high'
+            },
+            labels: {
+                overflow: 'justify'
+            }
+        },
+        tooltip: {
+            valueSuffix: ' %'
+        },
+        plotOptions: {
+            bar: {
+                dataLabels: {
+                    enabled: true
+                }
+            }
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'top',
+            x: -40,
+            y: 100,
+            floating: true,
+            borderWidth: 1,
+            backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
+            shadow: true
+        },
+        credits: {
+            enabled: false
+        },
+        series: [{
+            name: 'seguimiento: ',
+            data: <?php echo json_encode(array_values($satisfaccionsm));?>
+        }]
+    });
+    
+});
 
-  function drawChartPercepcionSM(tasa){
-	
-  var data2 = google.visualization.arrayToDataTable([
-	                                                    ['Label', 'Value'],
-	                                                    ['Satisfacción SM', parseFloat(tasa)]]);
-  
-  	var options2 = {
-  		'title': 'Satisfacción según SM',
-  		'width': 200,
-  		'height': 200,
-  	};
-
-  	var chart2 = new google.visualization.Gauge(document.getElementById('Percepcion-Interna'));
-  	chart2.draw(data2, options2);
-  }  
-
-  function drawChartPercepcionSMporCliente(clientes){
-    var data = google.visualization.arrayToDataTable(clientes, true);
-    var options = {
-          title: 'Satisfacción según SM por Cliente',
-          vAxis: {title: 'Clientes',  titleTextStyle: {color: 'black'}},
-          width: 900,
-          height: 500,
-          min: 0,
-          max: 100,
-    };
-
-    var chart = new google.visualization.BarChart(document.getElementById('Percepcion-Interna-Cliente'));
-    chart.draw(data, options);
-  }
-  </script>
+</script>

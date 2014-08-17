@@ -1,76 +1,122 @@
 <?php
-$clientesSinIssues = $porcentajeClientesSinIssues;
-$detalleIssuesClientes = $issuesClientesDetalle;
-$detalleIssuesServicios = $issuesServiciosDetalle;
-
-$a = Dashboard::getIssuesHistoricosPorClienteSegunServicio(1, 'Preventa');
+$this->breadcrumbs=array(
+		'Issues',
+);
 ?>
 
-<table align="center"><tr><td>
-<div id="Issues-Cliente" style="width: 400; height: 300"></div>
-</td></tr>
-<tr><td>
-<div id="Issues-Cliente-Detalle" style="width: 900; height: 500"></div>
-</td></tr>
-<tr><td>
-<div id="Issues-Servicio-Detalle" style="width: 900; height: 500"></div>
-</td></tr>
-</table>
 
-<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script src="<?php echo Yii::app()->baseUrl;?>/js/highcharts/highcharts.js"></script>
+<script src="<?php echo Yii::app()->baseUrl;?>/js/highcharts/highcharts-more.js"></script>
+<script src="<?php echo Yii::app()->baseUrl;?>/js/highcharts/modules/solid-gauge.src.js"></script>
+
+
+<div id="Issues-Cliente-Detalle" style="width: 700px; height: 500px; margin:0 auto 0 auto;"></div>
+<div id="Issues-Servicio-Detalle" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+
+
 <script type="text/javascript">
 
-// Load the Visualization API library and the piechart library.
-google.load('visualization', '1.0', {'packages':['corechart']});
-google.load('visualization', '1', {packages:['gauge']});
-google.setOnLoadCallback(drawChartIssuesCliente);
-google.setOnLoadCallback(drawChartIssuesClienteDetalle);
-google.setOnLoadCallback(drawChartIssuesServicioDetalle);
+$(function () {
+$('#Issues-Cliente-Detalle').highcharts({
+    chart: {
+        type: 'bar'
+    },
+    title: {
+        text: 'Issues Activos por Cliente'
+    },
+    subtitle: {
+        text: 'a la fecha'
+    },
+    xAxis: {
+        categories: <?php echo json_encode(array_keys($issuesClientesDetalle));?>,
+        title: {
+            text: null
+        }
+    },
+    yAxis: {
+    	allowDecimals: false,
+        min: 0,
+        title: {
+            text: 'Issues',
+            align: 'high'
+        },
+        labels: {
+            overflow: 'justify'
+        }
+    },
+    tooltip: {
+        valueSuffix: ' '
+    },
+    plotOptions: {
+        bar: {
+            dataLabels: {
+                enabled: true
+            }
+        },
+        series: {
+            stacking: 'normal'
+        }
+    },
+    legend: {
+        layout: 'vertical',
+        align: 'right',
+        verticalAlign: 'top',
+        x: -40,
+        y: 100,
+        floating: true,
+        borderWidth: 1,
+        backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
+        shadow: true
+    },
+    credits: {
+        enabled: false
+    },
+    series: [{
+        name: 'Issues Activos',
+        data: <?php echo json_encode(array_values($issuesClientesDetalle));?>
+    }]
+});
+$('#Issues-Servicio-Detalle').highcharts({
+    chart: {
+        type: 'column'
+    },
+    title: {
+        text: 'Issues Activos por Lineas de Servicio'
+    },
+    subtitle: {
+        text: 'a la fecha'
+    },
+    xAxis: {
+        categories: <?php echo json_encode(array_keys($issuesServiciosDetalle))?> 
+    },
+    yAxis: {
+    	allowDecimals: false,
+        min: 0,
+        title: {
+            text: 'Issues Activos'
+        }
+    },
+    tooltip: {
+        headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+        pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+            '<td style="padding:0"><b>{point.y:.1f} </b></td></tr>',
+        footerFormat: '</table>',
+        shared: true,
+        useHTML: true
+    },
+    plotOptions: {
+        column: {
+            pointPadding: 0.2,
+            borderWidth: 0
+        }
+    },
+    series: [{
+        name: 'Issues',
+        data: <?php echo json_encode(array_values($issuesServiciosDetalle));?>
 
-function drawChartIssuesCliente(){
-  var data1 = google.visualization.arrayToDataTable([
-                                                      ['Label', 'Value'],
-                                                      ['Clientes Sin Issues', parseFloat(<?php echo $clientesSinIssues;
-                                                        ?>)] ]);
-    var options1 = {
-      'title': 'Tasa de Issues de Clientes',
-      'width': 200,
-      'height': 200
-    };
+    }]
+});
 
-    var chart1 = new google.visualization.Gauge(document.getElementById('Issues-Cliente'));
-    chart1.draw(data1, options1);
+});
 
-}
-
-
-  function drawChartIssuesClienteDetalle(){
-  
-    var data = google.visualization.arrayToDataTable(<?php $json = json_encode($detalleIssuesClientes); echo $json;?>, true);
-  
-    var options = {
-          title: 'Issues Activos por Cliente',
-          vAxis: {title: 'Clientes',  titleTextStyle: {color: 'black'}, format:'0'},
-          width: 900,
-          height: 300,
-    };
-
-    var chart = new google.visualization.BarChart(document.getElementById('Issues-Cliente-Detalle'));
-    chart.draw(data, options);
-  }  
-
-  function drawChartIssuesServicioDetalle(){
-  
-    var data2 = google.visualization.arrayToDataTable(<?php $json = json_encode($detalleIssuesServicios); echo $json;?>, true);
-  
-    var options2 = {
-          title: 'Issues Activos por Servicio',
-          vAxis: {title: 'Servicios',  titleTextStyle: {color: 'black'}},
-          width: 900,
-          height: 300,
-    };
-
-    var chart = new google.visualization.BarChart(document.getElementById('Issues-Servicio-Detalle'));
-    chart.draw(data2, options2);
-  }  
   </script>

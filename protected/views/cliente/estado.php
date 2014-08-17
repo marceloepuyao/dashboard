@@ -15,6 +15,9 @@ Cliente:
 
 <h2>Último Estado Cliente: <?php echo $cliente->nombre?> </h2>
 
+<h5> Último seguimiento semanal: <?php echo $fechapercepcion;?> </h5>
+<h5> Último seguimiento Mensual: <?php echo $fechaitil;?></h5>
+
 <h4> Resumen: </h4>
 
 <?php $this->widget('bootstrap.widgets.TbGridView', array(

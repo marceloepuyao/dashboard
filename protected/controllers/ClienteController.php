@@ -82,6 +82,8 @@ class ClienteController extends Controller
 		$seguimientopercepcion = $seguimiento->getUltimoPercepcion($cliente->id);	
 		
 		$resumen_array = array();
+		$fechapercepcion = "No hay data";
+		$fechaitil = "No hay data";
 		
 		if($seguimientopercepciondata = $seguimientopercepcion->getData()){
 			$fechapercepcion = $seguimientopercepciondata[0]["fecha"];
@@ -92,8 +94,9 @@ class ClienteController extends Controller
 			
 		}
 		
-		if($seguimientosladata = $seguimientosla->getData()){
-			$fechasla = $seguimientosladata[0]["fecha"];
+		if($seguimientoitil->getData()){
+			$seguimientoitildata = $seguimientoitil->getData();
+			//$fechaitil = $seguimientoitildata["fecha"];
 		}
 		
 		$resumen = new CArrayDataProvider($resumen_array, array(
@@ -123,6 +126,8 @@ class ClienteController extends Controller
 				'seguimientopercepcion' => $seguimientopercepcion,
 				'issues'=>$issues,
 				'resumen'=>$resumen,
+				'fechapercepcion' => $fechapercepcion,
+				'fechaitil'=> $fechaitil,
 		));
 	}
 

@@ -1,21 +1,119 @@
 <?php
-
+$this->breadcrumbs=array(
+		'SLA',
+);
 ?>
 
-<?php echo CHtml::dropDownList("fechas", "", $fechas);?>
-<table align="center"><tr><td>
-<div id="Cumplimiento-SLA" style="width: 400; height: 300">
-</div>
-</td></tr>
-<tr><td>
-<div id="Cumplimiento-SLA-Cliente" style="width: 900; height: 500"></div>
-</td></tr>
-</table>
+<script src="<?php echo Yii::app()->baseUrl;?>/js/highcharts/highcharts.js"></script>
+<script src="<?php echo Yii::app()->baseUrl;?>/js/highcharts/highcharts-more.js"></script>
+<script src="<?php echo Yii::app()->baseUrl;?>/js/highcharts/modules/solid-gauge.src.js"></script>
 
-<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<div id="Cumplimiento-SLA-Cliente" style="width: 700px; height: 500px; margin:0 auto 0 auto;"></div>
+<div id="Cumplimiento-SLA-Historico" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+
+
+<?php echo CHtml::label("Selecciona Cliente", "clientes");?>
+<?php echo CHtml::dropDownList("clientes", "", $clientes);?>
+
+
 <script type="text/javascript">
 
-// Load the Visualization API library and the piechart library.
+$(function () {
+    $('#Cumplimiento-SLA-Historico').highcharts({
+        chart: {
+            type: 'line'
+        },
+        title: {
+            text: 'Cumplimiento Histórico SLA'
+        },
+        subtitle: {
+            text: ''
+        },
+        xAxis: {
+            categories: <?php echo json_encode($fechas);?>
+        },
+        yAxis: {
+            title: {
+                text: 'Cumplimiento SLA (%)'
+            }
+        },
+        plotOptions: {
+            line: {
+                dataLabels: {
+                    enabled: true
+                },
+                enableMouseTracking: false
+            }
+        },
+        series: <?php echo $cumplimientoSlaHistoricoPorCliente;?> 
+    });
+    
+
+    $('#Cumplimiento-SLA-Cliente').highcharts({
+        chart: {
+            type: 'bar'
+        },
+        title: {
+            text: 'Cumplimiento SLA por cliente'
+        },
+        subtitle: {
+            text: 'fecha : <?php echo end($fechas);?> '
+        },
+        xAxis: {
+            categories: <?php echo json_encode(array_keys($cumplimientoSlaPorCliente));?>,
+            title: {
+                text: null
+            }
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: 'Cumplimiento SLA (%)',
+                align: 'high'
+            },
+            labels: {
+                overflow: 'justify'
+            }
+        },
+        tooltip: {
+            valueSuffix: ' %'
+        },
+        plotOptions: {
+            bar: {
+                dataLabels: {
+                    enabled: true
+                }
+            }
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'top',
+            x: -40,
+            y: 100,
+            floating: true,
+            borderWidth: 1,
+            backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
+            shadow: true
+        },
+        credits: {
+            enabled: false
+        },
+        series: [{
+            name: 'seguimiento: ',
+            data: <?php echo json_encode(array_values($cumplimientoSlaPorCliente));?>
+        }]
+    });
+
+    
+});
+
+
+</script>
+
+<?php  /*
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript">
 google.load('visualization', '1.0', {'packages':['corechart']});
 google.load('visualization', '1', {packages:['gauge']});
 
@@ -94,3 +192,4 @@ function getData(fecha){
     chart.draw(data, options);
   }
   </script>
+  */?>

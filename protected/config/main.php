@@ -42,22 +42,20 @@ return array(
 	// application components
 	'components'=>array(
 			
-		/*
+		
 		'clientScript'=>array(
 			'packages'=>array(
 				'highcharts'=>array(
-					'baseUrl'=>'//localhost/dashboard/',
-					'js'=>array('protected/lib/Highcharts/js/highcharts.js', 
-								'protected/lib/Highcharts/js/highcharts-more.js',
-								'protected/lib/Highcharts/js/modules/exporting.js',
-								'protected/lib/Highcharts/js/modules/solid-gauge.src.js',
-								'protected/lib/Highmaps/js/highmaps.js',
-								'protected/lib/Highmaps/js/modules/exporting.js',
-								'protected/south-america.js'),
+					'baseUrl'=> "",
+					'js'=>array('js/highcharts/highcharts.js', 
+								'js/highcharts/highcharts-more.js',
+								'js/highcharts/modules/exporting.js',
+								'js/highcharts/modules/solid-gauge.src.js',
+								),
 				)
 			),
 		),
-		*/
+		
 		'bootstrap'=>array(
 				'class'=>'bootstrap.components.Bootstrap',
 		),

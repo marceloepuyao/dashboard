@@ -50,8 +50,10 @@ class SiteController extends Controller
 		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
 		$cumplimiento_sla = Dashboard::getCumplimientoSla($usuario->id);
 		$porcentajeClientesSinIssues = Dashboard::getClientesSinIssuesActivos($usuario->id);
-		$percepcionSM = Dashboard::getPercepcionSM($usuario->id);
-		$percepcionCliente = Dashboard::getPercepcionCliente($usuario->id);
+		$percepcionSM = Dashboard::getPercepcionGeneralSMporUsuario($usuario->id);
+		$percepcionCliente = Dashboard::getPercepcionGeneralClientePorUsuario($usuario->id);
+	
+		
 		$this->render('index',array(
 					 	'cumplimiento_sla'=>$cumplimiento_sla,
 					 	'porcentajeClientesSinIssues'=>$porcentajeClientesSinIssues,
@@ -60,51 +62,106 @@ class SiteController extends Controller
 		));
 		
 	}
-
-	public function actionIssuesCliente(){
-		if(Yii::app()->user->isGuest){
-			$this->redirect($this->createUrl('login'));
-		}
-		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
-		$porcentajeClientesSinIssues = Dashboard::getClientesSinIssuesActivos($usuario->id);
-		$issuesClientesDetalle = Dashboard::getClientesConIssuesActivosPorCliente($usuario->id);
-		$issuesServiciosDetalle = Dashboard::getIssuesActivosPorServicio($usuario->id);
-		//$a = Dashboard::getIssuesHistoricosPorClienteSegunServicio($usuario->id, 'Preventa');
-		//no sé cómo iterar dentro del render, por lo que las queries por servicio se harán directamente en el php issuecliente.php
-		$this->render('issuescliente',array(
-			'porcentajeClientesSinIssues'=>$porcentajeClientesSinIssues,
-			'issuesClientesDetalle'=>$issuesClientesDetalle,
-			'issuesServiciosDetalle'=>$issuesServiciosDetalle,
-		));
-
-	}
 	
 	public function actionSla()
 	{
 		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
-		$fechas = Dashboard::getFechas($usuario->id);
+		$clientes = CHtml::listData($usuario->clientes, "id", "nombre");
+		
+		$cumplimientoSlaPorCliente = Dashboard::getCumplimientoSlaPorCliente($usuario->id);		
+		$cumplimientoSlaHistoricoPorCliente = Dashboard::getCumplimientoSlaHistoricoPorCliente($usuario->id);
+		
+		$data = array();
+		foreach ($cumplimientoSlaHistoricoPorCliente as $k => $v){
+			array_push($data, array("name"=> $k, "data"=>$v));
+		}		
+		
+		$fechas = Dashboard::getFechasMensual($usuario->id);
+		$fechasarray=array();
+		foreach ($fechas as $fecha){
+			array_push($fechasarray, $fecha["fecha"]);
+		}
+		//die(var_dump(json_encode($data)));
 		$this->render('sla', array(
-			'fechas'=>$fechas,
+			'fechas'=>$fechasarray,
+			'clientes'=>$clientes,
+			'cumplimientoSlaPorCliente'=> $cumplimientoSlaPorCliente,
+			'cumplimientoSlaHistoricoPorCliente'=>json_encode($data),
 		));
 	}
 
 	public function actionPersm()
 	{
 		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
+		$persmgeneralhistorica = Dashboard::getPercepcionGeneralHistoricaSM($usuario->id);
+		
+		$satisfaccionsm = Dashboard::getSatisfaccionGeneralSM($usuario->id);
+		
+		//die(var_dump($satisfaccionsm));
+		
+		$data = array();
+		foreach ($persmgeneralhistorica as $k => $v){
+			array_push($data, array("name"=> $k, "data"=>$v));
+		}
+	
+		
 		$fechas = Dashboard::getFechas($usuario->id);
+		$fechasarray=array();
+		foreach ($fechas as $fecha){
+			array_push($fechasarray, $fecha["fecha"]);
+		}
 		$this->render('persm', array(
-			'fechas'=>$fechas,
+			'fechas'=>$fechasarray,
+			'persmgeneralhistorica'=>json_encode($data),
+			'satisfaccionsm'=> $satisfaccionsm,
 		));
 	}
 
 	public function actionPercl()
 	{
 		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
+		$perclgeneralhistorica = Dashboard::getPercepcionGeneralHistoricaCliente($usuario->id);
+		
+		$satisfaccioncliente = Dashboard::getSatisfaccionGeneralCliente($usuario->id);
+		
+		$data = array();
+		foreach ($perclgeneralhistorica as $k => $v){
+			array_push($data, array("name"=> $k, "data"=>$v));
+		}
 		$fechas = Dashboard::getFechas($usuario->id);
+		$fechasarray=array();
+		foreach ($fechas as $fecha){
+			array_push($fechasarray, $fecha["fecha"]);
+		}
+		
 		$this->render('percl', array(
-			'fechas'=>$fechas,
+			'fechas'=>$fechasarray,
+			'perclgeneralhistorica'=>json_encode($data),
+			'satisfaccioncliente'=> $satisfaccioncliente,
 		));
 	}
+	
+	
+	public function actionIssuesCliente(){
+		if(Yii::app()->user->isGuest){
+			$this->redirect($this->createUrl('login'));
+		}
+		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
+		
+		//$porcentajeClientesSinIssues = Dashboard::getClientesSinIssuesActivos($usuario->id);
+		$issuesClientesDetalle = Dashboard::getClientesConIssuesActivosPorCliente($usuario->id);
+		$issuesServiciosDetalle = Dashboard::getIssuesActivosPorServicio($usuario->id);
+	
+		//$a = Dashboard::getIssuesHistoricosPorClienteSegunServicio($usuario->id, 'Preventa');
+		//no sé cómo iterar dentro del render, por lo que las queries por servicio se harán directamente en el php issuecliente.php
+		$this->render('issuescliente',array(
+				//'porcentajeClientesSinIssues'=>$porcentajeClientesSinIssues,
+				'issuesClientesDetalle'=>$issuesClientesDetalle,
+				'issuesServiciosDetalle'=>$issuesServiciosDetalle,
+		));
+	
+	}
+	/*
 
 	public function actionCumplimientoSlaAjax($fecha){
 		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);

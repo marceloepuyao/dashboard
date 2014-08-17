@@ -91,8 +91,7 @@ class SeguimientoController extends Controller
 	{
 		SeguimientoPercepcion::model()->deleteAll("fecha = $fecha");
 		SeguimientoPercepcionGeneral::model()->find("fecha = $fecha");
-		if(!isset($_GET['ajax']))
-			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
+		$this->redirect(array('admin'));
 
 	}
 	
@@ -137,8 +136,7 @@ class SeguimientoController extends Controller
 		SeguimientoSla::model()->deleteAll("fecha = $fecha");
 		SeguimientoItil::model()->deleteAll("fecha = $fecha");
 		
-		if(!isset($_GET['ajax']))
-			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
+		$this->redirect(array('admin'));
 	}
 
 	public function actionIndex($id)
@@ -173,9 +171,12 @@ class SeguimientoController extends Controller
 	public function actionUpdateSemanal($id)
 	{
 		$cliente = Cliente::model()->findByPk($id);
-		$fecha = date('YW');
+		
 
 		$lineaservicios = $this->getUltimoPercepcion($cliente->id);
+		
+		$data = $lineaservicios->getData();
+		$fecha= $data[0]["fecha"];
 		
 		$percepcionGeneral =  $this->getUltimoPercepcionGeneral($cliente->id);   
 		
@@ -211,12 +212,12 @@ class SeguimientoController extends Controller
 	public function actionUpdateMensual($id)
 	{
 		$cliente = Cliente::model()->findByPk($id);
-		$fecha = date('YW');
+		
 				
 		$sla=$this->getUltimoSla($cliente->id);
 		$itil = $this->getUltimoItil($cliente->id);
 		$itilRawData = $this->getItilRawData($cliente->id);
-		
+		$fecha = $itilRawData["fecha"];
 		
 		if(isset($_POST['sla'])){
 			$seg_sla = $_POST['sla'];
@@ -418,4 +419,5 @@ class SeguimientoController extends Controller
 		return $percepcionGeneral;
 		
 	}
+	
 }

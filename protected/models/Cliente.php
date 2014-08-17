@@ -93,7 +93,8 @@ class Cliente extends CActiveRecord
 	}
 	
 	public function beforeDelete(){
-		ClienteCompetidor::model()->deleteAll("cliente_id = $this->id");		
+		ClienteCompetidor::model()->deleteAll("cliente_id = $this->id");	
+		SeguimientoPercepcionGeneral::model()->deleteAll("cliente_id = $this->id");
 		foreach($this->contratos as $c)
 			$c->delete();
 		
