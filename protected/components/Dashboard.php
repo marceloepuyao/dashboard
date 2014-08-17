@@ -3,6 +3,29 @@ class Dashboard {
 
 	///////////////////////////////SLA//////////////////////////////////////////////////////////////////////////////////
 	
+	public static function getCumplimientoSlaClienteID($clienteid, $fecha){
+		$cumplimientocliente = Yii::app()->db->createCommand("
+				SELECT ss.id, ss.valor, s.objetivo, IF(ss.valor >= s.objetivo, 1, 0) as cumplido
+				FROM seguimiento_sla ss, sla s, contrato c
+				WHERE s.contrato_id = c.id AND
+				c.cliente_id = $clienteid AND
+				ss.sla_id = s.id AND
+				ss.fecha = $fecha
+				GROUP BY s.id
+				")->queryAll();
+		
+		
+					
+		$valor = array();
+		foreach ($cumplimientocliente as $c_cliente){
+			$valor[] = (int)$c_cliente['cumplido'];
+		}
+		
+		
+		$tasacumplimientocliente = count($valor)!=0?(array_sum($valor)/count($valor)):0;
+		return $tasacumplimientocliente;
+	}
+	
 	/**
 	 * Funcion que calcula % de clientes tienen al menos el 75% de sus SLA cumplidos
 	 * @param integer $userid
@@ -19,21 +42,7 @@ class Dashboard {
 		$cumplimientoSla = array();
 		foreach ($clientes as $cliente){
 			
-			$cumplimientocliente = Yii::app()->db->createCommand("
-					SELECT ss.id, ss.valor, s.objetivo, IF(ss.valor >= s.objetivo, 1, 0) as cumplido
-					FROM seguimiento_sla ss, sla s, contrato c
-					WHERE s.contrato_id = c.id AND
-					c.cliente_id = $cliente->id AND
-					ss.sla_id = s.id AND
-					ss.fecha = $fecha
-					GROUP BY s.id
-					 ")->queryAll();
-			
-			$valor = array();
-			foreach ($cumplimientocliente as $c_cliente){
-				$valor[] = $c_cliente['cumplido'];
-			}
-			$tasacumplimientocliente = count($valor)!=0?(array_sum($valor)/count($valor)):0;
+			$tasacumplimientocliente = Dashboard::getCumplimientoSlaClienteID($cliente->id, $fecha);
 			if($tasacumplimientocliente >= 0.7){
 				$cumplimientoSla[] = 1;
 			}else{
@@ -483,12 +492,15 @@ class Dashboard {
 	public static function getFechaUltima($userid){
 		$fechas = Dashboard::getFechas($userid);
 		$ultima = end($fechas);
-		return $ultima["fecha"];
+		return (int)$ultima["fecha"];
 	}
 	public static function getFechaUltimaMensual($userid){
-		$fechas = Dashboard::getFechasMensual($userid);
-		$ultima = end($fechas);
-		return $ultima["fecha"];
+		if($fechas = Dashboard::getFechasMensual($userid)){
+			$ultima = end($fechas);
+			return (int)$ultima["fecha"];
+		}else{
+			return 0;
+		}
 	}
 	
 }

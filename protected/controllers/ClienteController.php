@@ -81,23 +81,33 @@ class ClienteController extends Controller
 		$seguimientosla = $seguimiento->getUltimoSla($cliente->id);
 		$seguimientopercepcion = $seguimiento->getUltimoPercepcion($cliente->id);	
 		
-		$resumen_array = array();
-		$fechapercepcion = "No hay data";
-		$fechaitil = "No hay data";
 		
+
+		
+		if(!$fechapercepcion = Dashboard::getFechaUltima($usuario->id))
+			$fechapercepcion = "No hay data";
+		
+		if(!$fechaitil = Dashboard::getFechaUltimaMensual($usuario->id))
+			$fechaitil = "No hay data";
+		
+		$resumen_array = array();
 		if($seguimientopercepciondata = $seguimientopercepcion->getData()){
 			$fechapercepcion = $seguimientopercepciondata[0]["fecha"];
 			$seguimientopercepcionGeneral = SeguimientoPercepcionGeneral::model()->find("cliente_id = $cliente->id AND fecha = $fechapercepcion ");
 			$per_general_cliente = $seguimientopercepcionGeneral->per_cliente;
 			$per_general_sm = $seguimientopercepcionGeneral->per_sm;
-			$resumen_array = array(array("id"=>1, "nombre"=>"Percepción Cliente", "valor"=>$per_general_cliente), array("id"=>1,"nombre"=>"Percepcion SM", "valor"=>$per_general_sm));
+		
+			$resumen_array = array(
+					array("id"=>1, "nombre"=>"Percepción Cliente", "valor"=>$per_general_cliente), 
+					array("id"=>2, "nombre"=>"Percepcion SM", "valor"=>$per_general_sm),
+					array("id"=>3, "nombre"=>"Cumplimiento SLA", "valor"=>(Dashboard::getCumplimientoSlaClienteID($cliente->id, $fechaitil)*100)."%"),
+					array("id"=>4, "nombre"=>"Issues Activos", "valor"=>Issue::model()->countByAttributes(array("cliente_id"=>$cliente->id, "solucionado"=>1)))
+			);
 			
 		}
 		
-		if($seguimientoitil->getData()){
-			$seguimientoitildata = $seguimientoitil->getData();
-			//$fechaitil = $seguimientoitildata["fecha"];
-		}
+		
+		
 		
 		$resumen = new CArrayDataProvider($resumen_array, array(
 				'id'=>'id',
