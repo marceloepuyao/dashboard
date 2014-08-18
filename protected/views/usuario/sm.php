@@ -30,7 +30,7 @@ $this->breadcrumbs=array(
 
 		),
 		array(
-    		'name'=>'nombre',
+    		'name'=>'Nombre',
     		'value'=>'$data["nombre"]." ".$data["apellido"]',
     	),
 	)

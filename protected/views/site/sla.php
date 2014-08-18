@@ -3,7 +3,7 @@ $this->breadcrumbs=array(
 		'SLA',
 );
 ?>
-
+<h2>Vista General</h2>
 <script src="<?php echo Yii::app()->baseUrl;?>/js/highcharts/highcharts.js"></script>
 <script src="<?php echo Yii::app()->baseUrl;?>/js/highcharts/highcharts-more.js"></script>
 <script src="<?php echo Yii::app()->baseUrl;?>/js/highcharts/modules/solid-gauge.src.js"></script>
@@ -11,45 +11,76 @@ $this->breadcrumbs=array(
 <div id="Cumplimiento-SLA-Cliente" style="width: 700px; height: 500px; margin:0 auto 0 auto;"></div>
 <div id="Cumplimiento-SLA-Historico" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 
-
+<h2>Vista por Cliente</h2>
 <?php echo CHtml::label("Selecciona Cliente", "clientes");?>
 <?php echo CHtml::dropDownList("clientes", "", $clientes);?>
+
+<div id="Cumplimiento-SLA-Contrato" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 
 
 <script type="text/javascript">
 
-$(function () {
-    $('#Cumplimiento-SLA-Historico').highcharts({
-        chart: {
-            type: 'line'
-        },
-        title: {
-            text: 'Cumplimiento Histórico SLA'
-        },
-        subtitle: {
-            text: ''
-        },
-        xAxis: {
-            categories: <?php echo json_encode($fechas);?>
-        },
-        yAxis: {
-            title: {
-                text: 'Cumplimiento SLA (%)'
-            }
-        },
-        plotOptions: {
-            line: {
-                dataLabels: {
-                    enabled: true
-                },
-                enableMouseTracking: false
-            }
-        },
-        series: <?php echo $cumplimientoSlaHistoricoPorCliente;?> 
-    });
-    
+$(function () { 
+	cumplimientoSlaHistorico(<?php echo json_encode($fechas);?> , <?php echo $cumplimientoSlaHistoricoPorCliente;?> );
+    cumplimientoSlaCliente(<?php echo json_encode(array_keys($cumplimientoSlaPorCliente));?> ,  <?php echo json_encode(array_values($cumplimientoSlaPorCliente));?>);
+    cumplimientoSlaContrato(<?php echo json_encode(array_keys($cumplimientoSlaPorContrato));?> ,  <?php echo json_encode(array_values($cumplimientoSlaPorContrato));?>);
+});
 
-    $('#Cumplimiento-SLA-Cliente').highcharts({
+$("#clientes").on("change",function(){
+	var cliente = $("#clientes option:selected").val();	
+	getData(cliente);
+});
+
+function getData(cliente){
+	$.ajax({
+        url: 'cumplimientoSlaContratoAjax',
+		data: {'fecha':<?php echo end($fechas);?>, 'clienteid':cliente},
+        async: false,
+        success: function(data){
+            if(data){
+                data = JSON.parse(data);
+				cumplimientoSlaContrato(data.categories, data.data);
+            }
+        },
+    });
+	
+
+  }
+
+
+function cumplimientoSlaHistorico(categories, data){
+	 $('#Cumplimiento-SLA-Historico').highcharts({
+	        chart: {
+	            type: 'line'
+	        },
+	        title: {
+	            text: 'Cumplimiento Histórico SLA'
+	        },
+	        subtitle: {
+	            text: ''
+	        },
+	        xAxis: {
+	            categories: categories
+	        },
+	        yAxis: {
+	            title: {
+	                text: 'Cumplimiento SLA (%)'
+	            }
+	        },
+	        plotOptions: {
+	            line: {
+	                dataLabels: {
+	                    enabled: true
+	                },
+	                enableMouseTracking: false
+	            }
+	        },
+	        series: data 
+	    });
+}
+
+function cumplimientoSlaCliente(categories, data){
+	$('#Cumplimiento-SLA-Cliente').highcharts({
         chart: {
             type: 'bar'
         },
@@ -60,7 +91,7 @@ $(function () {
             text: 'fecha : <?php echo end($fechas);?> '
         },
         xAxis: {
-            categories: <?php echo json_encode(array_keys($cumplimientoSlaPorCliente));?>,
+            categories: categories,
             title: {
                 text: null
             }
@@ -100,13 +131,56 @@ $(function () {
             enabled: false
         },
         series: [{
-            name: 'seguimiento: ',
-            data: <?php echo json_encode(array_values($cumplimientoSlaPorCliente));?>
+            name: '% SLA cumplidos: ',
+            data: data 
         }]
-    });
+    });	
+}
 
-    
-});
+function cumplimientoSlaContrato(categories, data){
+	 $('#Cumplimiento-SLA-Contrato').highcharts({
+	        chart: {
+	            type: 'column'
+	        },
+	        title: {
+	            text: '% SLA cumplidos por Contrato'
+	        },
+	        subtitle: {
+	        	text: 'fecha : <?php echo end($fechas);?> '
+	        },
+	        xAxis: {
+	            categories: categories
+	        },
+	        yAxis: {
+	            min: 0,
+	            max: 100,
+	            title: {
+	            	text: 'Cumplimiento SLA (%)',
+	                align: 'high'
+	            }
+	        },
+	        tooltip: {
+	            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+	            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+	                '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
+	            footerFormat: '</table>',
+	            shared: true,
+	            useHTML: true
+	        },
+	        plotOptions: {
+	            column: {
+	                pointPadding: 0.2,
+	                borderWidth: 0
+	            }
+	        },
+	        series: [{
+	            name: '% SLA cumplidos: ',
+	            data: data 
+	        }]
+	    });
+
+	
+}
 
 
 </script>
@@ -145,21 +219,7 @@ function getDataClientes(fecha){
     });
 }
 
-function getData(fecha){
-	$.ajax({
-        url: 'cumplimientoSlaAjax',
-		data: {'fecha':fecha},
-        async: false,
-        success: function(data){
-            if(data){
-				data = data;
-				drawChartCumplimientoSLA(data);
-            }
-        },
-    });
-	
 
-  }
 
   function drawChartCumplimientoSLA(tasa){
 	

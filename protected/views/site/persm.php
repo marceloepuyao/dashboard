@@ -13,7 +13,7 @@ $this->breadcrumbs=array(
 
 <div id="Satisfaccion-SM" style="width: 700px; height: 500px; margin:0 auto 0 auto;"></div>
 <div id="Percepcion-General-Interna-Historico" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
-
+<div id="Percepcion-Servicio" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 
 
 <script type="text/javascript">
@@ -68,7 +68,7 @@ $(function () {
             min: 0,
             max: 5,
             title: {
-                text: 'Percepción',
+                text: 'Percepción Interna',
                 align: 'high'
             },
             labels: {
@@ -76,7 +76,7 @@ $(function () {
             }
         },
         tooltip: {
-            valueSuffix: ' %'
+            valueSuffix: ''
         },
         plotOptions: {
             bar: {
@@ -100,8 +100,50 @@ $(function () {
             enabled: false
         },
         series: [{
-            name: 'seguimiento: ',
+            name: 'Percepción Interna: ',
             data: <?php echo json_encode(array_values($satisfaccionsm));?>
+        }]
+    });
+
+    
+    $('#Percepcion-Servicio').highcharts({
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Percepción Interna por líneas de Servicio'
+        },
+        subtitle: {
+        	text: 'fecha : <?php echo end($fechas);?> '
+        },
+        xAxis: {
+            categories: <?php echo json_encode(array_keys($percepcionsmservicio));?>,
+        },
+        yAxis: {
+        	allowDecimals: false,
+            min: 0,
+            max: 5,
+            title: {
+                text: 'Percepción Interna'
+            }
+        },
+        tooltip: {
+            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+            pointFormat: '<tr><td style="color:{series.color};padding:0">{point.key}: </td>' +
+                '<td style="padding:0"><b>{point.y:.1f}</b></td></tr>',
+            footerFormat: '</table>',
+            shared: true,
+            useHTML: true
+        },
+        plotOptions: {
+            column: {
+                pointPadding: 0.2,
+                borderWidth: 0
+            }
+        },
+        series: [{
+            name: 'líneas de servicio ',
+            data: <?php echo json_encode(array_values($percepcionsmservicio));?>
         }]
     });
     
