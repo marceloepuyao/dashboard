@@ -260,6 +260,7 @@ class Dashboard {
 		return 100*$percepcionManager/count($seguimientoPercepciones);
 		
 	}
+
 	/**
 	 * Percepción general histórica de todos los clientes de un usuario
 	 * @param unknown $userid
@@ -290,7 +291,7 @@ class Dashboard {
 		}
 	}
 	
-	public function getSatisfaccionGeneralSM($userid, $fecha = null){
+	public static function getSatisfaccionGeneralSM($userid, $fecha = null){
 		
 		if(!$fecha)
 			$fecha = Dashboard::getFechaUltima($userid);
@@ -398,7 +399,7 @@ class Dashboard {
 		return 100*$percepcionCliente/count($seguimientoPercepciones);
 		
 	}
-	public function getPercepcionGeneralHistoricaCliente($userid){
+	public static function getPercepcionGeneralHistoricaCliente($userid){
 	
 		$usuario = Usuario::model()->findByPk($userid);
 		$fechas = Dashboard::getFechas($userid);
@@ -417,7 +418,7 @@ class Dashboard {
 		
 	}
 	
-	public function getPercepcionGeneralClientePorCliente($clienteid, $fecha){
+	public static function getPercepcionGeneralClientePorCliente($clienteid, $fecha){
 		
 		if($percepciongeneral = SeguimientoPercepcionGeneral::model()->find("cliente_id = $clienteid AND fecha = $fecha")){
 			return (int)$percepciongeneral->per_cliente;
@@ -425,7 +426,7 @@ class Dashboard {
 			return 0;
 		}
 	}
-	public function getSatisfaccionGeneralCliente($userid, $fecha = null){
+	public static function getSatisfaccionGeneralCliente($userid, $fecha = null){
 	
 		if(!$fecha)
 			$fecha = Dashboard::getFechaUltima($userid);
