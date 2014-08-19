@@ -131,7 +131,7 @@ class Usuario extends CActiveRecord
 					WHERE 	c.usuario_id = $this->id OR
 							(sm.ssm_id = $this->id AND c.usuario_id = sm.sm_id )
 					GROUP by c.id");
-		}elseif(Yii::app()->user->isSM){
+		}elseif(Yii::app()->user->isSM()){
 			return $this->clientes;	
 		}	
 	}
