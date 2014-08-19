@@ -63,6 +63,8 @@ function cumplimientoSlaHistorico(categories, data){
 	            categories: categories
 	        },
 	        yAxis: {
+		        min:0,
+		        max:100,
 	            title: {
 	                text: 'Cumplimiento SLA (%)'
 	            }
@@ -162,7 +164,7 @@ function cumplimientoSlaContrato(categories, data){
 	        tooltip: {
 	            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
 	            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-	                '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
+	                '<td style="padding:0"><b>{point.y:.1f} % </b></td></tr>',
 	            footerFormat: '</table>',
 	            shared: true,
 	            useHTML: true
