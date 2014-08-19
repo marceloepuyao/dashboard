@@ -147,8 +147,11 @@ class Usuario extends CActiveRecord
 		}elseif(Yii::app()->user->isSM){
 			$clientes =  $this->clientes;
 		}
-		$clientes_array = CHtml::listData($clientes, "id", "nombre");
-		return "(".implode(", ",array_keys($clientes_array)).")";
+		if($clientes_array = CHtml::listData($clientes, "id", "nombre")){
+			return "(".implode(", ",array_keys($clientes_array)).")";
+		}else{
+			return "(0)";
+		}
 	}
 	
 }
