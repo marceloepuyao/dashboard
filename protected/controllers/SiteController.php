@@ -73,7 +73,8 @@ class SiteController extends Controller
 		
 		$cumplimientoSlaHistoricoPorCliente = Dashboard::getCumplimientoSlaHistoricoPorCliente($usuario->id);
 		//por defecto el primer cliente
-		$cumplimientoSlaPorContrato = Dashboard::getCumplimientoSlaPorContrato(array_keys($clientes)[0]);
+		$keys_clientes = array_keys($clientes);
+		$cumplimientoSlaPorContrato = Dashboard::getCumplimientoSlaPorContrato($keys_clientes[0]);
 		$data = array();
 		foreach ($cumplimientoSlaHistoricoPorCliente as $k => $v){
 			array_push($data, array("name"=> $k, "data"=>$v));
