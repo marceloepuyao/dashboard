@@ -70,11 +70,17 @@ class SiteController extends Controller
 		
 		$cumplimientoSlaPorCliente = Dashboard::getCumplimientoSlaPorCliente($usuario->id);		
 		$cumplimientoSlaHistoricoPorCliente = Dashboard::getCumplimientoSlaHistoricoPorCliente($usuario->id);
-		
+		$cumplimientoSlaHistorico = Dashboard::getCumplimientoSlaHistorico($usuario->id);
+
 		$data = array();
 		foreach ($cumplimientoSlaHistoricoPorCliente as $k => $v){
 			array_push($data, array("name"=> $k, "data"=>$v));
 		}		
+
+		$data2 = array();
+		foreach ($cumplimientoSlaHistorico as $k => $v){
+			array_push($data2, array("name"=> $k, "data"=>$v));
+		}
 		
 		$fechas = Dashboard::getFechasMensual($usuario->id);
 		$fechasarray=array();
@@ -87,14 +93,23 @@ class SiteController extends Controller
 			'clientes'=>$clientes,
 			'cumplimientoSlaPorCliente'=> $cumplimientoSlaPorCliente,
 			'cumplimientoSlaHistoricoPorCliente'=>json_encode($data),
+			'cumplimientoSlaHistorico'=>json_encode($data2),
 		));
 	}
+
+	public function actionCumplimientoSlaHistoricoPorServicioAjax($clienteid){
+		$cumplimiento_sla = Dashboard::getCumplimientoSlaHistoricoPorServicio($clienteid);
+		$this->renderPartial('_ajax', array(
+				'data'=>$cumplimiento_sla,
+		));
+	}
+
 
 	public function actionPersm()
 	{
 		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
 		$persmgeneralhistorica = Dashboard::getPercepcionGeneralHistoricaSM($usuario->id);
-		
+		$percepcionGeneralHistoricaUsuario = Dashboard::getPercepcionGeneralHistoricaUsuarioSM($usuario->id);
 		$satisfaccionsm = Dashboard::getSatisfaccionGeneralSM($usuario->id);
 		
 		//die(var_dump($satisfaccionsm));
@@ -103,7 +118,10 @@ class SiteController extends Controller
 		foreach ($persmgeneralhistorica as $k => $v){
 			array_push($data, array("name"=> $k, "data"=>$v));
 		}
-	
+		$data2 = array();
+		foreach ($percepcionGeneralHistoricaUsuario as $k => $v){
+			array_push($data2, array("name"=> $k, "data"=>$v));
+		}
 		
 		$fechas = Dashboard::getFechas($usuario->id);
 		$fechasarray=array();
@@ -113,6 +131,7 @@ class SiteController extends Controller
 		$this->render('persm', array(
 			'fechas'=>$fechasarray,
 			'persmgeneralhistorica'=>json_encode($data),
+			'pergeneralhistoricausuario'=>json_encode($data2),
 			'satisfaccionsm'=> $satisfaccionsm,
 		));
 	}
@@ -121,12 +140,17 @@ class SiteController extends Controller
 	{
 		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
 		$perclgeneralhistorica = Dashboard::getPercepcionGeneralHistoricaCliente($usuario->id);
-		
+		$percepcionGeneralHistoricaUsuario = Dashboard::getPercepcionGeneralHistoricaUsuario($usuario->id);
 		$satisfaccioncliente = Dashboard::getSatisfaccionGeneralCliente($usuario->id);
-		
+
 		$data = array();
 		foreach ($perclgeneralhistorica as $k => $v){
 			array_push($data, array("name"=> $k, "data"=>$v));
+		}
+		//die(print_r($data));
+		$data2 = array();
+		foreach ($percepcionGeneralHistoricaUsuario as $k => $v){
+			array_push($data2, array("name"=> $k, "data"=>$v));
 		}
 		$fechas = Dashboard::getFechas($usuario->id);
 		$fechasarray=array();
@@ -137,6 +161,7 @@ class SiteController extends Controller
 		$this->render('percl', array(
 			'fechas'=>$fechasarray,
 			'perclgeneralhistorica'=>json_encode($data),
+			'pergeneralhistoricausuario'=>json_encode($data2),
 			'satisfaccioncliente'=> $satisfaccioncliente,
 		));
 	}
@@ -151,6 +176,7 @@ class SiteController extends Controller
 		//$porcentajeClientesSinIssues = Dashboard::getClientesSinIssuesActivos($usuario->id);
 		$issuesClientesDetalle = Dashboard::getClientesConIssuesActivosPorCliente($usuario->id);
 		$issuesServiciosDetalle = Dashboard::getIssuesActivosPorServicio($usuario->id);
+		$issuesTotalesPorServicio = Dashboard::getIssuesTotalesPorServicio($usuario->id);
 	
 		//$a = Dashboard::getIssuesHistoricosPorClienteSegunServicio($usuario->id, 'Preventa');
 		//no sé cómo iterar dentro del render, por lo que las queries por servicio se harán directamente en el php issuecliente.php
@@ -158,6 +184,7 @@ class SiteController extends Controller
 				//'porcentajeClientesSinIssues'=>$porcentajeClientesSinIssues,
 				'issuesClientesDetalle'=>$issuesClientesDetalle,
 				'issuesServiciosDetalle'=>$issuesServiciosDetalle,
+				'issuesTotalesPorServicio'=>$issuesTotalesPorServicio,
 		));
 	
 	}

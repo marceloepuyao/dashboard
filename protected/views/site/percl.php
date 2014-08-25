@@ -12,6 +12,7 @@ $this->breadcrumbs=array(
 
 
 <div id="Satisfaccion-Cliente" style="width: 700px; height: 500px; margin:0 auto 0 auto;"></div>
+<div id="Percepcion-General-Externa-Historico-Usuario" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 <div id="Percepcion-General-Externa-Historico" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 
 
@@ -23,7 +24,7 @@ $(function () {
             type: 'line'
         },
         title: {
-            text: 'Percepcion General Externa Histórica'
+            text: 'Percepcion General Externa Histórica por Cliente'
         },
         subtitle: {
             text: ''
@@ -45,6 +46,34 @@ $(function () {
             }
         },
         series: <?php echo $perclgeneralhistorica;?>
+    });
+    $('#Percepcion-General-Externa-Historico-Usuario').highcharts({
+        chart: {
+            type: 'line'
+        },
+        title: {
+            text: 'Percepcion General Externa Histórica del Usuario'
+        },
+        subtitle: {
+            text: ''
+        },
+        xAxis: {
+            categories: <?php echo json_encode($fechas);?>
+        },
+        yAxis: {
+            title: {
+                text: 'Percepción Externa General (%)'
+            }
+        },
+        plotOptions: {
+            line: {
+                dataLabels: {
+                    enabled: true
+                },
+                enableMouseTracking: false
+            }
+        },
+        series: <?php echo $pergeneralhistoricausuario;?>
     });
     $('#Satisfaccion-Cliente').highcharts({
         chart: {

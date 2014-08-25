@@ -52,6 +52,45 @@ class Dashboard {
 		
 	}
 	
+	public static function getCumplimientoSlaHistorico($userid){
+		$fechas = Dashboard::getFechasMensual($userid);
+
+		$usuario = Usuario::model()->findByPk($userid);
+
+		$clientes = $usuario->getClientes();
+		$cumplimientoSla = array();
+		$historico;
+		foreach ($fechas as $fecha){
+			$cumplimientoPorFecha = array();
+			foreach ($clientes as $cliente){
+				$tasacumplimientocliente = Dashboard::getCumplimientoSlaClienteID($cliente->id, $fecha["fecha"]);
+				$clienteid = $cliente->id;
+				$fechaActual = $fecha["fecha"];
+				$cumplimientocliente = Yii::app()->db->createCommand("
+				SELECT ss.id, ss.valor, s.objetivo, IF(ss.valor >= s.objetivo, 1, 0) as cumplido
+				FROM seguimiento_sla ss, sla s, contrato c
+				WHERE s.contrato_id = c.id AND
+				c.cliente_id = $clienteid AND
+				ss.sla_id = s.id AND
+				ss.fecha = $fechaActual
+				GROUP BY s.id
+				")->queryAll();
+				$empty = array();
+				if ($cumplimientocliente != $empty){ 
+				//si el Sla no tiene seguimiento en la fecha señalada por no existir antes, entonces no afecta al cumplimiento histórico
+					if($tasacumplimientocliente >= 70){
+						$cumplimientoPorFecha[] = 1;
+					}else{
+						$cumplimientoPorFecha[] = 0;
+					}
+				}
+			}
+			$historico[] = count($cumplimientoPorFecha)!=0?(100*(array_sum($cumplimientoPorFecha)/(count($cumplimientoPorFecha)))):0;
+		}
+		$cumplimientoSla['historico'] = $historico;
+		return $cumplimientoSla;
+	}
+
 	/** Lista por CLiente con info sobre quien tiene al menos el 75% de sus SLA cumplidos
 	 * Cumpl
 	 * @param unknown $userid
@@ -73,6 +112,11 @@ class Dashboard {
 		}
 		return $cumplimientoSla;
 	}
+	/*
+	public static function getCumplimientoSlaPorServicio($clienteid){
+		
+	}
+	*/
 	/**
 	 * Lista de cumplimientos SLA histórico por cliente
 	 * @param unknown $userid
@@ -153,6 +197,32 @@ class Dashboard {
 		return $issuesporservicio;
 	}
 	
+	public static function getIssuesTotalesPorServicio($userid){
+		$usuario = Usuario::model()->findByPk($userid);
+		$clientessql = $usuario->getClientesSql();
+		$servicios = Yii::app()->db->createCommand('Select id, nombre from linea_servicio')->queryAll();
+		$issuesTotales = array();
+		foreach ($servicios as $servicio){
+			$id = $servicio['id'];
+			$conteoSegunServicio = Yii::app()->db->createCommand("
+
+				SELECT COUNT(*) as Conteo
+				FROM linea_servicio ls, issue_linea_servicio ils, issue i, cliente c
+				WHERE 
+				ils.issue_id = i.id AND
+				ils.linea_servicio_id = ls.id AND
+				ls.id = $id AND
+				i.cliente_id = c.id AND
+				c.id IN $clientessql
+			")->queryAll();
+			//die(print_r($conteoSegunServicio));
+			if ($conteoSegunServicio[0]['Conteo'] != 0){
+				$issuesTotales[$servicio['nombre']] = (int)$conteoSegunServicio[0]['Conteo'];
+			}
+		}
+		return $issuesTotales;
+	}
+
 	public static function getIssuesHistoricosPorClienteSegunServicio($userid, $servicio){
 		
 		$usuario = Usuario::model()->findByPk($userid);
@@ -188,9 +258,6 @@ class Dashboard {
 	
 		}
 		//die(print_r($issuesHistoricosServicios));
-	
-	
-	
 		}
 	
 	///////////////////////////////PERCEPCIÓN SM//////////////////////////////////////////////////////////////////////////////////
@@ -233,6 +300,45 @@ class Dashboard {
 		return 100*$percepcionManager/count($seguimientoPercepciones);
 		
 	}
+
+	public static function getPercepcionGeneralHistoricaUsuarioSM($userid){
+		$usuario = Usuario::model()->findByPk($userid);
+		$fechas = Dashboard::getFechas($userid);
+		$clientessql = $usuario->getClientesSql();
+		$percepcionClientePorFecha = array();
+		$navegador = 0;
+		foreach ($fechas as $fecha){
+			$fechaActual = $fecha['fecha'];
+			$seguimientoPercepciones = Yii::app()->db->createCommand("
+				SELECT spg.*
+				FROM seguimiento_percepcion_general spg, cliente c
+				WHERE 	c.id IN $clientessql AND
+				c.id = spg.cliente_id AND
+				spg.fecha = $fechaActual
+			")->queryAll();
+			if(!$seguimientoPercepciones){
+				$percepcionClientePorFecha[$navegador] = 0;
+			}
+			else{
+				if (!isset($percepcionClientePorFecha[$navegador])) $percepcionClientePorFecha[$navegador] = 0;
+				foreach ($seguimientoPercepciones as $seguimientoPercepcion){
+					if ($seguimientoPercepcion['per_sm']>=4){
+						$percepcionClientePorFecha[$navegador] ++;
+					}elseif ($seguimientoPercepcion['per_sm']<=2){
+						$percepcionClientePorFecha[$navegador] --;
+					}
+				}
+			}
+			if ($percepcionClientePorFecha[$navegador]<0) $percepcionClientePorFecha[$navegador] = 0;
+			$percepcionClientePorFecha[$navegador] = 100*$percepcionClientePorFecha[$navegador]/count($seguimientoPercepciones);
+			$navegador ++;
+		}
+		$percepcionGeneralHistoricaUsuario = array();
+		$percepcionGeneralHistoricaUsuario['historico'] = $percepcionClientePorFecha;
+		return $percepcionGeneralHistoricaUsuario;
+	}
+
+
 	public static function getPercepcionGeneralHistoricaSM($userid){
 	
 		$usuario = Usuario::model()->findByPk($userid);
@@ -345,6 +451,44 @@ class Dashboard {
 		return 100*$percepcionCliente/count($seguimientoPercepciones);
 		
 	}
+
+	public static function getPercepcionGeneralHistoricaUsuario($userid){
+		$usuario = Usuario::model()->findByPk($userid);
+		$fechas = Dashboard::getFechas($userid);
+		$clientessql = $usuario->getClientesSql();
+		$percepcionClientePorFecha = array();
+		$navegador = 0;
+		foreach ($fechas as $fecha){
+			$fechaActual = $fecha['fecha'];
+			$seguimientoPercepciones = Yii::app()->db->createCommand("
+				SELECT spg.*
+				FROM seguimiento_percepcion_general spg, cliente c
+				WHERE 	c.id IN $clientessql AND
+				c.id = spg.cliente_id AND
+				spg.fecha = $fechaActual
+			")->queryAll();
+			if(!$seguimientoPercepciones){
+				$percepcionClientePorFecha[$navegador] = 0;
+			}
+			else{
+				if (!isset($percepcionClientePorFecha[$navegador])) $percepcionClientePorFecha[$navegador] = 0;
+				foreach ($seguimientoPercepciones as $seguimientoPercepcion){
+					if ($seguimientoPercepcion['per_cliente']>=4){
+						$percepcionClientePorFecha[$navegador] ++;
+					}elseif ($seguimientoPercepcion['per_cliente']<=2){
+						$percepcionClientePorFecha[$navegador] --;
+					}
+				}
+			}
+			if ($percepcionClientePorFecha[$navegador]<0) $percepcionClientePorFecha[$navegador] = 0;
+			$percepcionClientePorFecha[$navegador] = 100*$percepcionClientePorFecha[$navegador]/count($seguimientoPercepciones);
+			$navegador ++;
+		}
+		$percepcionGeneralHistoricaUsuario = array();
+		$percepcionGeneralHistoricaUsuario['historico'] = $percepcionClientePorFecha;
+		return $percepcionGeneralHistoricaUsuario;
+	}
+
 	public static function getPercepcionGeneralHistoricaCliente($userid){
 	
 		$usuario = Usuario::model()->findByPk($userid);

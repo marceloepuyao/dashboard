@@ -10,16 +10,49 @@ $this->breadcrumbs=array(
 
 <div id="Cumplimiento-SLA-Cliente" style="width: 700px; height: 500px; margin:0 auto 0 auto;"></div>
 <div id="Cumplimiento-SLA-Historico" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<div id="Cumplimiento-SLA-Historico-Simple" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 
 
 <?php echo CHtml::label("Selecciona Cliente", "clientes");?>
 <?php echo CHtml::dropDownList("clientes", "", $clientes);?>
+<div id="Cumplimiento-SLA-Historico-Servicios" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 
 
 <script type="text/javascript">
 
 $(function () {
     $('#Cumplimiento-SLA-Historico').highcharts({
+        chart: {
+            type: 'line'
+        },
+        title: {
+            text: 'Cumplimiento Histórico SLA Por Cliente'
+        },
+        subtitle: {
+            text: ''
+        },
+        xAxis: {
+            categories: <?php echo json_encode($fechas);?>
+        },
+        yAxis: {
+            title: {
+                text: 'Cumplimiento SLA (%)',
+            },
+            min: 0,
+            max: 100
+        },
+        plotOptions: {
+            line: {
+                dataLabels: {
+                    enabled: true
+                },
+                enableMouseTracking: false
+            }
+        },
+        series: <?php echo $cumplimientoSlaHistoricoPorCliente;?> 
+    });
+    
+    $('#Cumplimiento-SLA-Historico-Simple').highcharts({
         chart: {
             type: 'line'
         },
@@ -35,7 +68,9 @@ $(function () {
         yAxis: {
             title: {
                 text: 'Cumplimiento SLA (%)'
-            }
+            },
+            min: 0,
+            max: 100
         },
         plotOptions: {
             line: {
@@ -45,9 +80,9 @@ $(function () {
                 enableMouseTracking: false
             }
         },
-        series: <?php echo $cumplimientoSlaHistoricoPorCliente;?> 
+        series: <?php echo $cumplimientoSlaHistorico;?> 
     });
-    
+
 
     $('#Cumplimiento-SLA-Cliente').highcharts({
         chart: {

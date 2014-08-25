@@ -12,6 +12,7 @@ $this->breadcrumbs=array(
 
 <div id="Issues-Cliente-Detalle" style="width: 700px; height: 500px; margin:0 auto 0 auto;"></div>
 <div id="Issues-Servicio-Detalle" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<div id="Issues-Totales-Servicio" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 
 
 <script type="text/javascript">
@@ -90,7 +91,7 @@ $('#Issues-Servicio-Detalle').highcharts({
         categories: <?php echo json_encode(array_keys($issuesServiciosDetalle))?> 
     },
     yAxis: {
-    	allowDecimals: false,
+      allowDecimals: false,
         min: 0,
         title: {
             text: 'Issues Activos'
@@ -116,7 +117,46 @@ $('#Issues-Servicio-Detalle').highcharts({
 
     }]
 });
+$('#Issues-Totales-Servicio').highcharts({
+    chart: {
+        type: 'column'
+    },
+    title: {
+        text: 'Issues Activos por Lineas de Servicio'
+    },
+    subtitle: {
+        text: 'a la fecha'
+    },
+    xAxis: {
+        categories: <?php echo json_encode(array_keys($issuesTotalesPorServicio))?> 
+    },
+    yAxis: {
+      allowDecimals: false,
+        min: 0,
+        title: {
+            text: 'Issues Activos'
+        }
+    },
+    tooltip: {
+        headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+        pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+            '<td style="padding:0"><b>{point.y:.1f} </b></td></tr>',
+        footerFormat: '</table>',
+        shared: true,
+        useHTML: true
+    },
+    plotOptions: {
+        column: {
+            pointPadding: 0.2,
+            borderWidth: 0
+        }
+    },
+    series: [{
+        name: 'Issues',
+        data: <?php echo json_encode(array_values($issuesTotalesPorServicio));?>
 
+    }]
+});
 });
 
   </script>
