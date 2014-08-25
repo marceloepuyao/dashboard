@@ -29,7 +29,7 @@ class SiteController extends Controller
 						'users'=>array('*'),
 				),
 				array('allow', // allow authenticated user to perform 'create' and 'update' actions
-						'actions'=>array('Index','sla', 'cumplimientoslaajax','cumplimientoslaporclienteajax', 'persm', 'PercepcionSMAjax','PercepcionSMporClienteAjax' ,'percl', 'PercepcionClienteAjax','PercepcionClientePorClienteAjax','issuescliente', 'issuesactivosporcliente', 'IssuesActivosPorServicio'),
+						'actions'=>array('Index','sla', 'cumplimientoslaajax','cumplimientoslacontratoajax', 'persm', 'PercepcionSMAjax','PercepcionSMporClienteAjax' ,'percl', 'PercepcionClienteAjax','PercepcionClientePorClienteAjax','issuescliente', 'issuesactivosporcliente', 'IssuesActivosPorServicio'),
 						'users'=>array('@'),
 				),
 				array('deny',  // deny all users
@@ -69,9 +69,17 @@ class SiteController extends Controller
 		$clientes = CHtml::listData($usuario->getClientes(), "id", "nombre");
 		
 		$cumplimientoSlaPorCliente = Dashboard::getCumplimientoSlaPorCliente($usuario->id);		
+<<<<<<< HEAD
 		$cumplimientoSlaHistoricoPorCliente = Dashboard::getCumplimientoSlaHistoricoPorCliente($usuario->id);
 		$cumplimientoSlaHistorico = Dashboard::getCumplimientoSlaHistorico($usuario->id);
 
+=======
+		
+		
+		$cumplimientoSlaHistoricoPorCliente = Dashboard::getCumplimientoSlaHistoricoPorCliente($usuario->id);
+		//por defecto el primer cliente
+		$cumplimientoSlaPorContrato = Dashboard::getCumplimientoSlaPorContrato(array_keys($clientes)[0]);
+>>>>>>> origin/develop
 		$data = array();
 		foreach ($cumplimientoSlaHistoricoPorCliente as $k => $v){
 			array_push($data, array("name"=> $k, "data"=>$v));
@@ -92,6 +100,7 @@ class SiteController extends Controller
 			'fechas'=>$fechasarray,
 			'clientes'=>$clientes,
 			'cumplimientoSlaPorCliente'=> $cumplimientoSlaPorCliente,
+			'cumplimientoSlaPorContrato'=> $cumplimientoSlaPorContrato,
 			'cumplimientoSlaHistoricoPorCliente'=>json_encode($data),
 			'cumplimientoSlaHistorico'=>json_encode($data2),
 		));
@@ -109,20 +118,27 @@ class SiteController extends Controller
 	{
 		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
 		$persmgeneralhistorica = Dashboard::getPercepcionGeneralHistoricaSM($usuario->id);
+<<<<<<< HEAD
 		$percepcionGeneralHistoricaUsuario = Dashboard::getPercepcionGeneralHistoricaUsuarioSM($usuario->id);
+=======
+>>>>>>> origin/develop
 		$satisfaccionsm = Dashboard::getSatisfaccionGeneralSM($usuario->id);
+		$percepcionsmservicio = Dashboard::getPercepcionSMporServicio($usuario->id);
 		
-		//die(var_dump($satisfaccionsm));
+		
 		
 		$data = array();
 		foreach ($persmgeneralhistorica as $k => $v){
 			array_push($data, array("name"=> $k, "data"=>$v));
 		}
+<<<<<<< HEAD
 		$data2 = array();
 		foreach ($percepcionGeneralHistoricaUsuario as $k => $v){
 			array_push($data2, array("name"=> $k, "data"=>$v));
 		}
 		
+=======
+>>>>>>> origin/develop
 		$fechas = Dashboard::getFechas($usuario->id);
 		$fechasarray=array();
 		foreach ($fechas as $fecha){
@@ -133,6 +149,7 @@ class SiteController extends Controller
 			'persmgeneralhistorica'=>json_encode($data),
 			'pergeneralhistoricausuario'=>json_encode($data2),
 			'satisfaccionsm'=> $satisfaccionsm,
+			'percepcionsmservicio'=> $percepcionsmservicio,
 		));
 	}
 
@@ -142,7 +159,12 @@ class SiteController extends Controller
 		$perclgeneralhistorica = Dashboard::getPercepcionGeneralHistoricaCliente($usuario->id);
 		$percepcionGeneralHistoricaUsuario = Dashboard::getPercepcionGeneralHistoricaUsuario($usuario->id);
 		$satisfaccioncliente = Dashboard::getSatisfaccionGeneralCliente($usuario->id);
+<<<<<<< HEAD
 
+=======
+		$percepcionclienteservicio = Dashboard::getPercepcionClienteporServicio($usuario->id);
+		
+>>>>>>> origin/develop
 		$data = array();
 		foreach ($perclgeneralhistorica as $k => $v){
 			array_push($data, array("name"=> $k, "data"=>$v));
@@ -163,6 +185,7 @@ class SiteController extends Controller
 			'perclgeneralhistorica'=>json_encode($data),
 			'pergeneralhistoricausuario'=>json_encode($data2),
 			'satisfaccioncliente'=> $satisfaccioncliente,
+			'percepcionclienteservicio' => $percepcionclienteservicio,
 		));
 	}
 	
@@ -188,24 +211,19 @@ class SiteController extends Controller
 		));
 	
 	}
+	
+	
+	public function actionCumplimientoSlaContratoAjax($fecha, $clienteid){
+
+		$cumplimientoSlaPorContrato = Dashboard::getCumplimientoSlaPorContrato($clienteid);
+		$data = array("categories"=>array_keys($cumplimientoSlaPorContrato), "data"=>array_values($cumplimientoSlaPorContrato));
+		$this->renderPartial('_ajax', array(
+				'data'=>json_encode($data),
+		));
+	}
 	/*
 
-	public function actionCumplimientoSlaAjax($fecha){
-		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
-		$cumplimiento_sla = Dashboard::getCumplimientoSla($usuario->id, $fecha);
-		$this->renderPartial('_ajax', array(
-				'data'=>$cumplimiento_sla,
-		));
-	}
-
-	public function actionCumplimientoSlaPorClienteAjax($fecha){
-		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
-		$clientes = Dashboard::getCumplimientoSlaPorCliente($usuario->id,$fecha);
-		$this->renderPartial('_ajax', array(
-				'data'=>json_encode($clientes)
-		));
-	}
-
+	
 	public function actionClientesSinIssuesAjax($fecha){
 		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
 		$porcentajeClientesSinIssues = Dashboard::getClientesSinIssuesActivos($usuario->id, $fecha);

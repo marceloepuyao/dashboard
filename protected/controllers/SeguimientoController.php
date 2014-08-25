@@ -387,7 +387,8 @@ class SeguimientoController extends Controller
 																$fechasql
 																c.cliente_id = $clienteId AND 
 																lsc.contrato_id = c.id AND 
-																ls.id = lsc.linea_servicio_id;")->queryAll();
+																ls.id = lsc.linea_servicio_id
+																GROUP BY ls.id;")->queryAll();
 		//die(var_dump($serviciosRawData));
 		$lineaservicios=new CArrayDataProvider($serviciosRawData, array(
 				'id'=>'id',

@@ -14,7 +14,7 @@ $this->breadcrumbs=array(
 <div id="Satisfaccion-Cliente" style="width: 700px; height: 500px; margin:0 auto 0 auto;"></div>
 <div id="Percepcion-General-Externa-Historico-Usuario" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 <div id="Percepcion-General-Externa-Historico" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
-
+<div id="Percepcion-Servicio" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 
 
 <script type="text/javascript">
@@ -130,6 +130,46 @@ $(function () {
         series: [{
             name: 'seguimiento: ',
             data: <?php echo json_encode(array_values($satisfaccioncliente));?>
+        }]
+    });
+    $('#Percepcion-Servicio').highcharts({
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Percepción Externa por líneas de Servicio'
+        },
+        subtitle: {
+        	text: 'fecha : <?php echo end($fechas);?> '
+        },
+        xAxis: {
+            categories: <?php echo json_encode(array_keys($percepcionclienteservicio));?>,
+        },
+        yAxis: {
+        	allowDecimals: false,
+            min: 0,
+            max: 5,
+            title: {
+                text: 'Percepción Externa'
+            }
+        },
+        tooltip: {
+            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+            pointFormat: '<tr><td style="color:{series.color};padding:0">{point.key}: </td>' +
+                '<td style="padding:0"><b>{point.y:.1f}</b></td></tr>',
+            footerFormat: '</table>',
+            shared: true,
+            useHTML: true
+        },
+        plotOptions: {
+            column: {
+                pointPadding: 0.2,
+                borderWidth: 0
+            }
+        },
+        series: [{
+            name: 'líneas de servicio ',
+            data: <?php echo json_encode(array_values($percepcionclienteservicio));?>
         }]
     });
 });
