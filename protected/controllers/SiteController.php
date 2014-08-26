@@ -69,17 +69,10 @@ class SiteController extends Controller
 		$clientes = CHtml::listData($usuario->getClientes(), "id", "nombre");
 		
 		$cumplimientoSlaPorCliente = Dashboard::getCumplimientoSlaPorCliente($usuario->id);		
-<<<<<<< HEAD
 		$cumplimientoSlaHistoricoPorCliente = Dashboard::getCumplimientoSlaHistoricoPorCliente($usuario->id);
 		$cumplimientoSlaHistorico = Dashboard::getCumplimientoSlaHistorico($usuario->id);
-
-=======
-		
-		
-		$cumplimientoSlaHistoricoPorCliente = Dashboard::getCumplimientoSlaHistoricoPorCliente($usuario->id);
 		//por defecto el primer cliente
 		$cumplimientoSlaPorContrato = Dashboard::getCumplimientoSlaPorContrato(array_keys($clientes)[0]);
->>>>>>> origin/develop
 		$data = array();
 		foreach ($cumplimientoSlaHistoricoPorCliente as $k => $v){
 			array_push($data, array("name"=> $k, "data"=>$v));
@@ -118,10 +111,7 @@ class SiteController extends Controller
 	{
 		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
 		$persmgeneralhistorica = Dashboard::getPercepcionGeneralHistoricaSM($usuario->id);
-<<<<<<< HEAD
 		$percepcionGeneralHistoricaUsuario = Dashboard::getPercepcionGeneralHistoricaUsuarioSM($usuario->id);
-=======
->>>>>>> origin/develop
 		$satisfaccionsm = Dashboard::getSatisfaccionGeneralSM($usuario->id);
 		$percepcionsmservicio = Dashboard::getPercepcionSMporServicio($usuario->id);
 		
@@ -131,14 +121,11 @@ class SiteController extends Controller
 		foreach ($persmgeneralhistorica as $k => $v){
 			array_push($data, array("name"=> $k, "data"=>$v));
 		}
-<<<<<<< HEAD
 		$data2 = array();
 		foreach ($percepcionGeneralHistoricaUsuario as $k => $v){
 			array_push($data2, array("name"=> $k, "data"=>$v));
 		}
 		
-=======
->>>>>>> origin/develop
 		$fechas = Dashboard::getFechas($usuario->id);
 		$fechasarray=array();
 		foreach ($fechas as $fecha){
@@ -159,12 +146,8 @@ class SiteController extends Controller
 		$perclgeneralhistorica = Dashboard::getPercepcionGeneralHistoricaCliente($usuario->id);
 		$percepcionGeneralHistoricaUsuario = Dashboard::getPercepcionGeneralHistoricaUsuario($usuario->id);
 		$satisfaccioncliente = Dashboard::getSatisfaccionGeneralCliente($usuario->id);
-<<<<<<< HEAD
-
-=======
 		$percepcionclienteservicio = Dashboard::getPercepcionClienteporServicio($usuario->id);
 		
->>>>>>> origin/develop
 		$data = array();
 		foreach ($perclgeneralhistorica as $k => $v){
 			array_push($data, array("name"=> $k, "data"=>$v));

@@ -137,16 +137,13 @@ class Dashboard {
 		return $cumplimientoSla;
 				
 	}
-<<<<<<< HEAD
 	/*
 	public static function getCumplimientoSlaPorServicio($clienteid){
 		
 	}
 	*/
-=======
 	
 	
->>>>>>> origin/develop
 	/**
 	 * Lista de cumplimientos SLA histórico por cliente
 	 * @param unknown $userid
@@ -331,7 +328,6 @@ class Dashboard {
 		
 	}
 
-<<<<<<< HEAD
 	public static function getPercepcionGeneralHistoricaUsuarioSM($userid){
 		$usuario = Usuario::model()->findByPk($userid);
 		$fechas = Dashboard::getFechas($userid);
@@ -370,13 +366,11 @@ class Dashboard {
 	}
 
 
-=======
 	/**
 	 * Percepción general histórica de todos los clientes de un usuario
 	 * @param unknown $userid
 	 * @return multitype:multitype:number
 	 */
->>>>>>> origin/develop
 	public static function getPercepcionGeneralHistoricaSM($userid){
 	
 		$usuario = Usuario::model()->findByPk($userid);

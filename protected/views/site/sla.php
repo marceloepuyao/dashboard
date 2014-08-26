@@ -22,7 +22,6 @@ $this->breadcrumbs=array(
 
 <script type="text/javascript">
 
-<<<<<<< HEAD
 $(function () {
     $('#Cumplimiento-SLA-Historico').highcharts({
         chart: {
@@ -50,19 +49,18 @@ $(function () {
                     enabled: true
                 },
                 enableMouseTracking: false
-=======
-$(function () { 
-	cumplimientoSlaHistorico(<?php echo json_encode($fechas);?> , <?php echo $cumplimientoSlaHistoricoPorCliente;?> );
-    cumplimientoSlaCliente(<?php echo json_encode(array_keys($cumplimientoSlaPorCliente));?> ,  <?php echo json_encode(array_values($cumplimientoSlaPorCliente));?>);
-    cumplimientoSlaContrato(<?php echo json_encode(array_keys($cumplimientoSlaPorContrato));?> ,  <?php echo json_encode(array_values($cumplimientoSlaPorContrato));?>);
+              }
+        },
+        series: <?php echo $cumplimientoSlaHistoricoPorCliente; ?>
 });
 
-$("#clientes").on("change",function(){
-	var cliente = $("#clientes option:selected").val();	
-	getData(cliente);
-});
 
-function getData(cliente){
+    $("#clientes").on("change",function(){
+	   var cliente = $("#clientes option:selected").val();	
+	   getData(cliente);
+    });
+
+/*function getData(cliente){
 	$.ajax({
         url: 'cumplimientoSlaContratoAjax',
 		data: {'fecha':<?php echo end($fechas);?>, 'clienteid':cliente},
@@ -71,12 +69,10 @@ function getData(cliente){
             if(data){
                 data = JSON.parse(data);
 				cumplimientoSlaContrato(data.categories, data.data);
->>>>>>> origin/develop
             }
         },
     });
-<<<<<<< HEAD
-    
+    */
     $('#Cumplimiento-SLA-Historico-Simple').highcharts({
         chart: {
             type: 'line'
@@ -107,13 +103,11 @@ function getData(cliente){
         },
         series: <?php echo $cumplimientoSlaHistorico;?> 
     });
-=======
 	
 
-  }
->>>>>>> origin/develop
+  
 
-
+/*
 function cumplimientoSlaHistorico(categories, data){
 	 $('#Cumplimiento-SLA-Historico').highcharts({
 	        chart: {
@@ -145,9 +139,9 @@ function cumplimientoSlaHistorico(categories, data){
 	        },
 	        series: data 
 	    });
-}
+}*/
 
-function cumplimientoSlaCliente(categories, data){
+//function cumplimientoSlaCliente(categories, data){
 	$('#Cumplimiento-SLA-Cliente').highcharts({
         chart: {
             type: 'bar'
@@ -159,7 +153,7 @@ function cumplimientoSlaCliente(categories, data){
             text: 'fecha : <?php echo end($fechas);?> '
         },
         xAxis: {
-            categories: categories,
+            categories: <?php echo json_encode(array_keys($cumplimientoSlaPorCliente));?>,
             title: {
                 text: null
             }
@@ -200,11 +194,12 @@ function cumplimientoSlaCliente(categories, data){
         },
         series: [{
             name: '% SLA cumplidos: ',
-            data: data 
+            data: <?php echo json_encode(array_values($cumplimientoSlaPorCliente));?>,
         }]
     });	
-}
 
+
+/*
 function cumplimientoSlaContrato(categories, data){
 	 $('#Cumplimiento-SLA-Contrato').highcharts({
 	        chart: {
@@ -249,7 +244,8 @@ function cumplimientoSlaContrato(categories, data){
 
 	
 }
-
+*/
+});
 
 </script>
 
