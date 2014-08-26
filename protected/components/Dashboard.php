@@ -112,7 +112,7 @@ class Dashboard {
 		}
 		return $cumplimientoSla;
 	}
-	public static function getCumplimientoSlaPorContrato($clienteid, $fecha = null){
+	public static function getCumplimientoDetallePorCliente($clienteid, $fecha = null){
 		
 		$cliente = Cliente::model()->findByPk($clienteid);
 		if(!$fecha)$fecha=Dashboard::getFechaUltimaMensual($cliente->usuario_id);
@@ -120,7 +120,7 @@ class Dashboard {
 		$cumplimientoSla = array();
 		foreach ($contratos as $contrato){
 			$cumplimientoContrato= Yii::app()->db->createCommand("
-					SELECT ss.id, ss.valor, s.objetivo, IF(ss.valor >= s.objetivo, 1, 0) as cumplido
+					SELECT s.id, s.nombre, s.objetivo, ss.valor, IF(ss.valor >= s.objetivo, 1, 0) as cumplido
 					FROM seguimiento_sla ss, sla s, contrato c
 					WHERE s.contrato_id = $contrato->id AND
 					ss.sla_id = s.id AND
@@ -129,10 +129,8 @@ class Dashboard {
 					")->queryAll();
 			$valor = array();
 			foreach ($cumplimientoContrato as $c_contrato){
-				$valor[] = (int)$c_contrato['cumplido'];
+				$cumplimientoSla[$c_contrato['nombre']] = $c_contrato['valor'];
 			}
-			$tasacumplimientocliente = count($valor)!=0?(100*array_sum($valor)/count($valor)):0;
-			$cumplimientoSla[$contrato->titulo] = round($tasacumplimientocliente, 2);
 		}
 		return $cumplimientoSla;
 				

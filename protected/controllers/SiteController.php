@@ -69,11 +69,12 @@ class SiteController extends Controller
 		$clientes = CHtml::listData($usuario->getClientes(), "id", "nombre");
 		
 		$cumplimientoSlaPorCliente = Dashboard::getCumplimientoSlaPorCliente($usuario->id);		
-		$cumplimientoSlaHistoricoPorCliente = Dashboard::getCumplimientoSlaHistoricoPorCliente($usuario->id);
 		$cumplimientoSlaHistorico = Dashboard::getCumplimientoSlaHistorico($usuario->id);
 		//por defecto el primer cliente
 		$keys_clientes = array_keys($clientes);
-		$cumplimientoSlaPorContrato = Dashboard::getCumplimientoSlaPorContrato($keys_clientes[0]);
+		$cumplimientoDetallePorCliente = Dashboard::getCumplimientoDetallePorCliente($keys_clientes[0]);
+		
+		$cumplimientoSlaHistoricoPorCliente = Dashboard::getCumplimientoSlaHistoricoPorCliente($usuario->id);
 		$data = array();
 		foreach ($cumplimientoSlaHistoricoPorCliente as $k => $v){
 			array_push($data, array("name"=> $k, "data"=>$v));
@@ -89,12 +90,12 @@ class SiteController extends Controller
 		foreach ($fechas as $fecha){
 			array_push($fechasarray, $fecha["fecha"]);
 		}
-		//die(var_dump(json_encode($data)));
+		//die(var_dump($cumplimientoDetallePorCliente));
 		$this->render('sla', array(
 			'fechas'=>$fechasarray,
 			'clientes'=>$clientes,
 			'cumplimientoSlaPorCliente'=> $cumplimientoSlaPorCliente,
-			'cumplimientoSlaPorContrato'=> $cumplimientoSlaPorContrato,
+			'cumplimientoDetallePorCliente'=> $cumplimientoDetallePorCliente,
 			'cumplimientoSlaHistoricoPorCliente'=>json_encode($data),
 			'cumplimientoSlaHistorico'=>json_encode($data2),
 		));
