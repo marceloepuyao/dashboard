@@ -29,7 +29,7 @@ class SiteController extends Controller
 						'users'=>array('*'),
 				),
 				array('allow', // allow authenticated user to perform 'create' and 'update' actions
-						'actions'=>array('Index','sla', 'cumplimientoslaajax','cumplimientoslacontratoajax', 'persm', 'PercepcionSMAjax','PercepcionSMporClienteAjax' ,'percl', 'PercepcionClienteAjax','PercepcionClientePorClienteAjax','issuescliente', 'issuesactivosporcliente', 'IssuesActivosPorServicio'),
+						'actions'=>array('Index','sla', 'cumplimientoslaajax','cumplimientoslacontratoajax', 'persm', 'PercepcionSMAjax','PercepcionSMporClienteAjax' ,'percl', 'PercepcionClienteAjax','PercepcionClientePorClienteAjax','issuesCliente', 'issuesactivosporcliente', 'IssuesActivosPorServicio'),
 						'users'=>array('@'),
 				),
 				array('deny',  // deny all users
@@ -72,7 +72,8 @@ class SiteController extends Controller
 		$cumplimientoSlaHistoricoPorCliente = Dashboard::getCumplimientoSlaHistoricoPorCliente($usuario->id);
 		$cumplimientoSlaHistorico = Dashboard::getCumplimientoSlaHistorico($usuario->id);
 		//por defecto el primer cliente
-		$cumplimientoSlaPorContrato = Dashboard::getCumplimientoSlaPorContrato(array_keys($clientes)[0]);
+		$keys_clientes = array_keys($clientes);
+		$cumplimientoSlaPorContrato = Dashboard::getCumplimientoSlaPorContrato($keys_clientes[0]);
 		$data = array();
 		foreach ($cumplimientoSlaHistoricoPorCliente as $k => $v){
 			array_push($data, array("name"=> $k, "data"=>$v));

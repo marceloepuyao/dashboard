@@ -27,7 +27,7 @@ class WebUser extends CWebUser
     function isSM(){
     	$user = $this->loadUser();
     	if ($user) 
-            return $user->provider_id==3;
+            return $user->perfil_id==3;
     	return false;
     }
  
