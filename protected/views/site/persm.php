@@ -10,9 +10,8 @@ $this->breadcrumbs=array(
 <script src="<?php echo Yii::app()->baseUrl;?>/js/highcharts/highcharts-more.js"></script>
 <script src="<?php echo Yii::app()->baseUrl;?>/js/highcharts/modules/solid-gauge.src.js"></script>
 
-
-<div id="Satisfaccion-SM" style="width: 700px; height: 500px; margin:0 auto 0 auto;"></div>
 <div id="Percepcion-General-Interna-Historico-Usuario" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<div id="Satisfaccion-SM" style="width: 700px; height: 500px; margin:0 auto 0 auto;"></div>
 <div id="Percepcion-General-Interna-Historico" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 <div id="Percepcion-Servicio" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 
@@ -30,7 +29,10 @@ $(function () {
             text: ''
         },
         xAxis: {
-            categories: <?php echo json_encode($fechas);?>
+            categories: <?php echo json_encode($fechas);?>,
+           	labels: {
+         		step:1,
+            }
         },
         yAxis: {
             title: {
@@ -52,13 +54,16 @@ $(function () {
             type: 'line'
         },
         title: {
-            text: 'Percepcion General Interna Histórica'
+            text: 'Satisfacción General Interna Histórica'
         },
         subtitle: {
             text: ''
         },
         xAxis: {
-            categories: <?php echo json_encode($fechas);?>
+            categories: <?php echo json_encode($fechas);?>,
+            		 labels: {
+         	            step:1,
+         	        }
         },
         yAxis: {
             title: {
@@ -88,6 +93,9 @@ $(function () {
         },
         xAxis: {
             categories: <?php echo json_encode(array_keys($satisfaccionsm));?>,
+            		 labels: {
+         	            step:1,
+         	        },
             title: {
                 text: null
             }
@@ -147,6 +155,9 @@ $(function () {
         },
         xAxis: {
             categories: <?php echo json_encode(array_keys($percepcionsmservicio));?>,
+            		 labels: {
+         	            step:1,
+         	        }
         },
         yAxis: {
         	allowDecimals: false,
@@ -159,7 +170,7 @@ $(function () {
         tooltip: {
             headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
             pointFormat: '<tr><td style="color:{series.color};padding:0">{point.key}: </td>' +
-                '<td style="padding:0"><b>{point.y:.1f}</b></td></tr>',
+                '<td style="padding:0"><b>{point.y:.0f}</b></td></tr>',
             footerFormat: '</table>',
             shared: true,
             useHTML: true

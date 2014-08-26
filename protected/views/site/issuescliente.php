@@ -30,6 +30,9 @@ $('#Issues-Cliente-Detalle').highcharts({
     },
     xAxis: {
         categories: <?php echo json_encode(array_keys($issuesClientesDetalle));?>,
+        		labels: {
+             		step:1,
+                },
         title: {
             text: null
         }
@@ -88,7 +91,10 @@ $('#Issues-Servicio-Detalle').highcharts({
         text: 'a la fecha'
     },
     xAxis: {
-        categories: <?php echo json_encode(array_keys($issuesServiciosDetalle))?> 
+        categories: <?php echo json_encode(array_keys($issuesServiciosDetalle))?> ,
+        		labels: {
+             		step:1,
+                },
     },
     yAxis: {
       allowDecimals: false,
@@ -100,7 +106,7 @@ $('#Issues-Servicio-Detalle').highcharts({
     tooltip: {
         headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
         pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-            '<td style="padding:0"><b>{point.y:.1f} </b></td></tr>',
+            '<td style="padding:0"><b>{point.y:.0f} </b></td></tr>',
         footerFormat: '</table>',
         shared: true,
         useHTML: true
@@ -122,13 +128,16 @@ $('#Issues-Totales-Servicio').highcharts({
         type: 'column'
     },
     title: {
-        text: 'Issues Activos por Lineas de Servicio'
+        text: 'Issues Creados Histórico por Servicios'
     },
     subtitle: {
         text: 'a la fecha'
     },
     xAxis: {
-        categories: <?php echo json_encode(array_keys($issuesTotalesPorServicio))?> 
+        categories: <?php echo json_encode(array_keys($issuesTotalesPorServicio))?> ,
+        		labels: {
+             		step:1,
+                },
     },
     yAxis: {
       allowDecimals: false,
@@ -140,7 +149,7 @@ $('#Issues-Totales-Servicio').highcharts({
     tooltip: {
         headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
         pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-            '<td style="padding:0"><b>{point.y:.1f} </b></td></tr>',
+            '<td style="padding:0"><b>{point.y:.0f} </b></td></tr>',
         footerFormat: '</table>',
         shared: true,
         useHTML: true

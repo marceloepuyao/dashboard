@@ -29,7 +29,7 @@ class SiteController extends Controller
 						'users'=>array('*'),
 				),
 				array('allow', // allow authenticated user to perform 'create' and 'update' actions
-						'actions'=>array('Index','sla', 'cumplimientoslaajax','cumplimientoslacontratoajax', 'persm', 'PercepcionSMAjax','PercepcionSMporClienteAjax' ,'percl', 'PercepcionClienteAjax','PercepcionClientePorClienteAjax','issuesCliente', 'issuesactivosporcliente', 'IssuesActivosPorServicio'),
+						'actions'=>array('Index','sla', 'cumplimientoslaajax','cumplimientoDetalleClienteAjax', 'persm', 'PercepcionSMAjax','PercepcionSMporClienteAjax' ,'percl', 'PercepcionClienteAjax','PercepcionClientePorClienteAjax','issuesCliente', 'issuesactivosporcliente', 'IssuesActivosPorServicio'),
 						'users'=>array('@'),
 				),
 				array('deny',  // deny all users
@@ -90,23 +90,39 @@ class SiteController extends Controller
 		foreach ($fechas as $fecha){
 			array_push($fechasarray, $fecha["fecha"]);
 		}
+		
+		function objetivo($n)
+		{
+			return $n["objetivo"];
+		}
+		$objetivo = array_map("objetivo", $cumplimientoDetallePorCliente);
+		
+		function valor($n)
+		{
+			return $n["valor"];
+		}
+		$valor = array_map("valor", $cumplimientoDetallePorCliente);
+		
+		//die(var_dump($valor));
 		//die(var_dump($cumplimientoDetallePorCliente));
 		$this->render('sla', array(
 			'fechas'=>$fechasarray,
 			'clientes'=>$clientes,
 			'cumplimientoSlaPorCliente'=> $cumplimientoSlaPorCliente,
 			'cumplimientoDetallePorCliente'=> $cumplimientoDetallePorCliente,
+			'cumplimientoDetalleObjetivo' => $objetivo,
+			'cumplimientoDetalleValor' => $valor,
 			'cumplimientoSlaHistoricoPorCliente'=>json_encode($data),
 			'cumplimientoSlaHistorico'=>json_encode($data2),
 		));
 	}
-
+	/*
 	public function actionCumplimientoSlaHistoricoPorServicioAjax($clienteid){
 		$cumplimiento_sla = Dashboard::getCumplimientoSlaHistoricoPorServicio($clienteid);
 		$this->renderPartial('_ajax', array(
 				'data'=>$cumplimiento_sla,
 		));
-	}
+	}*/
 
 
 	public function actionPersm()
@@ -198,10 +214,23 @@ class SiteController extends Controller
 	}
 	
 	
-	public function actionCumplimientoSlaContratoAjax($fecha, $clienteid){
+	public function actionCumplimientoDetalleClienteAjax($fecha, $clienteid){
 
-		$cumplimientoSlaPorContrato = Dashboard::getCumplimientoSlaPorContrato($clienteid);
-		$data = array("categories"=>array_keys($cumplimientoSlaPorContrato), "data"=>array_values($cumplimientoSlaPorContrato));
+		$cumplimientoDetallePorCliente = Dashboard::getCumplimientoDetallePorCliente($clienteid);
+		
+		function objetivo($n)
+		{
+			return $n["objetivo"];
+		}
+		$objetivo = array_map("objetivo", $cumplimientoDetallePorCliente);
+		
+		function valor($n)
+		{
+			return $n["valor"];
+		}
+		$valor = array_map("valor", $cumplimientoDetallePorCliente);
+		
+		$data = array("categories"=>array_keys($cumplimientoDetallePorCliente), "objetivo"=>array_values($objetivo), "valor" => array_values($valor));
 		$this->renderPartial('_ajax', array(
 				'data'=>json_encode($data),
 		));

@@ -100,7 +100,7 @@ $(function () {
 
         series: [{
             name: 'SLA',
-            data: [<?php echo (int)$cumplimiento_sla;?>],
+            data: [<?php echo round($cumplimiento_sla,2);?>],
             dataLabels: {
             	format: '<div style="text-align:center"><span style="font-size:25px;color:' + 
                 ((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}%</span><br/>' + 
@@ -132,7 +132,7 @@ $(function () {
 
         series: [{
             name: 'Issues',
-            data: [<?php echo $porcentajeClientesSinIssues;?>],
+            data: [<?php echo round($porcentajeClientesSinIssues,2);?>],
             dataLabels: {
             	format: '<div style="text-align:center"><span style="font-size:25px;color:' + 
                 ((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}%</span><br/>' + 
@@ -166,7 +166,7 @@ $(function () {
 
         series: [{
             name: 'Cliente',
-            data: [<?php echo $percepcionCliente;?>],
+            data: [<?php echo round($percepcionCliente,2);?>],
             dataLabels: {
             	format: '<div style="text-align:center"><span style="font-size:25px;color:' + 
                 ((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}%</span><br/>' + 
@@ -199,7 +199,7 @@ $(function () {
 
         series: [{
             name: 'SM',
-            data: [<?php echo $percepcionSM;?>],
+            data: [<?php echo round($percepcionSM,2);?>],
             dataLabels: {
             	format: '<div style="text-align:center"><span style="font-size:25px;color:' + 
                 ((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}%</span><br/>' + 

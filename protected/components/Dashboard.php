@@ -129,7 +129,7 @@ class Dashboard {
 					")->queryAll();
 			$valor = array();
 			foreach ($cumplimientoContrato as $c_contrato){
-				$cumplimientoSla[$c_contrato['nombre']] = $c_contrato['valor'];
+				$cumplimientoSla[$c_contrato['nombre']] = array("objetivo"=>(int)$c_contrato['objetivo'], "valor"=>(int)$c_contrato['valor']);
 			}
 		}
 		return $cumplimientoSla;
@@ -355,7 +355,7 @@ class Dashboard {
 				}
 			}
 			if ($percepcionClientePorFecha[$navegador]<0) $percepcionClientePorFecha[$navegador] = 0;
-			$percepcionClientePorFecha[$navegador] = 100*$percepcionClientePorFecha[$navegador]/count($seguimientoPercepciones);
+			$percepcionClientePorFecha[$navegador] = round(100*$percepcionClientePorFecha[$navegador]/count($seguimientoPercepciones),2);
 			$navegador ++;
 		}
 		$percepcionGeneralHistoricaUsuario = array();
@@ -532,7 +532,7 @@ class Dashboard {
 				}
 			}
 			if ($percepcionClientePorFecha[$navegador]<0) $percepcionClientePorFecha[$navegador] = 0;
-			$percepcionClientePorFecha[$navegador] = 100*$percepcionClientePorFecha[$navegador]/count($seguimientoPercepciones);
+			$percepcionClientePorFecha[$navegador] = round(100*$percepcionClientePorFecha[$navegador]/count($seguimientoPercepciones),2);
 			$navegador ++;
 		}
 		$percepcionGeneralHistoricaUsuario = array();
