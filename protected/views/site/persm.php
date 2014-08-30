@@ -5,7 +5,7 @@ $this->breadcrumbs=array(
 ?>
 
 <?php //echo CHtml::dropDownList("fechas", "", $fechas);?>
-
+<h2>Vista General</h2>
 <script src="<?php echo Yii::app()->baseUrl;?>/js/highcharts/highcharts.js"></script>
 <script src="<?php echo Yii::app()->baseUrl;?>/js/highcharts/highcharts-more.js"></script>
 <script src="<?php echo Yii::app()->baseUrl;?>/js/highcharts/modules/solid-gauge.src.js"></script>
@@ -15,9 +15,67 @@ $this->breadcrumbs=array(
 <div id="Percepcion-General-Interna-Historico" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 <div id="Percepcion-Servicio" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 
+<h2>Vista por Cliente</h2>
+<?php echo CHtml::label("Selecciona Cliente", "clientes");?>
+<?php echo CHtml::dropDownList("clientes", "", $clientes);?>
+<div id="Percepcion-Historico-Servicio-Cliente" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+
 
 <script type="text/javascript">
 $(function () {
+
+    $("#clientes").on("change",function(){
+        var cliente = $("#clientes option:selected").val(); 
+        getData(cliente);
+    });
+
+    function getData(cliente){
+        $.ajax({
+            url: 'percepcionHistoricoClienteServiciosAjax',
+            data: {'clienteid':cliente},
+            async: false,
+            success: function(data){
+                if(data){
+                    data = JSON.parse(data);
+                    percepcionHistoricoClienteServicios(data);
+                }
+            },
+        });
+    }
+    function percepcionHistoricoClienteServicios(Series){
+    $('#Percepcion-Historico-Servicio-Cliente').highcharts({
+        chart: {
+            type: 'line'
+        },
+        title: {
+            text: 'Percepcion General Interna Histórica por Cliente'
+        },
+        subtitle: {
+            text: ''
+        },
+        xAxis: {
+            categories: <?php echo json_encode($fechas);?>,
+            labels: {
+                step:1,
+            }
+        },
+        yAxis: {
+            title: {
+                text: 'Percepción Externa General'
+            }
+        },
+        plotOptions: {
+            line: {
+                dataLabels: {
+                    enabled: true
+                },
+                enableMouseTracking: false
+            }
+        },
+        series: Series
+    });
+    };
+
     $('#Percepcion-General-Interna-Historico').highcharts({
         chart: {
             type: 'line'
@@ -186,6 +244,7 @@ $(function () {
             data: <?php echo json_encode(array_values($percepcionsmservicio));?>
         }]
     });
+
     
 });
 

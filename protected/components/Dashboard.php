@@ -460,7 +460,33 @@ class Dashboard {
 						return $percepcionesSMClientesPorcentaje;
 						*/
 	}
-	
+	public static function getPercepcionSMporClienteParaServicios($clienteid){
+		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
+
+		$fechas = Dashboard::getFechas($usuario->id);
+
+		$percepcionFecha = array();
+		foreach ($fechas as $fecha){
+			$f = $fecha['fecha'];
+			$percepcion= Yii::app()->db->createCommand("
+				SELECT ls.nombre, sp.per_sm
+				FROM seguimiento_percepcion sp, linea_servicio_contrato lsc, contrato c, linea_servicio ls, cliente cl
+				WHERE cl.id = $clienteid AND
+					c.cliente_id = cl.id AND
+					c.id = lsc.contrato_id AND
+					ls.id = lsc.linea_servicio_id AND
+					lsc.id = sp.linea_servicio_contrato_id AND
+					sp.fecha = $f
+				GROUP BY sp.id")->queryAll();
+			foreach($percepcion as $p){
+				$percepcionFecha[$f][$p['nombre']] = (int)$p['per_sm']; 
+
+			}
+		}
+
+		return $percepcionFecha;
+	}
+
 	
 	///////////////////////////////PERCEPCION CLIENTE//////////////////////////////////////////////////////////////////////////////////
 	/**

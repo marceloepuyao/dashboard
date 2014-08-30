@@ -29,7 +29,7 @@ class SiteController extends Controller
 						'users'=>array('*'),
 				),
 				array('allow', // allow authenticated user to perform 'create' and 'update' actions
-						'actions'=>array('Index','sla', 'cumplimientoslaajax','cumplimientoDetalleClienteAjax', 'persm', 'PercepcionSMAjax','PercepcionSMporClienteAjax' ,'percl', 'PercepcionClienteAjax','PercepcionClientePorClienteAjax','issuesCliente', 'issuesactivosporcliente', 'IssuesActivosPorServicio'),
+						'actions'=>array('Index','sla','percepcionHistoricoClienteServiciosAjax', 'cumplimientoslaajax','cumplimientoDetalleClienteAjax', 'persm', 'PercepcionSMAjax','PercepcionSMporClienteAjax' ,'percl', 'PercepcionClienteAjax','PercepcionClientePorClienteAjax','issuesCliente', 'issuesactivosporcliente', 'IssuesActivosPorServicio'),
 						'users'=>array('@'),
 				),
 				array('deny',  // deny all users
@@ -132,8 +132,8 @@ class SiteController extends Controller
 		$percepcionGeneralHistoricaUsuario = Dashboard::getPercepcionGeneralHistoricaUsuarioSM($usuario->id);
 		$satisfaccionsm = Dashboard::getSatisfaccionGeneralSM($usuario->id);
 		$percepcionsmservicio = Dashboard::getPercepcionSMporServicio($usuario->id);
-		
-		
+
+		$clientes = CHtml::listData($usuario->getClientes(), "id", "nombre");
 		
 		$data = array();
 		foreach ($persmgeneralhistorica as $k => $v){
@@ -143,7 +143,13 @@ class SiteController extends Controller
 		foreach ($percepcionGeneralHistoricaUsuario as $k => $v){
 			array_push($data2, array("name"=> $k, "data"=>$v));
 		}
-		
+		/*
+		$data3 = array();
+		foreach ($percepcionHistoricoPorClienteParaServicios as $k => $v){
+			array_push($data3, array("name"=> $k, "data"=>$v));
+		}
+		*/
+		//die(print_r($data3));
 		$fechas = Dashboard::getFechas($usuario->id);
 		$fechasarray=array();
 		foreach ($fechas as $fecha){
@@ -151,6 +157,7 @@ class SiteController extends Controller
 		}
 		$this->render('persm', array(
 			'fechas'=>$fechasarray,
+			'clientes'=>$clientes,
 			'persmgeneralhistorica'=>json_encode($data),
 			'pergeneralhistoricausuario'=>json_encode($data2),
 			'satisfaccionsm'=> $satisfaccionsm,
@@ -165,7 +172,7 @@ class SiteController extends Controller
 		$percepcionGeneralHistoricaUsuario = Dashboard::getPercepcionGeneralHistoricaUsuario($usuario->id);
 		$satisfaccioncliente = Dashboard::getSatisfaccionGeneralCliente($usuario->id);
 		$percepcionclienteservicio = Dashboard::getPercepcionClienteporServicio($usuario->id);
-		
+		//$percepcionHistoricoClienteServicios = Dashboard::getCumplimientoDetallePorCliente($clienteid);
 		$data = array();
 		foreach ($perclgeneralhistorica as $k => $v){
 			array_push($data, array("name"=> $k, "data"=>$v));
@@ -175,6 +182,7 @@ class SiteController extends Controller
 		foreach ($percepcionGeneralHistoricaUsuario as $k => $v){
 			array_push($data2, array("name"=> $k, "data"=>$v));
 		}
+
 		$fechas = Dashboard::getFechas($usuario->id);
 		$fechasarray=array();
 		foreach ($fechas as $fecha){
@@ -217,7 +225,7 @@ class SiteController extends Controller
 	public function actionCumplimientoDetalleClienteAjax($fecha, $clienteid){
 
 		$cumplimientoDetallePorCliente = Dashboard::getCumplimientoDetallePorCliente($clienteid);
-		
+		$percepcionHistoricoPorClienteParaServicios = Dashboard::getPercepcionSMporClienteParaServicios(42, $usuario->id);
 		function objetivo($n)
 		{
 			return $n["objetivo"];
@@ -235,6 +243,20 @@ class SiteController extends Controller
 				'data'=>json_encode($data),
 		));
 	}
+
+	public function actionPercepcionHistoricoClienteServiciosAjax($clienteid, $userid){
+
+		$cumplimientoDetallePorCliente = Dashboard::getCumplimientoDetallePorCliente($clienteid);
+		$data = array();
+		foreach ($percepcionHistoricoPorClienteParaServicios as $k => $v){
+			array_push($data, array("name"=> $k, "data"=>$v));
+		}		
+		$this->renderPartial('_ajax', array(
+				'percepcionHistoricoClienteServicios'=>json_encode($data),
+		));
+	}
+
+
 	/*
 
 	

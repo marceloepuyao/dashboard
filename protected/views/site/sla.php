@@ -45,9 +45,8 @@ function getData(cliente){
             }
         },
     });
-	
+}
 
-  }
 function cumplimientoHistoricoSimple(categories, data){
     $('#Cumplimiento-SLA-Historico-Simple').highcharts({
         chart: {
