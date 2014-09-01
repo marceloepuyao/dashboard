@@ -1,7 +1,9 @@
 <?php
 $this->breadcrumbs=array(
 		'Percepcion Externa',
+
 );
+$c = key($clientes);
 ?>
 
 <?php //echo CHtml::dropDownList("fechas", "", $fechas);?>
@@ -17,12 +19,14 @@ $this->breadcrumbs=array(
 
 <h2>Vista por Cliente</h2>
 <?php echo CHtml::label("Selecciona Cliente", "clientes");?>
-<?php echo CHtml::dropDownList("clientes", "", $clientes);?>
+<?php echo CHtml::dropDownList("clientes", "", $clientes);
+?>
 <div id="Percepcion-Historico-Servicio-Cliente" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 
 
 <script type="text/javascript">
 $(function () {
+    getData(<?php echo $c;?>);
 
     $("#clientes").on("change",function(){
         var cliente = $("#clientes option:selected").val(); 
@@ -35,6 +39,7 @@ $(function () {
             data: {'clienteid':cliente},
             async: false,
             success: function(data){
+                alert(data);
                 if(data){
                     data = JSON.parse(data);
                     percepcionHistoricoClienteServicios(data);
@@ -54,7 +59,7 @@ $(function () {
             text: ''
         },
         xAxis: {
-            categories: <?php echo json_encode($fechas);?>,
+            categories: Series.data,
             labels: {
                 step:1,
             }

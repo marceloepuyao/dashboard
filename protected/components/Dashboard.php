@@ -479,9 +479,9 @@ class Dashboard {
 					sp.fecha = $f
 				GROUP BY sp.id")->queryAll();
 			foreach($percepcion as $p){
-				$percepcionFecha[$f][$p['nombre']] = (int)$p['per_sm']; 
-
+				$percepcionFecha[$p['nombre']][$f] = (int)$p['per_sm']; 
 			}
+			//die(print_r($percepcionFecha));
 		}
 
 		return $percepcionFecha;

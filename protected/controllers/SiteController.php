@@ -143,6 +143,8 @@ class SiteController extends Controller
 		foreach ($percepcionGeneralHistoricaUsuario as $k => $v){
 			array_push($data2, array("name"=> $k, "data"=>$v));
 		}
+		$percepcionHistoricoPorClienteParaServicios = Dashboard::getPercepcionSMporClienteParaServicios(42);
+		//die(print_r($percepcionHistoricoPorClienteParaServicios));
 		/*
 		$data3 = array();
 		foreach ($percepcionHistoricoPorClienteParaServicios as $k => $v){
@@ -244,15 +246,15 @@ class SiteController extends Controller
 		));
 	}
 
-	public function actionPercepcionHistoricoClienteServiciosAjax($clienteid, $userid){
+	public function actionPercepcionHistoricoClienteServiciosAjax($clienteid){
 
-		$cumplimientoDetallePorCliente = Dashboard::getCumplimientoDetallePorCliente($clienteid);
+		$percepcionHistoricoPorClienteParaServicios = Dashboard::getPercepcionSMporClienteParaServicios($clienteid);
 		$data = array();
 		foreach ($percepcionHistoricoPorClienteParaServicios as $k => $v){
 			array_push($data, array("name"=> $k, "data"=>$v));
 		}		
 		$this->renderPartial('_ajax', array(
-				'percepcionHistoricoClienteServicios'=>json_encode($data),
+				'data'=>json_encode($data),
 		));
 	}
 
