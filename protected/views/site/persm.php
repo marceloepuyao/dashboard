@@ -4,6 +4,7 @@ $this->breadcrumbs=array(
 
 );
 $c = key($clientes);
+echo json_encode($fechas);
 ?>
 
 <?php //echo CHtml::dropDownList("fechas", "", $fechas);?>
@@ -39,15 +40,37 @@ $(function () {
             data: {'clienteid':cliente},
             async: false,
             success: function(data){
-                alert(data);
                 if(data){
                     data = JSON.parse(data);
-                    percepcionHistoricoClienteServicios(data);
+                    var fechas = data.shift();
+                    /*
+                    var categoriaFechas = [];
+                    var i = 0
+                    for (var key in fechas){
+                        if (key == 'data'){
+                            categoriaFechas[i] = [];
+                            categoriaFechas[i].push(fechas[key].toString());
+                            i = i+1;
+                        }
+                    }
+                    */
+                    var categoriaFechas = {};
+                    var i = 0
+                    for (var key in fechas){
+                        if (key == 'data'){
+                            categoriaFechas[i] = fechas[key];
+                            i = i+1;
+                        }
+                    }
+                    
+                    console.log(categoriaFechas);
+                    
+                    percepcionHistoricoClienteServicios(data, categoriaFechas);
                 }
             },
         });
     }
-    function percepcionHistoricoClienteServicios(Series){
+    function percepcionHistoricoClienteServicios(Series, Categorias){
     $('#Percepcion-Historico-Servicio-Cliente').highcharts({
         chart: {
             type: 'line'
@@ -59,7 +82,7 @@ $(function () {
             text: ''
         },
         xAxis: {
-            categories: Series.data,
+            categories: Categorias[0],
             labels: {
                 step:1,
             }
@@ -79,6 +102,7 @@ $(function () {
         },
         series: Series
     });
+    //alert(Series['fechas']);
     };
 
     $('#Percepcion-General-Interna-Historico').highcharts({

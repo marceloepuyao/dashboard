@@ -468,6 +468,7 @@ class Dashboard {
 		$percepcionFecha = array();
 		foreach ($fechas as $fecha){
 			$f = $fecha['fecha'];
+			$empty = array();
 			$percepcion= Yii::app()->db->createCommand("
 				SELECT ls.nombre, sp.per_sm
 				FROM seguimiento_percepcion sp, linea_servicio_contrato lsc, contrato c, linea_servicio ls, cliente cl
@@ -478,12 +479,15 @@ class Dashboard {
 					lsc.id = sp.linea_servicio_contrato_id AND
 					sp.fecha = $f
 				GROUP BY sp.id")->queryAll();
-			foreach($percepcion as $p){
-				$percepcionFecha[$p['nombre']][$f] = (int)$p['per_sm']; 
+			if ($percepcion != $empty){
+				$percepcionFecha['fechas'][] = $f;
 			}
-			//die(print_r($percepcionFecha));
+			foreach($percepcion as $p){
+				$percepcionFecha[$p['nombre']][] = (int)$p['per_sm']; 
+			}
+			//die(print_r($percepcion));
 		}
-
+		//die(print_r($percepcionFecha['fechas']));
 		return $percepcionFecha;
 	}
 
