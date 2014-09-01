@@ -73,18 +73,18 @@ class SiteController extends Controller
 		//por defecto el primer cliente
 		$keys_clientes = array_keys($clientes);
 		$cumplimientoDetallePorCliente = Dashboard::getCumplimientoDetallePorCliente($keys_clientes[0]);
+		$cumplimientoHistoricoDetallePorCliente = Dashboard::getCumplimientoHistoricoDetallePorCliente($keys_clientes[0]); //41)
+		$data2 = array();
+		foreach ($cumplimientoHistoricoDetallePorCliente as $k => $v){
+			array_push($data2, array("name"=> $k, "data"=>$v));
+		}
+		//die(var_dump($data2));
 		
 		$cumplimientoSlaHistoricoPorCliente = Dashboard::getCumplimientoSlaHistoricoPorCliente($usuario->id);
 		$data = array();
 		foreach ($cumplimientoSlaHistoricoPorCliente as $k => $v){
 			array_push($data, array("name"=> $k, "data"=>$v));
 		}		
-
-		$data2 = array();
-		foreach ($cumplimientoSlaHistorico as $k => $v){
-			array_push($data2, array("name"=> $k, "data"=>$v));
-		}
-		
 		$fechas = Dashboard::getFechasMensual($usuario->id);
 		$fechasarray=array();
 		foreach ($fechas as $fecha){
@@ -103,8 +103,6 @@ class SiteController extends Controller
 		}
 		$valor = array_map("valor", $cumplimientoDetallePorCliente);
 		
-		//die(var_dump($valor));
-		//die(var_dump($cumplimientoDetallePorCliente));
 		$this->render('sla', array(
 			'fechas'=>$fechasarray,
 			'clientes'=>$clientes,
@@ -113,16 +111,10 @@ class SiteController extends Controller
 			'cumplimientoDetalleObjetivo' => $objetivo,
 			'cumplimientoDetalleValor' => $valor,
 			'cumplimientoSlaHistoricoPorCliente'=>json_encode($data),
-			'cumplimientoSlaHistorico'=>json_encode($data2),
+			'cumplimientoSlaHistorico'=>$cumplimientoSlaHistorico,
+			'cumplimientoSlaDetalleHistorico'=> json_encode($data2),
 		));
 	}
-	/*
-	public function actionCumplimientoSlaHistoricoPorServicioAjax($clienteid){
-		$cumplimiento_sla = Dashboard::getCumplimientoSlaHistoricoPorServicio($clienteid);
-		$this->renderPartial('_ajax', array(
-				'data'=>$cumplimiento_sla,
-		));
-	}*/
 
 
 	public function actionPersm()
@@ -132,8 +124,18 @@ class SiteController extends Controller
 		$percepcionGeneralHistoricaUsuario = Dashboard::getPercepcionGeneralHistoricaUsuarioSM($usuario->id);
 		$satisfaccionsm = Dashboard::getSatisfaccionGeneralSM($usuario->id);
 		$percepcionsmservicio = Dashboard::getPercepcionSMporServicio($usuario->id);
+		
+		
 
 		$clientes = CHtml::listData($usuario->getClientes(), "id", "nombre");
+		$arrayKeys = array_keys($clientes);
+		
+		$cumplimientoDetallePorCliente = Dashboard::getPercepcionSmHistoricaPorServicio($arrayKeys[0], "sm");
+		$data3 = array();
+		foreach ($cumplimientoDetallePorCliente as $k => $v){
+			array_push($data3, array("name"=> $k, "data"=>$v));
+		}
+		//die(var_dump($data3));
 		
 		$data = array();
 		foreach ($persmgeneralhistorica as $k => $v){
@@ -143,15 +145,6 @@ class SiteController extends Controller
 		foreach ($percepcionGeneralHistoricaUsuario as $k => $v){
 			array_push($data2, array("name"=> $k, "data"=>$v));
 		}
-		$percepcionHistoricoPorClienteParaServicios = Dashboard::getPercepcionSMporClienteParaServicios(42);
-		//die(print_r($percepcionHistoricoPorClienteParaServicios));
-		/*
-		$data3 = array();
-		foreach ($percepcionHistoricoPorClienteParaServicios as $k => $v){
-			array_push($data3, array("name"=> $k, "data"=>$v));
-		}
-		*/
-		//die(print_r($data3));
 		$fechas = Dashboard::getFechas($usuario->id);
 		$fechasarray=array();
 		foreach ($fechas as $fecha){
@@ -162,6 +155,8 @@ class SiteController extends Controller
 			'clientes'=>$clientes,
 			'persmgeneralhistorica'=>json_encode($data),
 			'pergeneralhistoricausuario'=>json_encode($data2),
+				
+			'cumplimientoDetallePorCliente'=>json_encode($data3),
 			'satisfaccionsm'=> $satisfaccionsm,
 			'percepcionsmservicio'=> $percepcionsmservicio,
 		));
@@ -170,11 +165,22 @@ class SiteController extends Controller
 	public function actionPercl()
 	{
 		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
+		$clientes = CHtml::listData($usuario->getClientes(), "id", "nombre");
+		$arrayKeys = array_keys($clientes);
+		
 		$perclgeneralhistorica = Dashboard::getPercepcionGeneralHistoricaCliente($usuario->id);
 		$percepcionGeneralHistoricaUsuario = Dashboard::getPercepcionGeneralHistoricaUsuario($usuario->id);
 		$satisfaccioncliente = Dashboard::getSatisfaccionGeneralCliente($usuario->id);
 		$percepcionclienteservicio = Dashboard::getPercepcionClienteporServicio($usuario->id);
 		//$percepcionHistoricoClienteServicios = Dashboard::getCumplimientoDetallePorCliente($clienteid);
+		
+		$cumplimientoDetallePorCliente = Dashboard::getPercepcionSmHistoricaPorServicio($arrayKeys[0], "sm");
+		$data3 = array();
+		foreach ($cumplimientoDetallePorCliente as $k => $v){
+			array_push($data3, array("name"=> $k, "data"=>$v));
+		}
+		
+		
 		$data = array();
 		foreach ($perclgeneralhistorica as $k => $v){
 			array_push($data, array("name"=> $k, "data"=>$v));
@@ -193,8 +199,10 @@ class SiteController extends Controller
 		
 		$this->render('percl', array(
 			'fechas'=>$fechasarray,
+			'clientes'=>$clientes,
 			'perclgeneralhistorica'=>json_encode($data),
 			'pergeneralhistoricausuario'=>json_encode($data2),
+			'cumplimientoDetallePorCliente'=>json_encode($data3),
 			'satisfaccioncliente'=> $satisfaccioncliente,
 			'percepcionclienteservicio' => $percepcionclienteservicio,
 		));
@@ -211,6 +219,8 @@ class SiteController extends Controller
 		$issuesClientesDetalle = Dashboard::getClientesConIssuesActivosPorCliente($usuario->id);
 		$issuesServiciosDetalle = Dashboard::getIssuesActivosPorServicio($usuario->id);
 		$issuesTotalesPorServicio = Dashboard::getIssuesTotalesPorServicio($usuario->id);
+		
+		$clientesSinIssuesHistorico = Dashboard::getClientesSinIssuesHistorico($usuario->id);
 	
 		//$a = Dashboard::getIssuesHistoricosPorClienteSegunServicio($usuario->id, 'Preventa');
 		//no sé cómo iterar dentro del render, por lo que las queries por servicio se harán directamente en el php issuecliente.php
@@ -219,15 +229,30 @@ class SiteController extends Controller
 				'issuesClientesDetalle'=>$issuesClientesDetalle,
 				'issuesServiciosDetalle'=>$issuesServiciosDetalle,
 				'issuesTotalesPorServicio'=>$issuesTotalesPorServicio,
+				'clientesSinIssuesHistorico'=> $clientesSinIssuesHistorico,
 		));
 	
+	}
+	
+	public function actionCumplimientoDetalleHistoricoClienteAjax($clienteid){
+		
+		$cumplimientoHistoricoDetallePorCliente = Dashboard::getCumplimientoHistoricoDetallePorCliente($clienteid);
+		$data = array();
+		foreach ($cumplimientoHistoricoDetallePorCliente as $k => $v){
+			array_push($data, array("name"=> $k, "data"=>$v));
+		}
+		
+		$this->renderPartial('_ajax', array(
+				'data'=>json_encode($data),
+		));
+		
 	}
 	
 	
 	public function actionCumplimientoDetalleClienteAjax($fecha, $clienteid){
 
 		$cumplimientoDetallePorCliente = Dashboard::getCumplimientoDetallePorCliente($clienteid);
-		$percepcionHistoricoPorClienteParaServicios = Dashboard::getPercepcionSMporClienteParaServicios(42, $usuario->id);
+		
 		function objetivo($n)
 		{
 			return $n["objetivo"];
@@ -246,13 +271,14 @@ class SiteController extends Controller
 		));
 	}
 
-	public function actionPercepcionHistoricoClienteServiciosAjax($clienteid){
+	public function actionPercepcionHistoricoClienteServiciosAjax($clienteid, $type){
 
-		$percepcionHistoricoPorClienteParaServicios = Dashboard::getPercepcionSMporClienteParaServicios($clienteid);
+		$cumplimientoDetallePorCliente = Dashboard::getPercepcionSmHistoricaPorServicio($clienteid, $type);
 		$data = array();
-		foreach ($percepcionHistoricoPorClienteParaServicios as $k => $v){
+		foreach ($cumplimientoDetallePorCliente as $k => $v){
 			array_push($data, array("name"=> $k, "data"=>$v));
 		}		
+		
 		$this->renderPartial('_ajax', array(
 				'data'=>json_encode($data),
 		));

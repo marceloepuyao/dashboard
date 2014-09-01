@@ -1,10 +1,7 @@
 <?php
 $this->breadcrumbs=array(
 		'Percepcion Externa',
-
 );
-$c = key($clientes);
-echo json_encode($fechas);
 ?>
 
 <?php //echo CHtml::dropDownList("fechas", "", $fechas);?>
@@ -20,14 +17,21 @@ echo json_encode($fechas);
 
 <h2>Vista por Cliente</h2>
 <?php echo CHtml::label("Selecciona Cliente", "clientes");?>
-<?php echo CHtml::dropDownList("clientes", "", $clientes);
-?>
+<?php echo CHtml::dropDownList("clientes", "", $clientes);?>
 <div id="Percepcion-Historico-Servicio-Cliente" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 
 
 <script type="text/javascript">
-$(function () {
-    getData(<?php echo $c;?>);
+	$(function () {
+	
+		percepcionGeneralInternaHistorico();
+		percepcionGeneralInternaHistoricoUsuario();
+		satisfaccionSm();
+		percepcionServicio();
+
+		percepcionHistoricoClienteServicios(<?php echo $cumplimientoDetallePorCliente;?>);
+	
+	});
 
     $("#clientes").on("change",function(){
         var cliente = $("#clientes option:selected").val(); 
@@ -37,52 +41,29 @@ $(function () {
     function getData(cliente){
         $.ajax({
             url: 'percepcionHistoricoClienteServiciosAjax',
-            data: {'clienteid':cliente},
+            data: {'clienteid':cliente, 'type':'sm'},
             async: false,
             success: function(data){
                 if(data){
                     data = JSON.parse(data);
-                    var fechas = data.shift();
-                    /*
-                    var categoriaFechas = [];
-                    var i = 0
-                    for (var key in fechas){
-                        if (key == 'data'){
-                            categoriaFechas[i] = [];
-                            categoriaFechas[i].push(fechas[key].toString());
-                            i = i+1;
-                        }
-                    }
-                    */
-                    var categoriaFechas = {};
-                    var i = 0
-                    for (var key in fechas){
-                        if (key == 'data'){
-                            categoriaFechas[i] = fechas[key];
-                            i = i+1;
-                        }
-                    }
-                    
-                    console.log(categoriaFechas);
-                    
-                    percepcionHistoricoClienteServicios(data, categoriaFechas);
+                    percepcionHistoricoClienteServicios(data);
                 }
             },
         });
     }
-    function percepcionHistoricoClienteServicios(Series, Categorias){
+    function percepcionHistoricoClienteServicios(Series){
     $('#Percepcion-Historico-Servicio-Cliente').highcharts({
         chart: {
             type: 'line'
         },
         title: {
-            text: 'Percepcion General Interna Histórica por Cliente'
+            text: 'Percepcion Externa Historica de Servicios por Cliente'
         },
         subtitle: {
             text: ''
         },
         xAxis: {
-            categories: Categorias[0],
+            categories: <?php echo json_encode($fechas);?>,
             labels: {
                 step:1,
             }
@@ -102,179 +83,183 @@ $(function () {
         },
         series: Series
     });
-    //alert(Series['fechas']);
     };
 
-    $('#Percepcion-General-Interna-Historico').highcharts({
-        chart: {
-            type: 'line'
-        },
-        title: {
-            text: 'Percepcion General Interna Histórica por Cliente'
-        },
-        subtitle: {
-            text: ''
-        },
-        xAxis: {
-            categories: <?php echo json_encode($fechas);?>,
-           	labels: {
-         		step:1,
-            }
-        },
-        yAxis: {
-            title: {
-                text: 'Percepción Externa General'
-            }
-        },
-        plotOptions: {
-            line: {
-                dataLabels: {
-                    enabled: true
-                },
-                enableMouseTracking: false
-            }
-        },
-        series: <?php echo $persmgeneralhistorica;?>
-    });
-    $('#Percepcion-General-Interna-Historico-Usuario').highcharts({
-        chart: {
-            type: 'line'
-        },
-        title: {
-            text: 'Satisfacción General Interna Histórica'
-        },
-        subtitle: {
-            text: ''
-        },
-        xAxis: {
-            categories: <?php echo json_encode($fechas);?>,
-            		 labels: {
-         	            step:1,
-         	        }
-        },
-        yAxis: {
-            title: {
-                text: 'Percepción Externa General'
-            }
-        },
-        plotOptions: {
-            line: {
-                dataLabels: {
-                    enabled: true
-                },
-                enableMouseTracking: false
-            }
-        },
-        series: <?php echo $pergeneralhistoricausuario;?>
-    });
-    
-    $('#Satisfaccion-SM').highcharts({
-        chart: {
-            type: 'bar'
-        },
-        title: {
-            text: 'Percepcion General Interna por Cliente '
-        },
-        subtitle: {
-            text: 'fecha : <?php echo end($fechas);?> '
-        },
-        xAxis: {
-            categories: <?php echo json_encode(array_keys($satisfaccionsm));?>,
-            		 labels: {
-         	            step:1,
-         	        },
-            title: {
-                text: null
-            }
-        },
-        yAxis: {
-        	allowDecimals: false,
-            min: 0,
-            max: 5,
-            title: {
-                text: 'Percepción Interna',
-                align: 'high'
-            },
-            labels: {
-                overflow: 'justify'
-            }
-        },
-        tooltip: {
-            valueSuffix: ''
-        },
-        plotOptions: {
-            bar: {
-                dataLabels: {
-                    enabled: true
-                }
-            }
-        },
-        legend: {
-            layout: 'vertical',
-            align: 'right',
-            verticalAlign: 'top',
-            x: -40,
-            y: 100,
-            floating: true,
-            borderWidth: 1,
-            backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
-            shadow: true
-        },
-        credits: {
-            enabled: false
-        },
-        series: [{
-            name: 'Percepción Interna: ',
-            data: <?php echo json_encode(array_values($satisfaccionsm));?>
-        }]
-    });
+    function percepcionGeneralInternaHistorico(){
+	    $('#Percepcion-General-Interna-Historico').highcharts({
+	        chart: {
+	            type: 'line'
+	        },
+	        title: {
+	            text: 'Percepcion General Interna Histórica por Cliente'
+	        },
+	        subtitle: {
+	            text: ''
+	        },
+	        xAxis: {
+	            categories: <?php echo json_encode($fechas);?>,
+	           	labels: {
+	         		step:1,
+	            }
+	        },
+	        yAxis: {
+	            title: {
+	                text: 'Percepción Externa General'
+	            }
+	        },
+	        plotOptions: {
+	            line: {
+	                dataLabels: {
+	                    enabled: true
+	                },
+	                enableMouseTracking: false
+	            }
+	        },
+	        series: <?php echo $persmgeneralhistorica;?>
+	    });
+    }
+    function percepcionGeneralInternaHistoricoUsuario(){
+	    $('#Percepcion-General-Interna-Historico-Usuario').highcharts({
+	        chart: {
+	            type: 'line'
+	        },
+	        title: {
+	            text: 'Satisfacción General Interna Histórica'
+	        },
+	        subtitle: {
+	            text: ''
+	        },
+	        xAxis: {
+	            categories: <?php echo json_encode($fechas);?>,
+	            		 labels: {
+	         	            step:1,
+	         	        }
+	        },
+	        yAxis: {
+	            title: {
+	                text: 'Percepción Externa General'
+	            }
+	        },
+	        plotOptions: {
+	            line: {
+	                dataLabels: {
+	                    enabled: true
+	                },
+	                enableMouseTracking: false
+	            }
+	        },
+	        series: <?php echo $pergeneralhistoricausuario;?>
+	    });
+    }
 
+    function satisfaccionSm(){
     
-    $('#Percepcion-Servicio').highcharts({
-        chart: {
-            type: 'column'
-        },
-        title: {
-            text: 'Percepción Interna por líneas de Servicio'
-        },
-        subtitle: {
-        	text: 'fecha : <?php echo end($fechas);?> '
-        },
-        xAxis: {
-            categories: <?php echo json_encode(array_keys($percepcionsmservicio));?>,
-            		 labels: {
-         	            step:1,
-         	        }
-        },
-        yAxis: {
-        	allowDecimals: false,
-            min: 0,
-            max: 5,
-            title: {
-                text: 'Percepción Interna'
-            }
-        },
-        tooltip: {
-            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
-            pointFormat: '<tr><td style="color:{series.color};padding:0">{point.key}: </td>' +
-                '<td style="padding:0"><b>{point.y:.0f}</b></td></tr>',
-            footerFormat: '</table>',
-            shared: true,
-            useHTML: true
-        },
-        plotOptions: {
-            column: {
-                pointPadding: 0.2,
-                borderWidth: 0
-            }
-        },
-        series: [{
-            name: 'líneas de servicio ',
-            data: <?php echo json_encode(array_values($percepcionsmservicio));?>
-        }]
-    });
+	    $('#Satisfaccion-SM').highcharts({
+	        chart: {
+	            type: 'bar'
+	        },
+	        title: {
+	            text: 'Percepcion General Interna por Cliente '
+	        },
+	        subtitle: {
+	            text: 'fecha : <?php echo end($fechas);?> '
+	        },
+	        xAxis: {
+	            categories: <?php echo json_encode(array_keys($satisfaccionsm));?>,
+	            		 labels: {
+	         	            step:1,
+	         	        },
+	            title: {
+	                text: null
+	            }
+	        },
+	        yAxis: {
+	        	allowDecimals: false,
+	            min: 0,
+	            max: 5,
+	            title: {
+	                text: 'Percepción Interna',
+	                align: 'high'
+	            },
+	            labels: {
+	                overflow: 'justify'
+	            }
+	        },
+	        tooltip: {
+	            valueSuffix: ''
+	        },
+	        plotOptions: {
+	            bar: {
+	                dataLabels: {
+	                    enabled: true
+	                }
+	            }
+	        },
+	        legend: {
+	            layout: 'vertical',
+	            align: 'right',
+	            verticalAlign: 'top',
+	            x: -40,
+	            y: 100,
+	            floating: true,
+	            borderWidth: 1,
+	            backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
+	            shadow: true
+	        },
+	        credits: {
+	            enabled: false
+	        },
+	        series: [{
+	            name: 'Percepción Interna: ',
+	            data: <?php echo json_encode(array_values($satisfaccionsm));?>
+	        }]
+	    });
+    }
 
+    function percepcionServicio(){
     
-});
-
+	    $('#Percepcion-Servicio').highcharts({
+	        chart: {
+	            type: 'column'
+	        },
+	        title: {
+	            text: 'Percepción Interna por líneas de Servicio'
+	        },
+	        subtitle: {
+	        	text: 'fecha : <?php echo end($fechas);?> '
+	        },
+	        xAxis: {
+	            categories: <?php echo json_encode(array_keys($percepcionsmservicio));?>,
+	            		 labels: {
+	         	            step:1,
+	         	        }
+	        },
+	        yAxis: {
+	        	allowDecimals: false,
+	            min: 0,
+	            max: 5,
+	            title: {
+	                text: 'Percepción Interna'
+	            }
+	        },
+	        tooltip: {
+	            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+	            pointFormat: '<tr><td style="color:{series.color};padding:0">{point.key}: </td>' +
+	                '<td style="padding:0"><b>{point.y:.0f}</b></td></tr>',
+	            footerFormat: '</table>',
+	            shared: true,
+	            useHTML: true
+	        },
+	        plotOptions: {
+	            column: {
+	                pointPadding: 0.2,
+	                borderWidth: 0
+	            }
+	        },
+	        series: [{
+	            name: 'líneas de servicio ',
+	            data: <?php echo json_encode(array_values($percepcionsmservicio));?>
+	        }]
+	    });
+ }
 </script>

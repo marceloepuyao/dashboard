@@ -87,7 +87,7 @@ $(function () {
             min: 0,
             max: 100,
             title: {
-                text: 'Cumpliento SLA'
+                text: 'Cumplimiento SLA'
             }
         },
 

@@ -17,6 +17,8 @@ $this->breadcrumbs=array(
 <?php echo CHtml::label("Selecciona Cliente", "clientes");?>
 <?php echo CHtml::dropDownList("clientes", "", $clientes);?>
 <div id="Cumplimiento-Detalle-Cliente" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<div id="Cumplimiento-SLA-Detalle-Historico" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+
 
 
 <script type="text/javascript">
@@ -25,12 +27,16 @@ $(function () {
 	cumplimientoSlaHistorico(<?php echo json_encode($fechas);?> , <?php echo $cumplimientoSlaHistoricoPorCliente;?> );
     cumplimientoSlaCliente(<?php echo json_encode(array_keys($cumplimientoSlaPorCliente));?> ,  <?php echo json_encode(array_values($cumplimientoSlaPorCliente));?>);
     cumplimientoDetalleCliente(<?php echo json_encode(array_keys($cumplimientoDetallePorCliente));?> ,  <?php echo json_encode(array_values($cumplimientoDetalleObjetivo));?>,  <?php echo json_encode(array_values($cumplimientoDetalleValor));?>);
-    cumplimientoHistoricoSimple(<?php echo json_encode($fechas);?> , <?php echo $cumplimientoSlaHistorico;?>);
+    cumplimientoHistoricoSimple(<?php echo json_encode($fechas);?> , <?php echo json_encode(array_values($cumplimientoSlaHistorico));?>);
+    cumplimientoSlaDetalleHistorico(<?php echo json_encode($fechas);?> , <?php echo $cumplimientoSlaDetalleHistorico;?> );
+
+	<?php //$cumplimientoSlaDetalleHistorico ?>
 });
 
 $("#clientes").on("change",function(){
 	var cliente = $("#clientes option:selected").val();	
 	getData(cliente);
+	getData2(cliente);
 });
 
 function getData(cliente){
@@ -42,6 +48,19 @@ function getData(cliente){
             if(data){
                 data = JSON.parse(data);
                 cumplimientoDetalleCliente(data.categories, data.objetivo, data.valor);
+            }
+        },
+    });
+}
+function getData2(cliente){
+	$.ajax({
+        url: 'cumplimientoDetalleHistoricoClienteAjax',
+		data: {'clienteid':cliente},
+        async: false,
+        success: function(data){
+            if(data){
+                data = JSON.parse(data);
+                cumplimientoSlaDetalleHistorico(<?php echo json_encode($fechas);?>, data);
             }
         },
     });
@@ -76,7 +95,10 @@ function cumplimientoHistoricoSimple(categories, data){
                 enableMouseTracking: false
             }
         },
-        series: data  
+        series: [{
+            name: '% SLA cumplidos: ',
+            data: data 
+        }] 
     });
 
 	
@@ -227,6 +249,42 @@ function cumplimientoDetalleCliente(categories, dataobjetivo, datavalor){
 	    });
 
 	
+}
+
+function cumplimientoSlaDetalleHistorico(categories, data){
+	 $('#Cumplimiento-SLA-Detalle-Historico').highcharts({
+	        chart: {
+	            type: 'line'
+	        },
+	        title: {
+	            text: 'Valor seguimiento '
+	        },
+	        subtitle: {
+	            text: ''
+	        },
+	        xAxis: {
+	            categories: categories,
+	            labels: {
+		            step:1,
+		        }
+	        },
+	        yAxis: {
+		        min:0,
+		        max:100,
+	            title: {
+	                text: 'Cumplimiento SLA (%)'
+	            }
+	        },
+	        plotOptions: {
+	            line: {
+	                dataLabels: {
+	                    enabled: true
+	                },
+	                enableMouseTracking: false
+	            }
+	        },
+	        series: data 
+	    });
 }
 
 </script>

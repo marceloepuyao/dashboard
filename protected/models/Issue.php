@@ -39,7 +39,7 @@ class Issue extends CActiveRecord
 			array('descripcion, fecha', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, cliente_id, lineaservicios, descripcion, fecha, solucionado, criticidad', 'safe', 'on'=>'search'),
+			array('id, cliente_id, lineaservicios, descripcion, fecha, solucionado, criticidad, fecha_solucionado', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -75,6 +75,7 @@ class Issue extends CActiveRecord
 			'solucionado' => 'Solucionado',
 			'criticidad' => 'Criticidad',
 			'lineaservicios'=> 'Líneas de Servicio',
+			'fecha_solucionado'=> 'Fecha Solucionado',
 		);
 	}
 

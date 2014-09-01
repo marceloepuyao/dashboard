@@ -9,10 +9,12 @@ $this->breadcrumbs=array(
 <script src="<?php echo Yii::app()->baseUrl;?>/js/highcharts/highcharts-more.js"></script>
 <script src="<?php echo Yii::app()->baseUrl;?>/js/highcharts/modules/solid-gauge.src.js"></script>
 
-
+<div id="Clientes-Sin-Issues-Historico" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 <div id="Issues-Cliente-Detalle" style="width: 700px; height: 500px; margin:0 auto 0 auto;"></div>
 <div id="Issues-Servicio-Detalle" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 <div id="Issues-Totales-Servicio" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+
+
 
 
 <script type="text/javascript">
@@ -58,7 +60,14 @@ $('#Issues-Cliente-Detalle').highcharts({
             }
         },
         series: {
-            stacking: 'normal'
+        	cursor: 'pointer',
+            point: {
+                events: {
+                    click: function () {
+                        alert('Category: ' + this.category + ', value: ' + this.y);
+                    }
+                }
+            }
         }
     },
     legend: {
@@ -166,6 +175,43 @@ $('#Issues-Totales-Servicio').highcharts({
 
     }]
 });
+ $('#Clientes-Sin-Issues-Historico').highcharts({
+        chart: {
+            type: 'line'
+        },
+        title: {
+            text: 'Clientes sin Issues Histórico'
+        },
+        subtitle: {
+            text: ''
+        },
+        xAxis: {
+            categories: <?php echo json_encode(array_keys($clientesSinIssuesHistorico));?> ,
+            labels: {
+	            step:1,
+	        }
+        },
+        yAxis: {
+	        min:0,
+	        max:100,
+            title: {
+                text: 'Cumplimiento SLA (%)'
+            }
+        },
+        plotOptions: {
+            line: {
+                dataLabels: {
+                    enabled: true
+                },
+                enableMouseTracking: false
+            }
+        },
+        series: [{
+            name: '% SLA cumplidos: ',
+            data: <?php echo json_encode(array_values($clientesSinIssuesHistorico));?> 
+        }]	
+    });
+
 });
 
   </script>

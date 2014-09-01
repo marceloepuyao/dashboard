@@ -36,6 +36,10 @@ $this->menu=array(
 			'value'=>'$data->solucionado==1?"Pendiente":"Terminado" ',
 		),
 		array(
+			'name'=>'fecha_solucionado',
+			'value'=>'$data->fecha_solucionado!=NULL?$data->fecha_solucionado:"-" ',
+		),
+		array(
 			'class'=>'CButtonColumn',
 		),
 	),

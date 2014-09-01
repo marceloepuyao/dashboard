@@ -13,9 +13,7 @@ class Dashboard {
 				ss.fecha = $fecha
 				GROUP BY s.id
 				")->queryAll();
-		
-		
-					
+			
 		$valor = array();
 		foreach ($cumplimientocliente as $c_cliente){
 			$valor[] = (int)$c_cliente['cumplido'];
@@ -32,21 +30,20 @@ class Dashboard {
 	 */
 	public static function getCumplimientoSla($userid, $fecha = null){
 		
-		if(!$fecha)$fecha=Dashboard::getFechaUltimaMensual($userid);
+		if(!$fecha)
+			$fecha=Dashboard::getFechaUltimaMensual($userid);
 		
 		$usuario = Usuario::model()->findByPk($userid);
 		
 		$clientes = $usuario->getClientes();
 		$cumplimientoSla = array();
 		foreach ($clientes as $cliente){
-			
 			$tasacumplimientocliente = Dashboard::getCumplimientoSlaClienteID($cliente->id, $fecha);
 			if($tasacumplimientocliente >= 75){
 				$cumplimientoSla[] = 1;
 			}else{
 				$cumplimientoSla[] = 0;
 			}
-			
 		}
 		return count($cumplimientoSla)!=0?(100*array_sum($cumplimientoSla)/count($cumplimientoSla)):0;
 		
@@ -54,40 +51,10 @@ class Dashboard {
 	
 	public static function getCumplimientoSlaHistorico($userid){
 		$fechas = Dashboard::getFechasMensual($userid);
-
-		$usuario = Usuario::model()->findByPk($userid);
-
-		$clientes = $usuario->getClientes();
 		$cumplimientoSla = array();
-		$historico;
 		foreach ($fechas as $fecha){
-			$cumplimientoPorFecha = array();
-			foreach ($clientes as $cliente){
-				$tasacumplimientocliente = Dashboard::getCumplimientoSlaClienteID($cliente->id, $fecha["fecha"]);
-				$clienteid = $cliente->id;
-				$fechaActual = $fecha["fecha"];
-				$cumplimientocliente = Yii::app()->db->createCommand("
-				SELECT ss.id, ss.valor, s.objetivo, IF(ss.valor >= s.objetivo, 1, 0) as cumplido
-				FROM seguimiento_sla ss, sla s, contrato c
-				WHERE s.contrato_id = c.id AND
-				c.cliente_id = $clienteid AND
-				ss.sla_id = s.id AND
-				ss.fecha = $fechaActual
-				GROUP BY s.id
-				")->queryAll();
-				$empty = array();
-				if ($cumplimientocliente != $empty){ 
-				//si el Sla no tiene seguimiento en la fecha señalada por no existir antes, entonces no afecta al cumplimiento histórico
-					if($tasacumplimientocliente >= 70){
-						$cumplimientoPorFecha[] = 1;
-					}else{
-						$cumplimientoPorFecha[] = 0;
-					}
-				}
-			}
-			$historico[] = count($cumplimientoPorFecha)!=0?(100*(array_sum($cumplimientoPorFecha)/(count($cumplimientoPorFecha)))):0;
+			$cumplimientoSla[$fecha["fecha"]] = Dashboard::getCumplimientoSla($userid, $fecha["fecha"]);
 		}
-		$cumplimientoSla['historico'] = $historico;
 		return $cumplimientoSla;
 	}
 
@@ -112,6 +79,7 @@ class Dashboard {
 		}
 		return $cumplimientoSla;
 	}
+	
 	public static function getCumplimientoDetallePorCliente($clienteid, $fecha = null){
 		
 		$cliente = Cliente::model()->findByPk($clienteid);
@@ -127,7 +95,6 @@ class Dashboard {
 					ss.fecha = $fecha
 					GROUP BY s.id
 					")->queryAll();
-			$valor = array();
 			foreach ($cumplimientoContrato as $c_contrato){
 				$cumplimientoSla[$c_contrato['nombre']] = array("objetivo"=>(int)$c_contrato['objetivo'], "valor"=>(int)$c_contrato['valor']);
 			}
@@ -135,6 +102,46 @@ class Dashboard {
 		return $cumplimientoSla;
 				
 	}
+	public static function getCumplimientoHistoricoDetallePorCliente($clienteid){
+		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
+		$cliente = Cliente::model()->findByPk($clienteid);
+		$fechas = Dashboard::getFechasMensual($usuario->id);
+		$slas = Dashboard::getSlaPorCliente($cliente->id);
+		//die(var_dump($slas));
+		$cumplimientoSla = array();
+		foreach($slas as $sla){
+			
+			$value = array();
+			foreach ($fechas as $fecha){
+				$cumplimientoContrato= Yii::app()->db->createCommand("
+						SELECT s.id, s.nombre, s.objetivo, ss.valor, IF(ss.valor >= s.objetivo, 1, 0) as cumplido
+						FROM seguimiento_sla ss, sla s
+						WHERE s.id = ".$sla['id']." AND
+						ss.sla_id = s.id AND
+						ss.fecha = ".$fecha['fecha']."
+						GROUP BY s.id
+						")->queryRow();
+				$value[] = isset($cumplimientoContrato["valor"])?(int)$cumplimientoContrato["valor"]:0;
+			}
+			$cumplimientoSla[$sla["nombre"]] = $value;
+		}
+		
+		return $cumplimientoSla;
+	}
+	
+	protected static function getSlaPorCliente($clienteid){
+		$cliente = Cliente::model()->findByPk($clienteid);
+		$slas = Yii::app()->db->createCommand("
+					SELECT s.*
+					FROM  sla s, contrato c
+					WHERE 	s.contrato_id = c.id AND
+							$clienteid =  c.cliente_id
+							GROUP BY s.id
+					")->queryAll();
+		
+		return $slas;
+	}
+	
 	/*
 	public static function getCumplimientoSlaPorServicio($clienteid){
 		
@@ -247,7 +254,7 @@ class Dashboard {
 		}
 		return $issuesTotales;
 	}
-
+/*
 	public static function getIssuesHistoricosPorClienteSegunServicio($userid, $servicio){
 		
 		$usuario = Usuario::model()->findByPk($userid);
@@ -265,24 +272,44 @@ class Dashboard {
 				//la idea es que se realice un foreach con los nombres de cada servicio y se realice esta query para cada uno
 				$issuesHistoricos = array();
 				$clientes = array();
-		$issues = array();
-		//die(print_r($issuesHistoricosServicios));
-	
-		foreach ($issuesHistoricosServicios as $ihs){
-		if (!in_array($ihs['nombre'], $clientes)) $clientes[] = $ihs['nombre'];
-		}
-		//die(print_r($issuesHistoricosServicios));
-		//se obtienen todos los clientes que irán al gráfico de cada servicio
-	
-		$issuesHistoricos[0] = array('Issue');
-		foreach ($clientes as $c=>$v){
-		array_push($issuesHistoricos[0], $v);
-		}
-		//die(print_r($issuesHistoricos[0]));
-		foreach($issuesHistoricosServicios as $ihs){
-	
-		}
-		//die(print_r($issuesHistoricosServicios));
+			$issues = array();
+		
+			foreach ($issuesHistoricosServicios as $ihs){
+			if (!in_array($ihs['nombre'], $clientes)) $clientes[] = $ihs['nombre'];
+			}
+			//se obtienen todos los clientes que irán al gráfico de cada servicio
+		
+			$issuesHistoricos[0] = array('Issue');
+			foreach ($clientes as $c=>$v){
+				array_push($issuesHistoricos[0], $v);
+			}
+		}*/
+		
+		public static function	getClientesSinIssuesHistorico($userid){
+			
+			$usuario =Usuario::model()->findByPk($userid);
+			$clientes = $usuario->getClientes();
+			$fechas = Dashboard::getFechas($userid);
+			$historico = array();
+			foreach ($fechas as $fecha){
+				$year = substr($fecha["fecha"], 0, 4);
+				$week = substr($fecha["fecha"], 4) ;
+				$date = Dashboard::getStartAndEndDate($week, $year);
+				
+				
+				$clientesConIssues = 0;
+				foreach ($clientes as $cliente){
+					$issuesActivos = Issue::model()->count("cliente_id = $cliente->id AND  solucionado = 1 AND fecha < '$date[0]' ");
+					$issuesSolucionados = Issue::model()->count("cliente_id = $cliente->id AND solucionado = 2 AND  fecha_solucionado > '$date[1]'" );
+					//die(var_dump($issuesActivos));
+					if($issuesActivos - $issuesSolucionados >0)
+						$clientesConIssues++;
+				}
+				
+				$historico[$fecha["fecha"]] = count($clientes)?(100*(count($clientes) - $clientesConIssues)/count($clientes)):0;
+			}
+			return $historico;
+			
 		}
 	
 	///////////////////////////////PERCEPCIÓN SM//////////////////////////////////////////////////////////////////////////////////
@@ -434,32 +461,43 @@ class Dashboard {
 		}
 		return $lineaservicios;
 		
-		
-		/*
-	
-		$seguimientoPercepcionesCliente = Yii::app()->db->createCommand("SELECT sp.per_sm, sp.fecha, cl.nombre, sp.id
-				FROM cliente cl, contrato c, linea_servicio_contrato lsc, seguimiento_percepcion sp
-				WHERE cl.id IN $clientessql
-				AND cl.id = c.cliente_id
-				AND c.id = lsc.contrato_id
-				AND lsc.id = sp.linea_servicio_contrato_id
-				AND $fecha = sp.fecha
-				GROUP BY sp.id;")->queryAll();
-		$percepcionesSM = array();
-		foreach ($seguimientoPercepcionesCliente as $percepciones){
-		if (!isset($percepcionesSM[$percepciones['nombre']]['total'])) $percepcionesSM[$percepciones['nombre']]['total'] = 0;
-		f (!isset($percepcionesSM[$percepciones['nombre']]['per_sm'])) $percepcionesSM[$percepciones['nombre']]['per_sm'] = 0;
-			$percepcionesSM[$percepciones['nombre']]['total']++;
-				if ($percepciones['per_sm'] >= 4) $percepcionesSM[$percepciones['nombre']]['per_sm']++;
-		}
-						$percepcionesSMClientesPorcentaje = array();
-						foreach ($percepcionesSM as $k=>$psm){
-						$valor = round(100*$psm['per_sm']/($psm['total']));
-						$percepcionesSMClientesPorcentaje[] = array($k, $valor);
-						}
-						return $percepcionesSMClientesPorcentaje;
-						*/
 	}
+	
+	public static function getPercepcionSmHistoricaPorServicio($clienteid, $type){
+
+		$cliente = Cliente::model()->findByPk($clienteid);
+		$fechas = Dashboard::getFechas(Yii::app()->user->id);
+		$lineasServicioContrato = LineaServicioContrato::model()->findAllBySql("
+				SELECT lsc.*
+				FROM linea_servicio_contrato lsc, contrato c
+				WHERE 
+					lsc.contrato_id = c.id AND
+				  	c.cliente_id = $cliente->id
+					
+					");
+		
+		
+		$percepcionHistorica = array();
+		foreach ($lineasServicioContrato as $lsc){
+			$value = array();
+			foreach ($fechas as $fecha){
+				$seguimiento = SeguimientoPercepcion::model()->find("linea_servicio_contrato_id = $lsc->id AND fecha = $fecha[fecha] ");
+				if($type == "sm")
+					$value[] = isset($seguimiento->per_sm)?(int)$seguimiento->per_sm:0;
+				elseif($type=="cl")
+					$value[] = isset($seguimiento->per_cliente)?(int)$seguimiento->per_cliente:0;
+			}
+			$lineaservicio = LineaServicio::model()->findByPk($lsc->linea_servicio_id);
+			
+			if(!isset($percepcionHistorica[$lineaservicio->nombre])){
+				$percepcionHistorica[$lineaservicio->nombre] = $value;
+			}
+		}
+		return $percepcionHistorica;
+		
+	}
+	
+	/*
 	public static function getPercepcionSMporClienteParaServicios($clienteid){
 		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
 
@@ -468,7 +506,6 @@ class Dashboard {
 		$percepcionFecha = array();
 		foreach ($fechas as $fecha){
 			$f = $fecha['fecha'];
-			$empty = array();
 			$percepcion= Yii::app()->db->createCommand("
 				SELECT ls.nombre, sp.per_sm
 				FROM seguimiento_percepcion sp, linea_servicio_contrato lsc, contrato c, linea_servicio ls, cliente cl
@@ -479,17 +516,14 @@ class Dashboard {
 					lsc.id = sp.linea_servicio_contrato_id AND
 					sp.fecha = $f
 				GROUP BY sp.id")->queryAll();
-			if ($percepcion != $empty){
-				$percepcionFecha['fechas'][] = $f;
-			}
 			foreach($percepcion as $p){
-				$percepcionFecha[$p['nombre']][] = (int)$p['per_sm']; 
+				$percepcionFecha[$f][$p['nombre']] = (int)$p['per_sm']; 
+
 			}
-			//die(print_r($percepcion));
 		}
-		//die(print_r($percepcionFecha['fechas']));
+
 		return $percepcionFecha;
-	}
+	}*/
 
 	
 	///////////////////////////////PERCEPCION CLIENTE//////////////////////////////////////////////////////////////////////////////////
@@ -739,5 +773,19 @@ class Dashboard {
 			return 0;
 		}
 	}
+	public static function getStartAndEndDate($week, $year)
+	{
+	
+	    $time = strtotime("1 January $year", time());
+	    $day = date('w', $time);
+	    $time += ((7*$week)+1-$day)*24*3600;
+	    $return[0] = date('Y-n-j', $time);
+	    $time += 6*24*3600;
+	    $return[1] = date('Y-n-j', $time);
+	    return $return;
+	}
+
+	 
+	
 	
 }

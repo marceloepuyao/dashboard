@@ -41,7 +41,7 @@ $('.search-form form').submit(function(){
 		'nombre',
 		array(
 			'name'=>'usuario_id',
-			'value'=>'Usuario::model()->findByPk($data->usuario_id)["nombre"]." ".Usuario::model()->findByPk($data->usuario_id)["apellido"] ',
+			'value'=>'Usuario::model()->findByPk($data->usuario_id)->nombre." ".Usuario::model()->findByPk($data->usuario_id)->apellido ',
 		),
 		'industria',
 		'kam',

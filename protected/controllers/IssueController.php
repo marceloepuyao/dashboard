@@ -115,6 +115,8 @@ class IssueController extends Controller
 			$model->attributes=$_POST['Issue'];
 			$model->cliente_id = $cliente->id;
 			$model->lineaservicios = isset($_POST['lineaservicios'])?$_POST['lineaservicios']:NULL;
+			if($model->solucionado)
+				$model->fecha_solucionado = date(DATE_ISO8601);
 			if($model->save()){
 				IssueLineaServicio::model()->deleteAll("issue_id = $model->id");
 				foreach ($model->lineaservicios as $servicio){
