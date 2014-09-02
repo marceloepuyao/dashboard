@@ -339,8 +339,9 @@ class Dashboard {
 						$clientesConIssues++;
 				}
 				
-				$historico[$fecha["fecha"]] = count($clientes)?(100*(count($clientes) - $clientesConIssues)/count($clientes)):0;
+				$historico[$fecha["fecha"]] = count($clientes)?round((100*(count($clientes) - $clientesConIssues))/count($clientes), 2):0;
 			}
+			
 			return $historico;
 			
 		}
@@ -529,34 +530,6 @@ class Dashboard {
 		return $percepcionHistorica;
 		
 	}
-	
-	/*
-	public static function getPercepcionSMporClienteParaServicios($clienteid){
-		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
-
-		$fechas = Dashboard::getFechas($usuario->id);
-
-		$percepcionFecha = array();
-		foreach ($fechas as $fecha){
-			$f = $fecha['fecha'];
-			$percepcion= Yii::app()->db->createCommand("
-				SELECT ls.nombre, sp.per_sm
-				FROM seguimiento_percepcion sp, linea_servicio_contrato lsc, contrato c, linea_servicio ls, cliente cl
-				WHERE cl.id = $clienteid AND
-					c.cliente_id = cl.id AND
-					c.id = lsc.contrato_id AND
-					ls.id = lsc.linea_servicio_id AND
-					lsc.id = sp.linea_servicio_contrato_id AND
-					sp.fecha = $f
-				GROUP BY sp.id")->queryAll();
-			foreach($percepcion as $p){
-				$percepcionFecha[$f][$p['nombre']] = (int)$p['per_sm']; 
-
-			}
-		}
-
-		return $percepcionFecha;
-	}*/
 
 	public static function getPercepcionHistoricoServiciosTotalClientes($userid){
 		$fechas = Dashboard::getFechas($userid);
@@ -577,8 +550,6 @@ class Dashboard {
 			$percepcionFecha = array();
 			$numeroFallos = 0;
 			foreach ($fechas as $fecha){
-
-				$f = $fecha['fecha'];
 				$percepcionFechaServicio = 0;
 
 				$percepcion = Yii::app()->db->createCommand("
@@ -590,16 +561,17 @@ class Dashboard {
 					ls.id = lsc.linea_servicio_id AND
 					lsc.id = sp.linea_servicio_contrato_id AND
 					ls.nombre = '$nombreServicio' AND
-					sp.fecha = $f
+					sp.fecha = '".$fecha['fecha']."'
+					GROUP BY lsc.linea_servicio_id, cl.id
 				")->queryAll();
 
 				if ($percepcion != $empty){
 					//die(print_r($percepcion));
 					$totalPercepcion = 0;
 					foreach ($percepcion as $p=>$v){
-						if ($v >= 4){
+						if ($v["per_sm"] >= 4){
 							$totalPercepcion++;
-						}elseif($v <= 2){
+						}elseif($v["per_sm"] <= 2){
 							$totalPercepcion--;
 						}
 					}
@@ -739,38 +711,6 @@ class Dashboard {
 	
 		return $per_general_cliente;
 	}
-/*
-	public static function getPercepcionCliente($userid, $fecha = null){
-
-		if(!$fecha)$fecha=Dashboard::getFechaUltima($userid);
-		
-		$usuario = Usuario::model()->findByPk($userid);
-		$clientessql = $usuario->getClientesSql();
-
-		$seguimientoPercepciones = Yii::app()->db->createCommand("SELECT sp.id, sp.linea_servicio_contrato_id, sp.per_cliente, sp.per_sm, sp.fecha, sp.tipo_seguimiento
-																  FROM cliente cl, contrato c, linea_servicio_contrato lsc, seguimiento_percepcion sp
-																  WHERE cl.id IN $clientessql
-																  AND cl.id = c.cliente_id
-																  AND c.id = lsc.contrato_id
-																  AND lsc.id = sp.linea_servicio_contrato_id
-																  AND sp.fecha = $fecha
-																  GROUP BY lsc.id;")->queryAll();
-		$totalPercepciones = 0;
-		$percepcionCliente = 0;
-		foreach($seguimientoPercepciones as $seguimientoPercepcion){
-			$totalPercepciones++;
-			if ($seguimientoPercepcion['per_cliente']>=4){
-				$percepcionCliente ++;
-			}
-		}
-		if ($totalPercepciones!=0){
-			$totalPerCliente = $percepcionCliente/$totalPercepciones*100;
-		}else{
-			return 0;
-		}
-		
-		return $totalPerCliente;
-	}*/
 	
 	public static function getPercepcionClienteporServicio($userid, $fecha = null){
 	
@@ -811,15 +751,11 @@ class Dashboard {
 		$percepcionHistoricaServicios = array();
 		$empty = array();
 		foreach ($servicios as $s){
-
-			$nombreServicio = $s['nombre'];
 			$percepcionFecha = array();
 			$numeroFallos = 0;
 			foreach ($fechas as $fecha){
 
-				$f = $fecha['fecha'];
-				$percepcionFechaServicio = 0;
-
+				$satisfaccionFechaServicio = 0;
 				$percepcion = Yii::app()->db->createCommand("
 				SELECT sp.per_cliente
 				FROM seguimiento_percepcion sp, linea_servicio_contrato lsc, contrato c, linea_servicio ls, cliente cl
@@ -828,65 +764,37 @@ class Dashboard {
 					c.id = lsc.contrato_id AND
 					ls.id = lsc.linea_servicio_id AND
 					lsc.id = sp.linea_servicio_contrato_id AND
-					ls.nombre = '$nombreServicio' AND
-					sp.fecha = $f
+					ls.id = ".$s['id']." AND
+					sp.fecha = '".$fecha['fecha']."'
+					GROUP BY lsc.linea_servicio_id, cl.id
 				")->queryAll();
-
-				if ($percepcion != $empty){
-					//die(print_r($percepcion));
+				if (count($percepcion)> 0){
 					$totalPercepcion = 0;
-					foreach ($percepcion as $p=>$v){
-						if ($v >= 4){
+					foreach ($percepcion as $v){
+						if ($v["per_cliente"] >= 4){
 							$totalPercepcion++;
-						}elseif($v <= 2){
+						}elseif($v["per_cliente"] <= 2){
 							$totalPercepcion--;
 						}
 					}
 					if ($totalPercepcion < 0) 
 						$totalPercepcion = 0;
-					$percepcionFechaServicio = $totalPercepcion/count($percepcion)*100; 
+					$satisfaccionFechaServicio = ($totalPercepcion/count($percepcion))*100; 
 				}else{
-					$percepcionFechaServicio = 0;
+					$satisfaccionFechaServicio = 0;
 					$numeroFallos++;
 				}
-				$percepcionFecha[] = $percepcionFechaServicio;
+				$percepcionFecha[] = $satisfaccionFechaServicio;
+				
 			}
 			if ($numeroFechas > $numeroFallos){
-				$percepcionHistoricaServicios[$nombreServicio] = $percepcionFecha;
+				$percepcionHistoricaServicios[$s["nombre"]] = $percepcionFecha;
 			}
+			
+			
 		}
 		//die(print_r($percepcionHistoricaServicios));
 		return $percepcionHistoricaServicios;
-	}
-
-	
-
-	public static function getPercepcionClientePorCliente($userid, $fecha = null){
-
-		/*
-		if(!$fecha)$fecha=date('YW');
-
-		$seguimientoPercepciones = Yii::app()->db->createCommand("SELECT sp.id, sp.per_cliente, sp.fecha, cl.nombre
-																  FROM cliente cl, contrato c, linea_servicio_contrato lsc, seguimiento_percepcion sp
-																  WHERE $userid = cl.usuario_id
-																  AND cl.id = c.cliente_id
-																  AND c.id = lsc.contrato_id
-																  AND lsc.id = sp.linea_servicio_contrato_id
-																  AND sp.fecha = $fecha
-																  GROUP BY sp.id;")->queryAll();
-		$percepcionesClientes = array();
-		foreach ($seguimientoPercepciones as $percepciones){
-			if (!isset($percepcionesClientes[$percepciones['nombre']]['total'])) $percepcionesClientes[$percepciones['nombre']]['total'] = 0;
-			if (!isset($percepcionesClientes[$percepciones['nombre']]['per_cliente'])) $percepcionesClientes[$percepciones['nombre']]['per_cliente'] = 0;
-			$percepcionesClientes[$percepciones['nombre']]['total']++;
-			if ($percepciones['per_cliente'] >= 4) $percepcionesClientes[$percepciones['nombre']]['per_cliente']++;
-		}
-		$percepcionesClientePorClientesPorcentaje = array();
-		foreach ($percepcionesClientes as $k=>$psm){
-			$valor = round(100*$psm['per_cliente']/($psm['total']));
-			$percepcionesClientePorClientesPorcentaje[] = array($k, $valor);
-		}
-		return $percepcionesClientePorClientesPorcentaje;*/
 	}
 	
 	////////////////////////////FECHAS /////////////////////////////////////////////////////////////////////////////
