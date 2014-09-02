@@ -135,6 +135,9 @@ class SiteController extends Controller
 		foreach ($percepcionHistoricoSerivciosTotalClientes as $k => $v){
 			array_push($data4, array("name"=> $k, "data"=>$v));
 		}
+		if(!$data4){
+			$data4 = array(array("name"=> "no data", "data"=> array(0)));
+		}
 		
 
 		$clientes = CHtml::listData($usuario->getClientes(), "id", "nombre");
@@ -191,21 +194,33 @@ class SiteController extends Controller
 		foreach ($percepcionHistoricoSerivciosTotalClientesExterna as $k => $v){
 			array_push($data4, array("name"=> $k, "data"=>$v));
 		}
+		if(!$data4){
+			$data4 = array(array("name"=> "no data", "data"=> array(0)));
+		}
 
 		$cumplimientoDetallePorCliente = Dashboard::getPercepcionSmHistoricaPorServicio($arrayKeys[0], "sm");
 		$data3 = array();
 		foreach ($cumplimientoDetallePorCliente as $k => $v){
 			array_push($data3, array("name"=> $k, "data"=>$v));
 		}
+		if(!$data3){
+			$data3 = array(array("name"=> "no data", "data"=> array(0)));
+		}
 		
 		$data = array();
 		foreach ($perclgeneralhistorica as $k => $v){
 			array_push($data, array("name"=> $k, "data"=>$v));
 		}
+		if(!$data){
+			$data = array(array("name"=> "no data", "data"=> array(0)));
+		}
 		//die(print_r($data));
 		$data2 = array();
 		foreach ($percepcionGeneralHistoricaUsuario as $k => $v){
 			array_push($data2, array("name"=> $k, "data"=>$v));
+		}
+		if(!$data2){
+			$data2 = array(array("name"=> "no data", "data"=> array(0)));
 		}
 
 		$fechas = Dashboard::getFechas($usuario->id);

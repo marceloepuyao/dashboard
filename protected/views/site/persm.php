@@ -12,7 +12,7 @@ $this->breadcrumbs=array(
 
 <div id="Percepcion-General-Interna-Historico-Usuario" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 <div id="Satisfaccion-SM" style="width: 700px; height: <?php echo 65 + count($satisfaccionsm)*30;?>px; margin:0 auto 0 auto;"></div>
-<div id="Percepcion-General-Interna-Historico" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<div id="Percepcion-General-Interna-Historico" style="min-width: 310px; height: 500px; margin: 0 auto"></div>
 <div id="Percepcion-Servicio" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 <div id="Percepcion-Historico-Servicio-Total" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 

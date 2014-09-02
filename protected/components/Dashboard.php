@@ -596,9 +596,7 @@ class Dashboard {
 				if ($percepcion != $empty){
 					//die(print_r($percepcion));
 					$totalPercepcion = 0;
-					$i = 0;
 					foreach ($percepcion as $p=>$v){
-						$i++;
 						if ($v >= 4){
 							$totalPercepcion++;
 						}elseif($v <= 2){
@@ -606,7 +604,7 @@ class Dashboard {
 						}
 					}
 					if ($totalPercepcion < 0) $totalPercepcion = 0;
-					$percepcionFechaServicio = $totalPercepcion/$i*100; 
+					$percepcionFechaServicio = $totalPercepcion/count($percepcion)*100; 
 				}else{
 					$percepcionFechaServicio = 0;
 					$numeroFallos++;
@@ -837,17 +835,16 @@ class Dashboard {
 				if ($percepcion != $empty){
 					//die(print_r($percepcion));
 					$totalPercepcion = 0;
-					$i = 0;
 					foreach ($percepcion as $p=>$v){
-						$i++;
 						if ($v >= 4){
 							$totalPercepcion++;
 						}elseif($v <= 2){
 							$totalPercepcion--;
 						}
 					}
-					if ($totalPercepcion < 0) $totalPercepcion = 0;
-					$percepcionFechaServicio = $totalPercepcion/$i*100; 
+					if ($totalPercepcion < 0) 
+						$totalPercepcion = 0;
+					$percepcionFechaServicio = $totalPercepcion/count($percepcion)*100; 
 				}else{
 					$percepcionFechaServicio = 0;
 					$numeroFallos++;
