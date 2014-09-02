@@ -29,7 +29,7 @@ class SiteController extends Controller
 						'users'=>array('*'),
 				),
 				array('allow', // allow authenticated user to perform 'create' and 'update' actions
-						'actions'=>array('Index','sla','percepcionHistoricoClienteServiciosAjax', 'cumplimientoslaajax','cumplimientoDetalleClienteAjax', 'persm', 'PercepcionSMAjax','PercepcionSMporClienteAjax' ,'percl', 'PercepcionClienteAjax','PercepcionClientePorClienteAjax','issuesCliente', 'issuesactivosporcliente', 'IssuesActivosPorServicio'),
+						'actions'=>array('Index','sla','issues','percepcionHistoricoClienteServiciosAjax', 'cumplimientoslaajax','cumplimientoDetalleClienteAjax', 'persm', 'PercepcionSMAjax','PercepcionSMporClienteAjax' ,'percl', 'PercepcionClienteAjax','PercepcionClientePorClienteAjax','issuesCliente', 'issuesactivosporcliente', 'IssuesActivosPorServicio'),
 						'users'=>array('@'),
 				),
 				array('deny',  // deny all users
@@ -215,23 +215,61 @@ class SiteController extends Controller
 		}
 		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
 		
+		$fechas = Dashboard::getFechas($usuario->id);
+		$fechasarray=array();
+		foreach ($fechas as $fecha){
+			array_push($fechasarray, $fecha["fecha"]);
+		}
+		
 		//$porcentajeClientesSinIssues = Dashboard::getClientesSinIssuesActivos($usuario->id);
 		$issuesClientesDetalle = Dashboard::getClientesConIssuesActivosPorCliente($usuario->id);
 		$issuesServiciosDetalle = Dashboard::getIssuesActivosPorServicio($usuario->id);
 		$issuesTotalesPorServicio = Dashboard::getIssuesTotalesPorServicio($usuario->id);
+		
+		$issuesHistoricosPorCliente = Dashboard::getIssuesActivosHistoricosPorCliente($usuario->id);
+		$data = array();
+		foreach ($issuesHistoricosPorCliente as $k => $v){
+			array_push($data, array("name"=> $k, "data"=>$v));
+		}
+		//die(var_dump(json_encode($fechasarray)));
 		
 		$clientesSinIssuesHistorico = Dashboard::getClientesSinIssuesHistorico($usuario->id);
 	
 		//$a = Dashboard::getIssuesHistoricosPorClienteSegunServicio($usuario->id, 'Preventa');
 		//no sé cómo iterar dentro del render, por lo que las queries por servicio se harán directamente en el php issuecliente.php
 		$this->render('issuescliente',array(
+				'fechas'=> $fechasarray,
 				//'porcentajeClientesSinIssues'=>$porcentajeClientesSinIssues,
 				'issuesClientesDetalle'=>$issuesClientesDetalle,
 				'issuesServiciosDetalle'=>$issuesServiciosDetalle,
 				'issuesTotalesPorServicio'=>$issuesTotalesPorServicio,
 				'clientesSinIssuesHistorico'=> $clientesSinIssuesHistorico,
+				'issuesHistoricosPorCliente'=> json_encode($data),
 		));
 	
+	}
+	public function actionIssues($cliente){
+		
+		$cliente = Cliente::model()->find("nombre = '$cliente'");
+		
+		//$issues = Issue::model()->findAll("cliente_id = $cliente->id AND solucionado = 1");
+		
+		//$query = count($issues)>0?"cliente_id IN (".implode(",",$issues).") AND solucionado = 1":"1 = 3 ";
+		$query = "cliente_id = $cliente->id AND solucionado = 1";
+		$issues=new CActiveDataProvider('Issue', array(
+				'criteria'=>array(
+						'condition'=>$query,
+				),
+				'pagination'=>array(
+						'pageSize'=>20,
+				),
+		));
+		
+		$this->render('issues',array(
+			"cliente"=> $cliente,
+			"issues" => $issues,
+		));
+		
 	}
 	
 	public function actionCumplimientoDetalleHistoricoClienteAjax($clienteid){

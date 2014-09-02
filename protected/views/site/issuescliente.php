@@ -14,7 +14,7 @@ $this->breadcrumbs=array(
 <div id="Issues-Servicio-Detalle" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 <div id="Issues-Totales-Servicio" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 
-
+<div id="Issues-Activos-Historicos-Cliente" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 
 
 <script type="text/javascript">
@@ -25,7 +25,7 @@ $('#Issues-Cliente-Detalle').highcharts({
         type: 'bar'
     },
     title: {
-        text: 'Issues Activos por Cliente'
+        text: 'Issues Activos por Cliente (click para ver detalle)'
     },
     subtitle: {
         text: 'a la fecha'
@@ -64,7 +64,7 @@ $('#Issues-Cliente-Detalle').highcharts({
             point: {
                 events: {
                     click: function () {
-                        alert('Category: ' + this.category + ', value: ' + this.y);
+                    	window.location.replace("<?php echo $this->createUrl("issues"); ?>?cliente=" + this.category);
                     }
                 }
             }
@@ -137,7 +137,7 @@ $('#Issues-Totales-Servicio').highcharts({
         type: 'column'
     },
     title: {
-        text: 'Issues Creados Histórico por Servicios'
+        text: 'Total Issues Creados por Servicios'
     },
     subtitle: {
         text: 'a la fecha'
@@ -211,6 +211,35 @@ $('#Issues-Totales-Servicio').highcharts({
             data: <?php echo json_encode(array_values($clientesSinIssuesHistorico));?> 
         }]	
     });
+ $('#Issues-Activos-Historicos-Cliente').highcharts({
+	    chart: {
+	        type: 'line'
+	    },
+	    title: {
+	        text: 'Issues Activos Historicos por Cliente'
+	    },
+	    subtitle: {
+	        text: ''
+	    },
+	    xAxis: {
+	    	categories: <?php echo json_encode($fechas);?> ,
+	    },
+	    yAxis: {
+	        title: {
+	            text: 'Issues Activos'
+	        },
+	        min: 0,
+	    },
+	    plotOptions: {
+	        line: {
+	            dataLabels: {
+	                enabled: true
+	            },
+	            enableMouseTracking: false
+	        }
+	    },
+	    series: <?php echo $issuesHistoricosPorCliente;?> , 
+	});
 
 });
 

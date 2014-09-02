@@ -193,18 +193,51 @@ class Dashboard {
 		return count($clientes)?(100*(count($clientes) - $clientesConIssues)/count($clientes)):0;
 
 	}
-	public static function getClientesConIssuesActivosPorCliente($userid){
+	public static function getClientesConIssuesActivosPorCliente($userid, $fecha = null){
+		
+		if($fecha==null){
+			$fecha = Dashboard::getStartAndEndDate(date('W'), date("Y"));
+		}else{
+			$fecha = Dashboard::getStartAndEndDate(substr($fecha["fecha"],4), substr($fecha["fecha"], 0, 4));
+		}
 		
 		$usuario =Usuario::model()->findByPk($userid);
 		$clientes = $usuario->getClientes();
 		
 		$issuesActivosPorCliente = array();
 		foreach ($clientes as $cliente){
-			$issuesactivos = Issue::model()->countByAttributes(array("cliente_id" => $cliente->id,"solucionado" => 1));
-			$issuesActivosPorCliente[$cliente->nombre] = (int)$issuesactivos;
+			$issuesactivos = Issue::model()->count("cliente_id = $cliente->id AND solucionado = 1 AND fecha < '$fecha[1]'");
+			$issuesactivosfecha = Issue::model()->count("cliente_id = $cliente->id AND solucionado = 2 AND fecha < '$fecha[1]' AND fecha_solucionado IS NOT NULL AND fecha_solucionado > '$fecha[1]'");
+			$issuesActivosPorCliente[$cliente->nombre] = (int)$issuesactivos + (int)$issuesactivosfecha;
 		}
+		
 		return $issuesActivosPorCliente;
 	}
+	
+	public static function getIssuesActivosHistoricosPorCliente($userid){
+		
+		$usuario = Usuario::model()->findByPk($userid);
+		$clientes = $usuario->getClientes();
+		$fechas = Dashboard::getFechas($userid);
+		//TODO: agregar la última 
+		$issuesHistoricos = array();
+		foreach($clientes as $cliente){
+			$value = array();
+			foreach ($fechas as $fecha){
+				//die(var_dump($fecha["fecha"]));
+				$fecha = Dashboard::getStartAndEndDate(substr($fecha["fecha"], 4), substr($fecha["fecha"], 0, 4));
+				$issuesactivos = Issue::model()->count("cliente_id = $cliente->id AND solucionado = 1 AND fecha < '$fecha[1]'");
+				$issuesactivosfecha = Issue::model()->count("cliente_id = $cliente->id AND solucionado = 2 AND fecha < '$fecha[1]' AND fecha_solucionado IS NOT NULL AND fecha_solucionado > '$fecha[1]'");
+				$value[] = (int)$issuesactivos + (int)$issuesactivosfecha;
+			}
+			
+			//die(var_dump(Dashboard::getStartAndEndDate(substr($fechas[4]["fecha"], 4), substr($fechas[4]["fecha"], 0, 4))));
+			$issuesHistoricos[$cliente->nombre] = $value;
+		}
+		return $issuesHistoricos;
+		
+	}
+	
 	public static function getIssuesActivosPorServicio($userid){
 	
 		$usuario = Usuario::model()->findByPk($userid);
@@ -299,10 +332,10 @@ class Dashboard {
 				
 				$clientesConIssues = 0;
 				foreach ($clientes as $cliente){
-					$issuesActivos = Issue::model()->count("cliente_id = $cliente->id AND  solucionado = 1 AND fecha < '$date[0]' ");
-					$issuesSolucionados = Issue::model()->count("cliente_id = $cliente->id AND solucionado = 2 AND  fecha_solucionado > '$date[1]'" );
+					$issuesActivos = Issue::model()->count("cliente_id = $cliente->id AND  solucionado = 1 AND fecha < '$date[1]' ");
+					$issuesActivosFecha = Issue::model()->count("cliente_id = $cliente->id AND solucionado = 2 AND  fecha < '$date[1]' AND fecha_solucionado > '$date[1]'" );
 					//die(var_dump($issuesActivos));
-					if($issuesActivos - $issuesSolucionados >0)
+					if($issuesActivos + $issuesActivosFecha >0)
 						$clientesConIssues++;
 				}
 				
@@ -779,9 +812,9 @@ class Dashboard {
 	    $time = strtotime("1 January $year", time());
 	    $day = date('w', $time);
 	    $time += ((7*$week)+1-$day)*24*3600;
-	    $return[0] = date('Y-n-j', $time);
+	    $return[0] = date('Y-m-d', $time);
 	    $time += 6*24*3600;
-	    $return[1] = date('Y-n-j', $time);
+	    $return[1] = date('Y-m-d', $time);
 	    return $return;
 	}
 
