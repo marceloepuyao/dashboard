@@ -124,8 +124,12 @@ class SiteController extends Controller
 		$percepcionGeneralHistoricaUsuario = Dashboard::getPercepcionGeneralHistoricaUsuarioSM($usuario->id);
 		$satisfaccionsm = Dashboard::getSatisfaccionGeneralSM($usuario->id);
 		$percepcionsmservicio = Dashboard::getPercepcionSMporServicio($usuario->id);
-		
-		
+		$percepcionHistoricoSerivciosTotalClientes = Dashboard::getPercepcionHistoricoServiciosTotalClientes($usuario->id);
+		$data4 = array();
+		foreach ($percepcionHistoricoSerivciosTotalClientes as $k => $v){
+			array_push($data4, array("name"=> $k, "data"=>$v));
+		}
+
 
 		$clientes = CHtml::listData($usuario->getClientes(), "id", "nombre");
 		$arrayKeys = array_keys($clientes);
@@ -159,6 +163,7 @@ class SiteController extends Controller
 			'cumplimientoDetallePorCliente'=>json_encode($data3),
 			'satisfaccionsm'=> $satisfaccionsm,
 			'percepcionsmservicio'=> $percepcionsmservicio,
+			'percepcionhistoricoserviciostotal'=>json_encode($data4),
 		));
 	}
 
@@ -173,7 +178,12 @@ class SiteController extends Controller
 		$satisfaccioncliente = Dashboard::getSatisfaccionGeneralCliente($usuario->id);
 		$percepcionclienteservicio = Dashboard::getPercepcionClienteporServicio($usuario->id);
 		//$percepcionHistoricoClienteServicios = Dashboard::getCumplimientoDetallePorCliente($clienteid);
-		
+		$percepcionHistoricoSerivciosTotalClientesExterna = Dashboard::getPercepcionHistoricoServiciosTotalClientesExterna($usuario->id);
+		$data4 = array();
+		foreach ($percepcionHistoricoSerivciosTotalClientesExterna as $k => $v){
+			array_push($data4, array("name"=> $k, "data"=>$v));
+		}
+
 		$cumplimientoDetallePorCliente = Dashboard::getPercepcionSmHistoricaPorServicio($arrayKeys[0], "sm");
 		$data3 = array();
 		foreach ($cumplimientoDetallePorCliente as $k => $v){
@@ -205,6 +215,7 @@ class SiteController extends Controller
 			'cumplimientoDetallePorCliente'=>json_encode($data3),
 			'satisfaccioncliente'=> $satisfaccioncliente,
 			'percepcionclienteservicio' => $percepcionclienteservicio,
+			'percepcionhistoricatotalclientesexterna' => json_encode($data4),
 		));
 	}
 	

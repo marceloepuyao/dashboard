@@ -13,6 +13,7 @@ $this->breadcrumbs=array(
 <div id="Percepcion-General-Externa-Historico-Usuario" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 <div id="Satisfaccion-Cliente" style="width: 700px; height: 500px; margin:0 auto 0 auto;"></div>
 <div id="Percepcion-General-Externa-Historico" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<div id="Percepcion-Historico-Servicio-Total-Externa" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 <div id="Percepcion-Servicio" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 
 <h2>Vista por Cliente</h2>
@@ -28,7 +29,7 @@ $(function () {
 	percepcionGeneralExternaHistoricoUsuario();
 	satisfaccionCliente();
 	percepcionServicio();
-
+	percepcionHistoricoServicioTotalExterna();
 	percepcionHistoricoClienteServicios(<?php echo $cumplimientoDetallePorCliente;?>);
 
 });
@@ -119,6 +120,39 @@ $(function () {
 	        series: <?php echo $pergeneralhistoricausuario;?>
 	    });
 	}
+    function percepcionHistoricoServicioTotalExterna(){
+        $('#Percepcion-Historico-Servicio-Total-Externa').highcharts({
+            chart: {
+                type: 'line'
+            },
+            title: {
+                text: 'Percepcion Histórica Externa por Línea de Servicio'
+            },
+            subtitle: {
+                text: ''
+            },
+            xAxis: {
+                categories: <?php echo json_encode($fechas);?>,
+                labels: {
+                    step:1,
+                }
+            },
+            yAxis: {
+                title: {
+                    text: 'Percepción'
+                }
+            },
+            plotOptions: {
+                line: {
+                    dataLabels: {
+                        enabled: true
+                    },
+                    enableMouseTracking: false
+                }
+            },
+            series: <?php echo $percepcionhistoricatotalclientesexterna;?>
+        });
+    }
 
 	function satisfaccionCliente(){
 	    $('#Satisfaccion-Cliente').highcharts({

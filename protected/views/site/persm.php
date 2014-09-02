@@ -14,6 +14,7 @@ $this->breadcrumbs=array(
 <div id="Satisfaccion-SM" style="width: 700px; height: 500px; margin:0 auto 0 auto;"></div>
 <div id="Percepcion-General-Interna-Historico" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 <div id="Percepcion-Servicio" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<div id="Percepcion-Historico-Servicio-Total" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 
 <h2>Vista por Cliente</h2>
 <?php echo CHtml::label("Selecciona Cliente", "clientes");?>
@@ -28,7 +29,7 @@ $this->breadcrumbs=array(
 		percepcionGeneralInternaHistoricoUsuario();
 		satisfaccionSm();
 		percepcionServicio();
-
+        percepcionHistoricoServicioTotal();
 		percepcionHistoricoClienteServicios(<?php echo $cumplimientoDetallePorCliente;?>);
 	
 	});
@@ -86,37 +87,70 @@ $this->breadcrumbs=array(
     };
 
     function percepcionGeneralInternaHistorico(){
-	    $('#Percepcion-General-Interna-Historico').highcharts({
-	        chart: {
-	            type: 'line'
-	        },
-	        title: {
-	            text: 'Percepcion General Interna Histórica por Cliente'
-	        },
-	        subtitle: {
-	            text: ''
-	        },
-	        xAxis: {
-	            categories: <?php echo json_encode($fechas);?>,
-	           	labels: {
-	         		step:1,
-	            }
-	        },
-	        yAxis: {
-	            title: {
-	                text: 'Percepción Externa General'
-	            }
-	        },
-	        plotOptions: {
-	            line: {
-	                dataLabels: {
-	                    enabled: true
-	                },
-	                enableMouseTracking: false
-	            }
-	        },
-	        series: <?php echo $persmgeneralhistorica;?>
-	    });
+        $('#Percepcion-General-Interna-Historico').highcharts({
+            chart: {
+                type: 'line'
+            },
+            title: {
+                text: 'Percepcion General Interna Histórica por Cliente'
+            },
+            subtitle: {
+                text: ''
+            },
+            xAxis: {
+                categories: <?php echo json_encode($fechas);?>,
+                labels: {
+                    step:1,
+                }
+            },
+            yAxis: {
+                title: {
+                    text: 'Percepción Externa General'
+                }
+            },
+            plotOptions: {
+                line: {
+                    dataLabels: {
+                        enabled: true
+                    },
+                    enableMouseTracking: false
+                }
+            },
+            series: <?php echo $persmgeneralhistorica;?>
+        });
+    }
+    function percepcionHistoricoServicioTotal(){
+        $('#Percepcion-Historico-Servicio-Total').highcharts({
+            chart: {
+                type: 'line'
+            },
+            title: {
+                text: 'Percepcion Histórica Interna por Línea de Servicio'
+            },
+            subtitle: {
+                text: ''
+            },
+            xAxis: {
+                categories: <?php echo json_encode($fechas);?>,
+                labels: {
+                    step:1,
+                }
+            },
+            yAxis: {
+                title: {
+                    text: 'Percepción'
+                }
+            },
+            plotOptions: {
+                line: {
+                    dataLabels: {
+                        enabled: true
+                    },
+                    enableMouseTracking: false
+                }
+            },
+            series: <?php echo $percepcionhistoricoserviciostotal;?>
+        });
     }
     function percepcionGeneralInternaHistoricoUsuario(){
 	    $('#Percepcion-General-Interna-Historico-Usuario').highcharts({
