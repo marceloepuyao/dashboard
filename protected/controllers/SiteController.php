@@ -78,13 +78,19 @@ class SiteController extends Controller
 		foreach ($cumplimientoHistoricoDetallePorCliente as $k => $v){
 			array_push($data2, array("name"=> $k, "data"=>$v));
 		}
+		if(!$data2){
+			$data2 = array(array("name"=> "no data", "data"=> array(0)));
+		}
 		//die(var_dump($data2));
 		
 		$cumplimientoSlaHistoricoPorCliente = Dashboard::getCumplimientoSlaHistoricoPorCliente($usuario->id);
 		$data = array();
 		foreach ($cumplimientoSlaHistoricoPorCliente as $k => $v){
 			array_push($data, array("name"=> $k, "data"=>$v));
-		}		
+		}	
+		if(!$data){
+			$data = array(array("name"=> "no data", "data"=> array(0)));
+		}	
 		$fechas = Dashboard::getFechasMensual($usuario->id);
 		$fechasarray=array();
 		foreach ($fechas as $fecha){
@@ -129,7 +135,7 @@ class SiteController extends Controller
 		foreach ($percepcionHistoricoSerivciosTotalClientes as $k => $v){
 			array_push($data4, array("name"=> $k, "data"=>$v));
 		}
-
+		
 
 		$clientes = CHtml::listData($usuario->getClientes(), "id", "nombre");
 		$arrayKeys = array_keys($clientes);
@@ -139,7 +145,9 @@ class SiteController extends Controller
 		foreach ($cumplimientoDetallePorCliente as $k => $v){
 			array_push($data3, array("name"=> $k, "data"=>$v));
 		}
-		//die(var_dump($data3));
+		if(!$data3){
+			$data3 = array(array("name"=> "no data", "data"=> array(0)));
+		}
 		
 		$data = array();
 		foreach ($persmgeneralhistorica as $k => $v){
@@ -190,7 +198,6 @@ class SiteController extends Controller
 			array_push($data3, array("name"=> $k, "data"=>$v));
 		}
 		
-		
 		$data = array();
 		foreach ($perclgeneralhistorica as $k => $v){
 			array_push($data, array("name"=> $k, "data"=>$v));
@@ -206,7 +213,6 @@ class SiteController extends Controller
 		foreach ($fechas as $fecha){
 			array_push($fechasarray, $fecha["fecha"]);
 		}
-		
 		$this->render('percl', array(
 			'fechas'=>$fechasarray,
 			'clientes'=>$clientes,
@@ -290,6 +296,9 @@ class SiteController extends Controller
 		foreach ($cumplimientoHistoricoDetallePorCliente as $k => $v){
 			array_push($data, array("name"=> $k, "data"=>$v));
 		}
+		if(!$data){
+			$data = array(array("name"=> "no data", "data"=> array(0)));
+		}
 		
 		$this->renderPartial('_ajax', array(
 				'data'=>json_encode($data),
@@ -327,6 +336,10 @@ class SiteController extends Controller
 		foreach ($cumplimientoDetallePorCliente as $k => $v){
 			array_push($data, array("name"=> $k, "data"=>$v));
 		}		
+		if(!$data){
+			$data = array(array("name"=> "no data", "data"=> array(0)));
+		}
+		
 		
 		$this->renderPartial('_ajax', array(
 				'data'=>json_encode($data),

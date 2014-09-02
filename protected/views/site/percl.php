@@ -11,7 +11,7 @@ $this->breadcrumbs=array(
 <script src="<?php echo Yii::app()->baseUrl;?>/js/highcharts/modules/solid-gauge.src.js"></script>
 
 <div id="Percepcion-General-Externa-Historico-Usuario" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
-<div id="Satisfaccion-Cliente" style="width: 700px; height: 500px; margin:0 auto 0 auto;"></div>
+<div id="Satisfaccion-Cliente" style="width: 700px; height: <?php echo 65 + count($satisfaccioncliente)*30;?>px; margin:0 auto 0 auto;"></div>
 <div id="Percepcion-General-Externa-Historico" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 <div id="Percepcion-Historico-Servicio-Total-Externa" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 <div id="Percepcion-Servicio" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
@@ -126,7 +126,7 @@ $(function () {
                 type: 'line'
             },
             title: {
-                text: 'Percepcion Histórica Externa por Línea de Servicio'
+                text: 'Satisfacción Histórica Externa por Línea de Servicio'
             },
             subtitle: {
                 text: ''

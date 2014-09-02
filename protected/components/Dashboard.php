@@ -561,13 +561,13 @@ class Dashboard {
 	public static function getPercepcionHistoricoServiciosTotalClientes($userid){
 		$fechas = Dashboard::getFechas($userid);
 		$numeroFechas = count($fechas);
-		//die(print_r($numeroFechas));
+
 		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
 		$servicios = Yii::app()->db->createCommand("
 				Select ls.nombre, ls.id
 				from linea_servicio ls
 			")->queryAll();
-		//die(print_r($servicios));
+
 		$clientessql = $usuario->getClientesSql();
 		$percepcionHistoricaServicios = array();
 		$empty = array();

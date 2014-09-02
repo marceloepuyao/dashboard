@@ -9,7 +9,7 @@ $this->breadcrumbs=array(
 <script src="<?php echo Yii::app()->baseUrl;?>/js/highcharts/modules/solid-gauge.src.js"></script>
 
 <div id="Cumplimiento-SLA-Historico-Simple" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
-<div id="Cumplimiento-SLA-Cliente" style="width: 700px; height: 500px; margin: 0 auto 0 auto;"></div>
+<div id="Cumplimiento-SLA-Cliente" style="width: 700px; height: <?php echo 65 + count($cumplimientoSlaPorCliente)*30;?>px; margin: 0 auto 0 auto;"></div>
 <div id="Cumplimiento-SLA-Historico" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 
 
@@ -257,7 +257,7 @@ function cumplimientoSlaDetalleHistorico(categories, data){
 	            type: 'line'
 	        },
 	        title: {
-	            text: 'Valor seguimiento '
+	            text: 'Valor seguimiento de Cliente por SLA'
 	        },
 	        subtitle: {
 	            text: ''
