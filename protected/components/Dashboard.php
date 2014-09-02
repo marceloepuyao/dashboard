@@ -558,6 +558,69 @@ class Dashboard {
 		return $percepcionFecha;
 	}*/
 
+	public static function getPercepcionHistoricoServiciosTotalClientes($userid){
+		$fechas = Dashboard::getFechas($userid);
+		$numeroFechas = count($fechas);
+		//die(print_r($numeroFechas));
+		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
+		$servicios = Yii::app()->db->createCommand("
+				Select ls.nombre, ls.id
+				from linea_servicio ls
+			")->queryAll();
+		//die(print_r($servicios));
+		$clientessql = $usuario->getClientesSql();
+		$percepcionHistoricaServicios = array();
+		$empty = array();
+		foreach ($servicios as $s){
+
+			$nombreServicio = $s['nombre'];
+			$percepcionFecha = array();
+			$numeroFallos = 0;
+			foreach ($fechas as $fecha){
+
+				$f = $fecha['fecha'];
+				$percepcionFechaServicio = 0;
+
+				$percepcion = Yii::app()->db->createCommand("
+				SELECT sp.per_sm
+				FROM seguimiento_percepcion sp, linea_servicio_contrato lsc, contrato c, linea_servicio ls, cliente cl
+				WHERE cl.id in $clientessql AND
+					c.cliente_id = cl.id AND
+					c.id = lsc.contrato_id AND
+					ls.id = lsc.linea_servicio_id AND
+					lsc.id = sp.linea_servicio_contrato_id AND
+					ls.nombre = '$nombreServicio' AND
+					sp.fecha = $f
+				")->queryAll();
+
+				if ($percepcion != $empty){
+					//die(print_r($percepcion));
+					$totalPercepcion = 0;
+					$i = 0;
+					foreach ($percepcion as $p=>$v){
+						$i++;
+						if ($v >= 4){
+							$totalPercepcion++;
+						}elseif($v <= 2){
+							$totalPercepcion--;
+						}
+					}
+					if ($totalPercepcion < 0) $totalPercepcion = 0;
+					$percepcionFechaServicio = $totalPercepcion/$i*100; 
+				}else{
+					$percepcionFechaServicio = 0;
+					$numeroFallos++;
+				}
+				$percepcionFecha[] = $percepcionFechaServicio;
+			}
+			if ($numeroFechas > $numeroFallos){
+				$percepcionHistoricaServicios[$nombreServicio] = $percepcionFecha;
+			}
+		}
+		//die(print_r($percepcionHistoricaServicios));
+		return $percepcionHistoricaServicios;
+	}
+
 	
 	///////////////////////////////PERCEPCION CLIENTE//////////////////////////////////////////////////////////////////////////////////
 	/**
@@ -736,7 +799,69 @@ class Dashboard {
 				return $lineaservicios;
 	}
 
-	
+	public static function getPercepcionHistoricoServiciosTotalClientesExterna($userid){
+		$fechas = Dashboard::getFechas($userid);
+		$numeroFechas = count($fechas);
+		//die(print_r($numeroFechas));
+		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
+		$servicios = Yii::app()->db->createCommand("
+				Select ls.nombre, ls.id
+				from linea_servicio ls
+			")->queryAll();
+		//die(print_r($servicios));
+		$clientessql = $usuario->getClientesSql();
+		$percepcionHistoricaServicios = array();
+		$empty = array();
+		foreach ($servicios as $s){
+
+			$nombreServicio = $s['nombre'];
+			$percepcionFecha = array();
+			$numeroFallos = 0;
+			foreach ($fechas as $fecha){
+
+				$f = $fecha['fecha'];
+				$percepcionFechaServicio = 0;
+
+				$percepcion = Yii::app()->db->createCommand("
+				SELECT sp.per_cliente
+				FROM seguimiento_percepcion sp, linea_servicio_contrato lsc, contrato c, linea_servicio ls, cliente cl
+				WHERE cl.id in $clientessql AND
+					c.cliente_id = cl.id AND
+					c.id = lsc.contrato_id AND
+					ls.id = lsc.linea_servicio_id AND
+					lsc.id = sp.linea_servicio_contrato_id AND
+					ls.nombre = '$nombreServicio' AND
+					sp.fecha = $f
+				")->queryAll();
+
+				if ($percepcion != $empty){
+					//die(print_r($percepcion));
+					$totalPercepcion = 0;
+					$i = 0;
+					foreach ($percepcion as $p=>$v){
+						$i++;
+						if ($v >= 4){
+							$totalPercepcion++;
+						}elseif($v <= 2){
+							$totalPercepcion--;
+						}
+					}
+					if ($totalPercepcion < 0) $totalPercepcion = 0;
+					$percepcionFechaServicio = $totalPercepcion/$i*100; 
+				}else{
+					$percepcionFechaServicio = 0;
+					$numeroFallos++;
+				}
+				$percepcionFecha[] = $percepcionFechaServicio;
+			}
+			if ($numeroFechas > $numeroFallos){
+				$percepcionHistoricaServicios[$nombreServicio] = $percepcionFecha;
+			}
+		}
+		//die(print_r($percepcionHistoricaServicios));
+		return $percepcionHistoricaServicios;
+	}
+
 	
 
 	public static function getPercepcionClientePorCliente($userid, $fecha = null){
