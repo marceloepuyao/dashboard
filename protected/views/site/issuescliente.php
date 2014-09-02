@@ -10,7 +10,7 @@ $this->breadcrumbs=array(
 <script src="<?php echo Yii::app()->baseUrl;?>/js/highcharts/modules/solid-gauge.src.js"></script>
 
 <div id="Clientes-Sin-Issues-Historico" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
-<div id="Issues-Cliente-Detalle" style="width: 700px; height: <?php echo 65 + count($issuesClientesDetalle)*30;?>px; margin:0 auto 0 auto;"></div>
+<div id="Issues-Cliente-Detalle" style="width: 700px; height: <?php echo 130 + count($issuesClientesDetalle)*35;?>px; margin:0 auto 0 auto;"></div>
 <div id="Issues-Servicio-Detalle" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 <div id="Issues-Totales-Servicio" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 

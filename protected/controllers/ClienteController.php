@@ -338,7 +338,12 @@ class ClienteController extends Controller
 		foreach ($clientes as $cliente){
 			$arraycliente[]= array('id'=>$cliente->id, 'cliente'=>$cliente->nombre);
 		}
-		$dataProvider = new CArrayDataProvider($arraycliente);
+		$dataProvider = new CArrayDataProvider($arraycliente , array(
+				'id'=>'id',
+				'pagination'=>array(
+						'pageSize'=>500,
+				),
+		));
 		
 		$this->render('misclientes',array(
 				'dataProvider'=>$dataProvider,
