@@ -29,7 +29,7 @@ class SiteController extends Controller
 						'users'=>array('*'),
 				),
 				array('allow', // allow authenticated user to perform 'create' and 'update' actions
-						'actions'=>array('Index','sla','issues','percepcionHistoricoClienteServiciosAjax', 'cumplimientoslaajax','cumplimientoDetalleClienteAjax', 'persm', 'PercepcionSMAjax','PercepcionSMporClienteAjax' ,'percl', 'PercepcionClienteAjax','PercepcionClientePorClienteAjax','issuesCliente', 'issuesactivosporcliente', 'IssuesActivosPorServicio'),
+						'actions'=>array('Index','sla','issues','percepcionHistoricoClienteServiciosTotalAjax','percepcionHistoricoClienteServiciosAjax', 'cumplimientoslaajax','cumplimientoDetalleClienteAjax', 'persm', 'PercepcionSMAjax','PercepcionSMporClienteAjax' ,'percl', 'PercepcionClienteAjax','PercepcionClientePorClienteAjax','issuesCliente', 'issuesactivosporcliente', 'IssuesActivosPorServicio'),
 						'users'=>array('@'),
 				),
 				array('deny',  // deny all users
@@ -399,7 +399,7 @@ class SiteController extends Controller
 				}
 			}		
 			if ($perFecha < 0) $perFecha = 0;
-			$perFecha = floor($perFecha/$j*100);
+			if ($j!=0) $perFecha = floor($perFecha/$j*100);
 			$historico['historico'][] = $perFecha;
 		}
 		//die(print_r($aux));
