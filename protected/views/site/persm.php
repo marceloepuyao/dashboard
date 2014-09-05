@@ -20,6 +20,7 @@ $this->breadcrumbs=array(
 <?php echo CHtml::label("Selecciona Cliente", "clientes");?>
 <?php echo CHtml::dropDownList("clientes", "", $clientes);?>
 <div id="Percepcion-Historico-Servicio-Cliente" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<div id="Percepcion-Historico-Servicio-Cliente-Total" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 
 
 <script type="text/javascript">
@@ -31,12 +32,15 @@ $this->breadcrumbs=array(
 		percepcionServicio();
         percepcionHistoricoServicioTotal();
 		percepcionHistoricoClienteServicios(<?php echo $cumplimientoDetallePorCliente;?>);
-	
+        var cliente = $("#clientes option:selected").val(); 
+        getData2(cliente);
+
 	});
 
     $("#clientes").on("change",function(){
         var cliente = $("#clientes option:selected").val(); 
         getData(cliente);
+        getData2(cliente);
     });
 
     function getData(cliente){
@@ -52,13 +56,26 @@ $this->breadcrumbs=array(
             },
         });
     }
+    function getData2(cliente){
+        $.ajax({
+            url: 'percepcionHistoricoClienteServiciosTotalAjax',
+            data: {'clienteid':cliente, 'type':'sm'},
+            async: false,
+            success: function(data){
+                if(data){
+                    data = JSON.parse(data);
+                    percepcionHistoricoClienteServiciosTotal(data);
+                }
+            },
+        });
+    }
     function percepcionHistoricoClienteServicios(Series){
     $('#Percepcion-Historico-Servicio-Cliente').highcharts({
         chart: {
             type: 'line'
         },
         title: {
-            text: 'Percepcion Externa Historica de Servicios por Cliente'
+            text: 'Percepcion Interna Historica de Servicios por Cliente'
         },
         subtitle: {
             text: ''
@@ -71,7 +88,40 @@ $this->breadcrumbs=array(
         },
         yAxis: {
             title: {
-                text: 'Percepción Externa General'
+                text: 'Percepción Interna General'
+            }
+        },
+        plotOptions: {
+            line: {
+                dataLabels: {
+                    enabled: true
+                },
+                enableMouseTracking: false
+            }
+        },
+        series: Series
+    });
+    };
+    function percepcionHistoricoClienteServiciosTotal(Series){
+    $('#Percepcion-Historico-Servicio-Cliente-Total').highcharts({
+        chart: {
+            type: 'line'
+        },
+        title: {
+            text: 'Percepcion Interna Historica de Servicios por Cliente Total'
+        },
+        subtitle: {
+            text: ''
+        },
+        xAxis: {
+            categories: <?php echo json_encode($fechas);?>,
+            labels: {
+                step:1,
+            }
+        },
+        yAxis: {
+            title: {
+                text: 'Percepción Interna General Total %'
             }
         },
         plotOptions: {

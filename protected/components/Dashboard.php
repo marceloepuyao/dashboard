@@ -531,7 +531,7 @@ class Dashboard {
 		
 	}
 
-	public static function getPercepcionHistoricoServiciosTotalClientes($userid){
+	public static function getPercepcionHistoricoServiciosTotalClientes($userid, $tipo){
 		$fechas = Dashboard::getFechas($userid);
 		$numeroFechas = count($fechas);
 
@@ -540,6 +540,15 @@ class Dashboard {
 				Select ls.nombre, ls.id
 				from linea_servicio ls
 			")->queryAll();
+
+		if ($tipo == 'externo') {
+			$persql = 'sp.per_sm';
+			$per = 'per_sm';
+		}
+		else {
+			$persql = 'sp.per_cliente';
+			$per = 'per_cliente';
+		}
 
 		$clientessql = $usuario->getClientesSql();
 		$percepcionHistoricaServicios = array();
@@ -553,7 +562,7 @@ class Dashboard {
 				$percepcionFechaServicio = 0;
 
 				$percepcion = Yii::app()->db->createCommand("
-				SELECT sp.per_sm
+				SELECT $persql
 				FROM seguimiento_percepcion sp, linea_servicio_contrato lsc, contrato c, linea_servicio ls, cliente cl
 				WHERE cl.id in $clientessql AND
 					c.cliente_id = cl.id AND
@@ -569,9 +578,9 @@ class Dashboard {
 					//die(print_r($percepcion));
 					$totalPercepcion = 0;
 					foreach ($percepcion as $p=>$v){
-						if ($v["per_sm"] >= 4){
+						if ($v[$per] >= 4){
 							$totalPercepcion++;
-						}elseif($v["per_sm"] <= 2){
+						}elseif($v[$per] <= 2){
 							$totalPercepcion--;
 						}
 					}

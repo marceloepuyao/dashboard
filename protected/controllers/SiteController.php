@@ -130,7 +130,9 @@ class SiteController extends Controller
 		$percepcionGeneralHistoricaUsuario = Dashboard::getPercepcionGeneralHistoricaUsuarioSM($usuario->id);
 		$satisfaccionsm = Dashboard::getSatisfaccionGeneralSM($usuario->id);
 		$percepcionsmservicio = Dashboard::getPercepcionSMporServicio($usuario->id);
-		$percepcionHistoricoSerivciosTotalClientes = Dashboard::getPercepcionHistoricoServiciosTotalClientes($usuario->id);
+		$percepcionHistoricoSerivciosTotalClientes = Dashboard::getPercepcionHistoricoServiciosTotalClientes($usuario->id, 'externo');
+
+
 		$data4 = array();
 		foreach ($percepcionHistoricoSerivciosTotalClientes as $k => $v){
 			array_push($data4, array("name"=> $k, "data"=>$v));
@@ -189,7 +191,7 @@ class SiteController extends Controller
 		$satisfaccioncliente = Dashboard::getSatisfaccionGeneralCliente($usuario->id);
 		$percepcionclienteservicio = Dashboard::getPercepcionClienteporServicio($usuario->id);
 		//$percepcionHistoricoClienteServicios = Dashboard::getCumplimientoDetallePorCliente($clienteid);
-		$percepcionHistoricoSerivciosTotalClientesExterna = Dashboard::getPercepcionHistoricoServiciosTotalClientesExterna($usuario->id);
+		$percepcionHistoricoSerivciosTotalClientesExterna = Dashboard::getPercepcionHistoricoServiciosTotalClientes($usuario->id, 'interno');
 		$data4 = array();
 		foreach ($percepcionHistoricoSerivciosTotalClientesExterna as $k => $v){
 			array_push($data4, array("name"=> $k, "data"=>$v));
@@ -198,7 +200,7 @@ class SiteController extends Controller
 			$data4 = array(array("name"=> "no data", "data"=> array(0)));
 		}
 
-		$cumplimientoDetallePorCliente = Dashboard::getPercepcionSmHistoricaPorServicio($arrayKeys[0], "sm");
+		$cumplimientoDetallePorCliente = Dashboard::getPercepcionSmHistoricaPorServicio($arrayKeys[0], "cl");
 		$data3 = array();
 		foreach ($cumplimientoDetallePorCliente as $k => $v){
 			array_push($data3, array("name"=> $k, "data"=>$v));
@@ -356,6 +358,58 @@ class SiteController extends Controller
 		}
 		
 		
+		$this->renderPartial('_ajax', array(
+				'data'=>json_encode($data),
+		));
+	}
+
+	public function actionPercepcionHistoricoClienteServiciosTotalAjax($clienteid, $type){
+		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
+		$cumplimientoDetallePorCliente = Dashboard::getPercepcionSmHistoricaPorServicio($clienteid, $type);
+		$fechas = Dashboard::getFechas($usuario->id);
+		$fechasSimple = array();
+		foreach($fechas as $k=>$v){
+			$fechasSimple[] = $v['fecha'];
+		}
+		$numFechas = count($fechasSimple);
+		//die(print_r($cumplimientoDetallePorCliente));
+		$aux = array();
+		$i = 0;
+		foreach($cumplimientoDetallePorCliente as $c){
+			//die(print_r($c));
+			foreach ($c as $k=>$v){
+				$aux[$i][] = $v;
+				$i++;
+				if($i == ($numFechas)) $i = 0;
+			}
+		}
+		$historico = array();
+		foreach($aux as $f=>$per){
+			$perFecha = 0;
+			$j = 0;
+			foreach($per as $k=>$v){
+				if ($v != 0){
+					$j++;
+					if ($v >= 4){
+						$perFecha++;
+					}
+					elseif ($v <=2){
+						$perFecha--;
+					}
+				}
+			}		
+			if ($perFecha < 0) $perFecha = 0;
+			$perFecha = floor($perFecha/$j*100);
+			$historico['historico'][] = $perFecha;
+		}
+		//die(print_r($aux));
+		$data = array();
+		foreach ($historico as $k => $v){
+			array_push($data, array("name"=> $k, "data"=>$v));
+		}		
+		if(!$data){
+			$data = array(array("name"=> "no data", "data"=> array(0)));
+		}
 		$this->renderPartial('_ajax', array(
 				'data'=>json_encode($data),
 		));
