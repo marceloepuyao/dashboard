@@ -195,7 +195,7 @@ $('#Issues-Totales-Servicio').highcharts({
 	        min:0,
 	        max:100,
             title: {
-                text: 'Cumplimiento SLA (%)'
+                text: 'Clientes sin Issues (%)'
             }
         },
         plotOptions: {
@@ -207,7 +207,7 @@ $('#Issues-Totales-Servicio').highcharts({
             }
         },
         series: [{
-            name: '% SLA cumplidos: ',
+            name: '% Clientes sin Issues: ',
             data: <?php echo json_encode(array_values($clientesSinIssuesHistorico));?> 
         }]	
     });
