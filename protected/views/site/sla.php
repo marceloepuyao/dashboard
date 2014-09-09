@@ -77,6 +77,9 @@ function cumplimientoHistoricoSimple(categories, data){
         subtitle: {
             text: ''
         },
+        credits: {
+	    	enabled: false
+	    },
         xAxis: {
         	categories: categories
         },
@@ -87,8 +90,10 @@ function cumplimientoHistoricoSimple(categories, data){
             min: 0,
             max: 100
         },
+
         plotOptions: {
             line: {
+            	pointPadding: 0.2,
                 dataLabels: {
                     enabled: true
                 },
@@ -116,6 +121,9 @@ function cumplimientoSlaHistorico(categories, data){
 	        subtitle: {
 	            text: ''
 	        },
+	        credits: {
+		    	enabled: false
+		    },
 	        xAxis: {
 	            categories: categories,
 	            labels: {
@@ -211,6 +219,9 @@ function cumplimientoDetalleCliente(categories, dataobjetivo, datavalor){
 	        subtitle: {
 	        	text: 'fecha : <?php echo end($fechas);?> '
 	        },
+	        credits: {
+		    	enabled: false
+		    },
 	        xAxis: {
 	            categories: categories,
 	            labels: {
@@ -262,6 +273,9 @@ function cumplimientoSlaDetalleHistorico(categories, data){
 	        subtitle: {
 	            text: ''
 	        },
+	        credits: {
+		    	enabled: false
+		    },
 	        xAxis: {
 	            categories: categories,
 	            labels: {

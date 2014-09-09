@@ -351,7 +351,7 @@ class SiteController extends Controller
 		$cumplimientoDetallePorCliente = Dashboard::getPercepcionSmHistoricaPorServicio($clienteid, $type);
 		$data = array();
 		foreach ($cumplimientoDetallePorCliente as $k => $v){
-			array_push($data, array("name"=> $k, "data"=>$v));
+			array_push($data, array("name"=> $k, "data"=>array_values($v)));
 		}		
 		if(!$data){
 			$data = array(array("name"=> "no data", "data"=> array(0)));
@@ -366,50 +366,32 @@ class SiteController extends Controller
 	public function actionPercepcionHistoricoClienteServiciosTotalAjax($clienteid, $type){
 		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
 		$cumplimientoDetallePorCliente = Dashboard::getPercepcionSmHistoricaPorServicio($clienteid, $type);
-		$fechas = Dashboard::getFechas($usuario->id);
-		$fechasSimple = array();
-		foreach($fechas as $k=>$v){
-			$fechasSimple[] = $v['fecha'];
-		}
-		$numFechas = count($fechasSimple);
-		//die(print_r($cumplimientoDetallePorCliente));
-		$aux = array();
-		$i = 0;
-		foreach($cumplimientoDetallePorCliente as $c){
-			//die(print_r($c));
-			foreach ($c as $k=>$v){
-				$aux[$i][] = $v;
-				$i++;
-				if($i == ($numFechas)) $i = 0;
+		
+		$percepcionFecha = array();
+		foreach ($cumplimientoDetallePorCliente as $cdcs){
+			foreach ($cdcs as $i=>$cdc){	
+				if(isset($percepcionFecha[$i])){
+					array_push($percepcionFecha[$i], $cdc);
+				}else{
+					$percepcionFecha[$i] = array($cdc);
+				}
 			}
 		}
 		$historico = array();
-		foreach($aux as $f=>$per){
-			$perFecha = 0;
-			$j = 0;
-			foreach($per as $k=>$v){
-				if ($v != 0){
-					$j++;
-					if ($v >= 4){
-						$perFecha++;
-					}
-					elseif ($v <=2){
-						$perFecha--;
-					}
+		foreach($percepcionFecha as $i=>$pf){
+			$satisfaccionFecha = 0;
+			foreach ($pf as $p){
+				if($p>=4){
+					$satisfaccionFecha++;
+				}elseif($p<=2){
+					$satisfaccionFecha--;
 				}
-			}		
-			if ($perFecha < 0) $perFecha = 0;
-			if ($j!=0) $perFecha = floor($perFecha/$j*100);
-			$historico['historico'][] = $perFecha;
+			}
+			$historico[$i] = $satisfaccionFecha>0?round(100*$satisfaccionFecha/count($pf), 2):0;
 		}
-		//die(print_r($aux));
-		$data = array();
-		foreach ($historico as $k => $v){
-			array_push($data, array("name"=> $k, "data"=>$v));
-		}		
-		if(!$data){
-			$data = array(array("name"=> "no data", "data"=> array(0)));
-		}
+		//die(var_dump($historico));
+		
+		$data = array(array("name"=>"Histórico", "data"=> array_values($historico)));
 		$this->renderPartial('_ajax', array(
 				'data'=>json_encode($data),
 		));

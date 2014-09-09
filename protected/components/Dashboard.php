@@ -45,7 +45,7 @@ class Dashboard {
 				$cumplimientoSla[] = 0;
 			}
 		}
-		return count($cumplimientoSla)!=0?(100*array_sum($cumplimientoSla)/count($cumplimientoSla)):0;
+		return count($cumplimientoSla)!=0?round(100*array_sum($cumplimientoSla)/count($cumplimientoSla), 2):0;
 		
 	}
 	
@@ -517,9 +517,9 @@ class Dashboard {
 			foreach ($fechas as $fecha){
 				$seguimiento = SeguimientoPercepcion::model()->find("linea_servicio_contrato_id = $lsc->id AND fecha = $fecha[fecha] ");
 				if($type == "sm")
-					$value[] = isset($seguimiento->per_sm)?(int)$seguimiento->per_sm:0;
+					$value[$fecha["fecha"]] = isset($seguimiento->per_sm)?(int)$seguimiento->per_sm:0;
 				elseif($type=="cl")
-					$value[] = isset($seguimiento->per_cliente)?(int)$seguimiento->per_cliente:0;
+					$value[$fecha["fecha"]] = isset($seguimiento->per_cliente)?(int)$seguimiento->per_cliente:0;
 			}
 			$lineaservicio = LineaServicio::model()->findByPk($lsc->linea_servicio_id);
 			

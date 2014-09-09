@@ -30,6 +30,9 @@ $('#Issues-Cliente-Detalle').highcharts({
     subtitle: {
         text: 'a la fecha'
     },
+    credits: {
+    	enabled: false
+    },
     xAxis: {
         categories: <?php echo json_encode(array_keys($issuesClientesDetalle));?>,
         		labels: {
@@ -81,9 +84,6 @@ $('#Issues-Cliente-Detalle').highcharts({
         backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
         shadow: true
     },
-    credits: {
-        enabled: false
-    },
     series: [{
         name: 'Issues Activos',
         data: <?php echo json_encode(array_values($issuesClientesDetalle));?>
@@ -98,6 +98,9 @@ $('#Issues-Servicio-Detalle').highcharts({
     },
     subtitle: {
         text: 'a la fecha'
+    },
+    credits: {
+    	enabled: false
     },
     xAxis: {
         categories: <?php echo json_encode(array_keys($issuesServiciosDetalle))?> ,
@@ -142,6 +145,9 @@ $('#Issues-Totales-Servicio').highcharts({
     subtitle: {
         text: 'a la fecha'
     },
+    credits: {
+    	enabled: false
+    },
     xAxis: {
         categories: <?php echo json_encode(array_keys($issuesTotalesPorServicio))?> ,
         		labels: {
@@ -185,6 +191,9 @@ $('#Issues-Totales-Servicio').highcharts({
         subtitle: {
             text: ''
         },
+        credits: {
+	    	enabled: false
+	    },
         xAxis: {
             categories: <?php echo json_encode(array_keys($clientesSinIssuesHistorico));?> ,
             labels: {
@@ -220,6 +229,9 @@ $('#Issues-Totales-Servicio').highcharts({
 	    },
 	    subtitle: {
 	        text: ''
+	    },
+	    credits: {
+	    	enabled: false
 	    },
 	    xAxis: {
 	    	categories: <?php echo json_encode($fechas);?> ,

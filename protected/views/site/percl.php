@@ -80,6 +80,9 @@ $(function () {
 	        subtitle: {
 	            text: ''
 	        },
+	        credits: {
+		    	enabled: false
+		    },
 	        xAxis: {
 	            categories: <?php echo json_encode($fechas);?>,
 	            		labels: {
@@ -113,6 +116,9 @@ $(function () {
 	        subtitle: {
 	            text: ''
 	        },
+	        credits: {
+		    	enabled: false
+		    },
 	        xAxis: {
 	            categories: <?php echo json_encode($fechas);?>,
 	            		labels: {
@@ -122,7 +128,7 @@ $(function () {
 	        },
 	        yAxis: {
 	            title: {
-	                text: 'Percepción Externa General (%)'
+	                text: 'Satisfacción Externa General (%)'
 	            }
 	        },
 	        plotOptions: {
@@ -147,6 +153,9 @@ $(function () {
             subtitle: {
                 text: ''
             },
+            credits: {
+    	    	enabled: false
+    	    },
             xAxis: {
                 categories: <?php echo json_encode($fechas);?>,
                 labels: {
@@ -155,7 +164,7 @@ $(function () {
             },
             yAxis: {
                 title: {
-                    text: 'Percepción'
+                    text: 'Satisfacción'
                 }
             },
             plotOptions: {
@@ -244,6 +253,9 @@ $(function () {
 	        subtitle: {
 	        	text: 'fecha : <?php echo end($fechas);?> '
 	        },
+	        credits: {
+		    	enabled: false
+		    },
 	        xAxis: {
 	            categories: <?php echo json_encode(array_keys($percepcionclienteservicio));?>,
 	        },
@@ -286,6 +298,9 @@ $(function () {
 		        subtitle: {
 		            text: ''
 		        },
+		        credits: {
+			    	enabled: false
+			    },
 		        xAxis: {
 		            categories: <?php echo json_encode($fechas);?>,
 		            labels: {
@@ -315,11 +330,14 @@ $(function () {
 		            type: 'line'
 		        },
 		        title: {
-		            text: 'Percepcion Externa Historica de Servicios por Cliente Total'
+		            text: 'Satisfacción Externa Historica de Servicios por Cliente Total'
 		        },
 		        subtitle: {
 		            text: ''
 		        },
+		        credits: {
+			    	enabled: false
+			    },
 		        xAxis: {
 		            categories: <?php echo json_encode($fechas);?>,
 		            labels: {
@@ -328,7 +346,7 @@ $(function () {
 		        },
 		        yAxis: {
 		            title: {
-		                text: 'Percepción Externa General Total %'
+		                text: 'Satisfacción Externa General Total %'
 		            }
 		        },
 		        plotOptions: {

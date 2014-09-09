@@ -80,6 +80,9 @@ $this->breadcrumbs=array(
         subtitle: {
             text: ''
         },
+        credits: {
+	    	enabled: false
+	    },
         xAxis: {
             categories: <?php echo json_encode($fechas);?>,
             labels: {
@@ -113,6 +116,9 @@ $this->breadcrumbs=array(
         subtitle: {
             text: ''
         },
+        credits: {
+	    	enabled: false
+	    },
         xAxis: {
             categories: <?php echo json_encode($fechas);?>,
             labels: {
@@ -147,6 +153,9 @@ $this->breadcrumbs=array(
             subtitle: {
                 text: ''
             },
+            credits: {
+		    	enabled: false
+		    },
             xAxis: {
                 categories: <?php echo json_encode($fechas);?>,
                 labels: {
@@ -180,6 +189,9 @@ $this->breadcrumbs=array(
             subtitle: {
                 text: ''
             },
+            credits: {
+		    	enabled: false
+		    },
             xAxis: {
                 categories: <?php echo json_encode($fechas);?>,
                 labels: {
@@ -213,6 +225,9 @@ $this->breadcrumbs=array(
 	        subtitle: {
 	            text: ''
 	        },
+	        credits: {
+		    	enabled: false
+		    },
 	        xAxis: {
 	            categories: <?php echo json_encode($fechas);?>,
 	            		 labels: {
@@ -312,6 +327,9 @@ $this->breadcrumbs=array(
 	        subtitle: {
 	        	text: 'fecha : <?php echo end($fechas);?> '
 	        },
+	        credits: {
+		    	enabled: false
+		    },
 	        xAxis: {
 	            categories: <?php echo json_encode(array_keys($percepcionsmservicio));?>,
 	            		 labels: {
