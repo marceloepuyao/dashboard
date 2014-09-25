@@ -514,6 +514,7 @@ class Dashboard {
 				$lineaservicios[$ser] = $countSatisfaccion<0?0:(100*$countSatisfaccion/count($ls));
 			}
 		}
+		return $lineaservicios;
 	}
 	
 	public static function getPercepcionSmHistoricaPorServicio($clienteid, $type){
