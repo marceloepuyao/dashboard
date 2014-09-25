@@ -135,7 +135,7 @@ class SiteController extends Controller
 
 		$data4 = array();
 		foreach ($percepcionHistoricoSerivciosTotalClientes as $k => $v){
-			array_push($data4, array("name"=> $k, "data"=>$v));
+			array_push($data4, array("name"=> $k, "data"=>array_values($v)));
 		}
 		if(!$data4){
 			$data4 = array(array("name"=> "no data", "data"=> array(0)));
@@ -148,7 +148,7 @@ class SiteController extends Controller
 		$cumplimientoDetallePorCliente = Dashboard::getPercepcionSmHistoricaPorServicio($arrayKeys[0], "sm");
 		$data3 = array();
 		foreach ($cumplimientoDetallePorCliente as $k => $v){
-			array_push($data3, array("name"=> $k, "data"=>$v));
+			array_push($data3, array("name"=> $k, "data"=>array_values($v)));
 		}
 		if(!$data3){
 			$data3 = array(array("name"=> "no data", "data"=> array(0)));
