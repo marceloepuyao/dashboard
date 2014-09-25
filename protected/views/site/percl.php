@@ -90,6 +90,8 @@ $(function () {
 	                    },
 	        },
 	        yAxis: {
+	        	min: 0,
+	            max: 5,
 	            title: {
 	                text: 'Percepción Externa General'
 	            }
@@ -127,6 +129,8 @@ $(function () {
 	                
 	        },
 	        yAxis: {
+	        	min: 0,
+	            max: 100,
 	            title: {
 	                text: 'Satisfacción Externa General (%)'
 	            }
@@ -163,6 +167,8 @@ $(function () {
                 }
             },
             yAxis: {
+            	min: 0,
+	            max: 100,
                 title: {
                     text: 'Satisfacción'
                 }
@@ -308,6 +314,8 @@ $(function () {
 		            }
 		        },
 		        yAxis: {
+		        	min: 0,
+		            max: 5,
 		            title: {
 		                text: 'Percepción Externa General'
 		            }
@@ -345,6 +353,8 @@ $(function () {
 		            }
 		        },
 		        yAxis: {
+		        	min: 0,
+		            max: 100,
 		            title: {
 		                text: 'Satisfacción Externa General Total %'
 		            }

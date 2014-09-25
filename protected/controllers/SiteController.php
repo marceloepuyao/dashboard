@@ -130,7 +130,7 @@ class SiteController extends Controller
 		$percepcionGeneralHistoricaUsuario = Dashboard::getPercepcionGeneralHistoricaUsuarioSM($usuario->id);
 		$satisfaccionsm = Dashboard::getSatisfaccionGeneralSM($usuario->id);
 		$percepcionsmservicio = Dashboard::getPercepcionSMporServicio($usuario->id);
-		$percepcionHistoricoSerivciosTotalClientes = Dashboard::getPercepcionHistoricoServiciosTotalClientes($usuario->id, 'externo');
+		$percepcionHistoricoSerivciosTotalClientes = Dashboard::getPercepcionHistoricoServiciosTotalClientes($usuario->id, 'interno');
 
 
 		$data4 = array();
@@ -140,7 +140,6 @@ class SiteController extends Controller
 		if(!$data4){
 			$data4 = array(array("name"=> "no data", "data"=> array(0)));
 		}
-		
 
 		$clientes = CHtml::listData($usuario->getClientes(), "id", "nombre");
 		$arrayKeys = array_keys($clientes);
@@ -172,7 +171,6 @@ class SiteController extends Controller
 			'clientes'=>$clientes,
 			'persmgeneralhistorica'=>json_encode($data),
 			'pergeneralhistoricausuario'=>json_encode($data2),
-				
 			'cumplimientoDetallePorCliente'=>json_encode($data3),
 			'satisfaccionsm'=> $satisfaccionsm,
 			'percepcionsmservicio'=> $percepcionsmservicio,
@@ -390,7 +388,7 @@ class SiteController extends Controller
 					$satisfaccionFecha--;
 				}
 			}
-			$historico[$i] = $satisfaccionFecha>0?round(100*$satisfaccionFecha/count($pf), 2):0;
+			$historico[$i] = round(100*($satisfaccionFecha + count($pf))/(2*count($pf)), 2);
 		}
 		//die(var_dump($historico));
 		

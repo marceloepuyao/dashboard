@@ -90,6 +90,8 @@ $this->breadcrumbs=array(
             }
         },
         yAxis: {
+        	min: 0,
+            max: 5,
             title: {
                 text: 'Percepción Interna General'
             }
@@ -111,7 +113,7 @@ $this->breadcrumbs=array(
             type: 'line'
         },
         title: {
-            text: 'Percepcion Interna Historica de Servicios por Cliente Total'
+            text: 'Satisfacción Interna Historica de Servicios por Cliente Total'
         },
         subtitle: {
             text: ''
@@ -126,8 +128,10 @@ $this->breadcrumbs=array(
             }
         },
         yAxis: {
+        	min: 0,
+            max: 100,
             title: {
-                text: 'Percepción Interna General Total %'
+                text: 'Satisfacción Interna General Total %'
             }
         },
         plotOptions: {
@@ -163,6 +167,8 @@ $this->breadcrumbs=array(
                 }
             },
             yAxis: {
+            	min: 0,
+	            max: 5,
                 title: {
                     text: 'Percepción Interna General'
                 }
@@ -199,8 +205,10 @@ $this->breadcrumbs=array(
                 }
             },
             yAxis: {
+            	min: 0,
+	            max: 100,
                 title: {
-                    text: 'Percepción'
+                    text: 'Satisfacción'
                 }
             },
             plotOptions: {
@@ -235,8 +243,10 @@ $this->breadcrumbs=array(
 	         	        }
 	        },
 	        yAxis: {
+	        	min: 0,
+	            max: 100,
 	            title: {
-	                text: 'Percepción Externa General'
+	                text: 'Satisfacción Externa General'
 	            }
 	        },
 	        plotOptions: {
@@ -322,7 +332,7 @@ $this->breadcrumbs=array(
 	            type: 'column'
 	        },
 	        title: {
-	            text: 'Percepción Interna por líneas de Servicio'
+	            text: 'Satisfacción Interna por líneas de Servicio'
 	        },
 	        subtitle: {
 	        	text: 'fecha : <?php echo end($fechas);?> '
@@ -338,10 +348,8 @@ $this->breadcrumbs=array(
 	        },
 	        yAxis: {
 	        	allowDecimals: false,
-	            min: 0,
-	            max: 5,
 	            title: {
-	                text: 'Percepción Interna'
+	                text: 'Satisfacción Interna'
 	            }
 	        },
 	        tooltip: {

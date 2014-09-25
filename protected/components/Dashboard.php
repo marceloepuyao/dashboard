@@ -365,6 +365,8 @@ class Dashboard {
 		
 		$usuario = Usuario::model()->findByPk($userid);
 		$clientessql = $usuario->getClientesSql();
+		
+		$numeroClientes = count(explode(",",$clientessql));
 
 		$seguimientoPercepciones = Yii::app()->db->createCommand("
 				SELECT spg.* 
@@ -385,12 +387,11 @@ class Dashboard {
 				$percepcionManager --;
 			}
 		}
+		if($numeroClientes > count($seguimientoPercepciones)){
+			$percepcionCliente = $percepcionCliente - ($numeroClientes-count($seguimientoPercepciones));
+		}
 		
-		if($percepcionManager < 0)
-			$percepcionManager = 0;
-		
-		return 100*$percepcionManager/count($seguimientoPercepciones);
-		
+		return round(100*($percepcionManager + count($seguimientoPercepciones))/(2*count($seguimientoPercepciones)), 2);		
 	}
 
 	public static function getPercepcionGeneralHistoricaUsuarioSM($userid){
@@ -421,8 +422,7 @@ class Dashboard {
 					}
 				}
 			}
-			if ($percepcionClientePorFecha[$navegador]<0) $percepcionClientePorFecha[$navegador] = 0;
-			$percepcionClientePorFecha[$navegador] = round(100*$percepcionClientePorFecha[$navegador]/count($seguimientoPercepciones),2);
+			$percepcionClientePorFecha[$navegador] = round(100*($percepcionClientePorFecha[$navegador] + count($seguimientoPercepciones))/(2*count($seguimientoPercepciones)),2);
 			$navegador ++;
 		}
 		$percepcionGeneralHistoricaUsuario = array();
@@ -508,11 +508,9 @@ class Dashboard {
 					$countSatisfaccion--;
 				}
 			}
-			if(count($ls)==0){
-				$lineaservicios[$ser] = 0;
-			}else{
-				$lineaservicios[$ser] = $countSatisfaccion<0?0:(100*$countSatisfaccion/count($ls));
-			}
+			
+			$lineaservicios[$ser] = round(100*($countSatisfaccion + count($ls))/(2*count($ls)), 2);
+
 		}
 		return $lineaservicios;
 	}
@@ -600,9 +598,11 @@ class Dashboard {
 					GROUP BY lsc.linea_servicio_id, cl.id
 				")->queryAll();
 				
-				if($nombreServicio == "Gestión de Procesos"){
-					//die(var_dump($percepcion));
-				}
+				
+				
+				/*if($nombreServicio == "Virtualización"){
+					die(var_dump($percepcion));
+				}*/
 
 				if ($percepcion != $empty){
 					$totalPercepcion = 0;
@@ -613,10 +613,7 @@ class Dashboard {
 							$totalPercepcion--;
 						}
 					}
-					if ($totalPercepcion < 0){
-						$totalPercepcion = 0;
-					}
-					$percepcionFechaServicio = 100*$totalPercepcion/count($percepcion); 
+					$percepcionFechaServicio = round(100*($totalPercepcion+ count($percepcion))/(2*count($percepcion)), 2);
 				}else{
 					$percepcionFechaServicio = 0;
 					$numeroFallos++;
@@ -645,6 +642,8 @@ class Dashboard {
 		$usuario = Usuario::model()->findByPk($userid);
 		$clientessql = $usuario->getClientesSql();
 		
+		$numeroClientes = count(explode(",",$clientessql));
+		
 		$seguimientoPercepciones = Yii::app()->db->createCommand("
 				SELECT spg.*
 				FROM seguimiento_percepcion_general spg, cliente c
@@ -664,13 +663,14 @@ class Dashboard {
 				$percepcionCliente --;
 			}
 		}
-		if($percepcionCliente<0)
-			$percepcionCliente = 0;
 		
+		if($numeroClientes > count($seguimientoPercepciones)){
+			
+			$percepcionCliente = $percepcionCliente - ($numeroClientes-count($seguimientoPercepciones));
+		}
+
 		
-		
-		return 100*$percepcionCliente/count($seguimientoPercepciones);
-		
+		return round(100*($percepcionCliente+ count($seguimientoPercepciones))/(2*count($seguimientoPercepciones)), 2);
 	}
 
 	public static function getPercepcionGeneralHistoricaUsuario($userid){
@@ -701,8 +701,7 @@ class Dashboard {
 					}
 				}
 			}
-			if ($percepcionClientePorFecha[$navegador]<0) $percepcionClientePorFecha[$navegador] = 0;
-			$percepcionClientePorFecha[$navegador] = round(100*$percepcionClientePorFecha[$navegador]/count($seguimientoPercepciones),2);
+			$percepcionClientePorFecha[$navegador] = round(100*($percepcionClientePorFecha[$navegador] + count($seguimientoPercepciones) )/(2*count($seguimientoPercepciones)),2);
 			$navegador ++;
 		}
 		$percepcionGeneralHistoricaUsuario = array();
@@ -783,11 +782,8 @@ class Dashboard {
 					$countSatisfaccion--;
 				}
 			}
-			if(count($ls)==0){
-				$lineaservicios[$ser] = 0;
-			}else{
-				$lineaservicios[$ser] = $countSatisfaccion<0?0:(100*$countSatisfaccion/count($ls));
-			}
+			
+			$lineaservicios[$ser] = round(100*($countSatisfaccion + count($ls))/(2*count($ls)));
 		}
 			
 		return $lineaservicios;
@@ -837,9 +833,8 @@ class Dashboard {
 							$totalPercepcion--;
 						}
 					}
-					if ($totalPercepcion < 0) 
-						$totalPercepcion = 0;
-					$satisfaccionFechaServicio = ($totalPercepcion/count($percepcion))*100; 
+					
+					$satisfaccionFechaServicio = round(100*($totalPercepcion + count($percepcion))/(2*count($percepcion)), 2);
 				}else{
 					$satisfaccionFechaServicio = 0;
 					$numeroFallos++;
