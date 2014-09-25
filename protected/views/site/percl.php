@@ -31,7 +31,7 @@ $(function () {
 	satisfaccionCliente();
 	percepcionServicio();
 	percepcionHistoricoServicioTotalExterna();
-	percepcionHistoricoClienteServicios(<?php echo $cumplimientoDetallePorCliente;?>);
+	percepcionHistoricoClienteServicios(<?php echo json_encode($cumplimientoDetallePorCliente);?>);
 	var cliente = $("#clientes option:selected").val(); 
 	getData2(cliente);
 });
@@ -248,7 +248,7 @@ $(function () {
 	            type: 'column'
 	        },
 	        title: {
-	            text: 'Percepción Externa por líneas de Servicio'
+	            text: 'Satisfacción General Externa de líneas de Servicio'
 	        },
 	        subtitle: {
 	        	text: 'fecha : <?php echo end($fechas);?> '
@@ -262,9 +262,9 @@ $(function () {
 	        yAxis: {
 	        	allowDecimals: false,
 	            min: 0,
-	            max: 5,
+	            max: 100,
 	            title: {
-	                text: 'Percepción Externa'
+	                text: 'Satisfacción Externa'
 	            }
 	        },
 	        tooltip: {
@@ -293,7 +293,7 @@ $(function () {
 		            type: 'line'
 		        },
 		        title: {
-		            text: 'Percepcion Externa Historica de Servicios por Cliente'
+		            text: 'Percepción Externa Historica de Servicios por Cliente'
 		        },
 		        subtitle: {
 		            text: ''

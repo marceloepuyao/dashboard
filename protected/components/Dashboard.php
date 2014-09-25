@@ -265,7 +265,13 @@ class Dashboard {
 	public static function getIssuesTotalesPorServicio($userid){
 		$usuario = Usuario::model()->findByPk($userid);
 		$clientessql = $usuario->getClientesSql();
-		$servicios = Yii::app()->db->createCommand('Select id, nombre from linea_servicio')->queryAll();
+		$servicios = Yii::app()->db->createCommand("
+				SELECT ls.nombre, ls.id
+				FROM linea_servicio ls, linea_servicio_contrato lsc, contrato c
+				WHERE 	lsc.contrato_id = c.id AND
+				lsc.linea_servicio_id = ls.id AND
+				c.cliente_id IN $clientessql
+				")->queryAll();
 		$issuesTotales = array();
 		foreach ($servicios as $servicio){
 			$id = $servicio['id'];
@@ -489,12 +495,25 @@ class Dashboard {
 					sp.fecha = $fecha
 				GROUP BY sp.id")->queryAll();
 		
-		$lineaservicios = array(); 
+		$lineaservicios = array();
 		foreach($seguimientoPercepcion as $sp){
-			$lineaservicios[$sp["nombre"]] = (int)$sp["per_sm"];	
+			$lineaservicios[$sp["nombre"]][] = (int)$sp["per_sm"];
 		}
-		return $lineaservicios;
-		
+		foreach ($lineaservicios as $ser=>$ls){
+			$countSatisfaccion = 0;
+			foreach ($ls as $n){
+				if($n>=4){
+					$countSatisfaccion++;
+				}elseif ($n<=2){
+					$countSatisfaccion--;
+				}
+			}
+			if(count($ls)==0){
+				$lineaservicios[$ser] = 0;
+			}else{
+				$lineaservicios[$ser] = $countSatisfaccion<0?0:(100*$countSatisfaccion/count($ls));
+			}
+		}
 	}
 	
 	public static function getPercepcionSmHistoricaPorServicio($clienteid, $type){
@@ -536,21 +555,27 @@ class Dashboard {
 		$numeroFechas = count($fechas);
 
 		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
+		$clientessql = $usuario->getClientesSql();
 		$servicios = Yii::app()->db->createCommand("
-				Select ls.nombre, ls.id
-				from linea_servicio ls
+				SELECT ls.nombre, ls.id
+				FROM linea_servicio ls, linea_servicio_contrato lsc, contrato c
+				WHERE 	lsc.contrato_id = c.id AND 
+						lsc.linea_servicio_id = ls.id AND
+						c.cliente_id IN $clientessql
+						GROUP BY ls.id
 			")->queryAll();
+		
 
 		if ($tipo == 'externo') {
-			$persql = 'sp.per_sm';
-			$per = 'per_sm';
-		}
-		else {
 			$persql = 'sp.per_cliente';
 			$per = 'per_cliente';
 		}
+		else {
+			$persql = 'sp.per_sm';
+			$per = 'per_sm';
+		}
 
-		$clientessql = $usuario->getClientesSql();
+		
 		$percepcionHistoricaServicios = array();
 		$empty = array();
 		foreach ($servicios as $s){
@@ -573,9 +598,12 @@ class Dashboard {
 					sp.fecha = '".$fecha['fecha']."'
 					GROUP BY lsc.linea_servicio_id, cl.id
 				")->queryAll();
+				
+				if($nombreServicio == "Gestión de Procesos"){
+					//die(var_dump($percepcion));
+				}
 
 				if ($percepcion != $empty){
-					//die(print_r($percepcion));
 					$totalPercepcion = 0;
 					foreach ($percepcion as $p=>$v){
 						if ($v[$per] >= 4){
@@ -584,8 +612,10 @@ class Dashboard {
 							$totalPercepcion--;
 						}
 					}
-					if ($totalPercepcion < 0) $totalPercepcion = 0;
-					$percepcionFechaServicio = $totalPercepcion/count($percepcion)*100; 
+					if ($totalPercepcion < 0){
+						$totalPercepcion = 0;
+					}
+					$percepcionFechaServicio = 100*$totalPercepcion/count($percepcion); 
 				}else{
 					$percepcionFechaServicio = 0;
 					$numeroFallos++;
@@ -596,7 +626,7 @@ class Dashboard {
 				$percepcionHistoricaServicios[$nombreServicio] = $percepcionFecha;
 			}
 		}
-		//die(print_r($percepcionHistoricaServicios));
+		//die(var_dump($percepcionHistoricaServicios));
 		return $percepcionHistoricaServicios;
 	}
 
@@ -739,11 +769,27 @@ class Dashboard {
 				sp.fecha = $fecha
 				GROUP BY sp.id")->queryAll();
 	
-				$lineaservicios = array();
-				foreach($seguimientoPercepcion as $sp){
-				$lineaservicios[$sp["nombre"]] = (int)$sp["per_cliente"];
+		$lineaservicios = array();
+		foreach($seguimientoPercepcion as $sp){
+			$lineaservicios[$sp["nombre"]][] = (int)$sp["per_cliente"];
+		}
+		foreach ($lineaservicios as $ser=>$ls){
+			$countSatisfaccion = 0;
+			foreach ($ls as $n){
+				if($n>=4){
+					$countSatisfaccion++;
+				}elseif ($n<=2){
+					$countSatisfaccion--;
 				}
-				return $lineaservicios;
+			}
+			if(count($ls)==0){
+				$lineaservicios[$ser] = 0;
+			}else{
+				$lineaservicios[$ser] = $countSatisfaccion<0?0:(100*$countSatisfaccion/count($ls));
+			}
+		}
+			
+		return $lineaservicios;
 	}
 
 	public static function getPercepcionHistoricoServiciosTotalClientesExterna($userid){
@@ -751,12 +797,16 @@ class Dashboard {
 		$numeroFechas = count($fechas);
 		//die(print_r($numeroFechas));
 		$usuario = Usuario::model()->findByPk(Yii::app()->user->id);
+		$clientessql = $usuario->getClientesSql();
 		$servicios = Yii::app()->db->createCommand("
-				Select ls.nombre, ls.id
-				from linea_servicio ls
+				SELECT ls.nombre, ls.id
+				FROM linea_servicio ls, linea_servicio_contrato lsc, contrato c
+				WHERE 	lsc.contrato_id = c.id AND 
+						lsc.linea_servicio_id = ls.id AND
+						c.cliente_id IN $clientessql
 			")->queryAll();
 		//die(print_r($servicios));
-		$clientessql = $usuario->getClientesSql();
+		
 		$percepcionHistoricaServicios = array();
 		$empty = array();
 		foreach ($servicios as $s){

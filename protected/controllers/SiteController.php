@@ -191,10 +191,10 @@ class SiteController extends Controller
 		$satisfaccioncliente = Dashboard::getSatisfaccionGeneralCliente($usuario->id);
 		$percepcionclienteservicio = Dashboard::getPercepcionClienteporServicio($usuario->id);
 		//$percepcionHistoricoClienteServicios = Dashboard::getCumplimientoDetallePorCliente($clienteid);
-		$percepcionHistoricoSerivciosTotalClientesExterna = Dashboard::getPercepcionHistoricoServiciosTotalClientes($usuario->id, 'interno');
+		$percepcionHistoricoSerivciosTotalClientesExterna = Dashboard::getPercepcionHistoricoServiciosTotalClientes($usuario->id, 'externo');
 		$data4 = array();
 		foreach ($percepcionHistoricoSerivciosTotalClientesExterna as $k => $v){
-			array_push($data4, array("name"=> $k, "data"=>$v));
+			array_push($data4, array("name"=> $k, "data"=>array_values($v)));
 		}
 		if(!$data4){
 			$data4 = array(array("name"=> "no data", "data"=> array(0)));
@@ -203,11 +203,13 @@ class SiteController extends Controller
 		$cumplimientoDetallePorCliente = Dashboard::getPercepcionSmHistoricaPorServicio($arrayKeys[0], "cl");
 		$data3 = array();
 		foreach ($cumplimientoDetallePorCliente as $k => $v){
-			array_push($data3, array("name"=> $k, "data"=>$v));
+			array_push($data3, array("name"=> $k, "data"=>array_values($v)));
 		}
 		if(!$data3){
 			$data3 = array(array("name"=> "no data", "data"=> array(0)));
 		}
+	
+		
 		
 		$data = array();
 		foreach ($perclgeneralhistorica as $k => $v){
@@ -230,12 +232,13 @@ class SiteController extends Controller
 		foreach ($fechas as $fecha){
 			array_push($fechasarray, $fecha["fecha"]);
 		}
+		//die(var_dump($data3));
 		$this->render('percl', array(
 			'fechas'=>$fechasarray,
 			'clientes'=>$clientes,
 			'perclgeneralhistorica'=>json_encode($data),
 			'pergeneralhistoricausuario'=>json_encode($data2),
-			'cumplimientoDetallePorCliente'=>json_encode($data3),
+			'cumplimientoDetallePorCliente'=>$data3,
 			'satisfaccioncliente'=> $satisfaccioncliente,
 			'percepcionclienteservicio' => $percepcionclienteservicio,
 			'percepcionhistoricatotalclientesexterna' => json_encode($data4),
