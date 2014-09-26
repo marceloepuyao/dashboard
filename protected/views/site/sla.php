@@ -41,8 +41,8 @@ $("#clientes").on("change",function(){
 
 function getData(cliente){
 	$.ajax({
-        url: 'cumplimientoDetalleClienteAjax',
-		data: {'fecha':<?php echo end($fechas);?>, 'clienteid':cliente},
+        url: 'cumplimientoDetalleClienteAjax'
+		data: {'fecha':"<?php echo end($fechas);?>", 'clienteid':cliente},
         async: false,
         success: function(data){
             if(data){
