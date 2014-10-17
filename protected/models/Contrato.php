@@ -61,8 +61,12 @@ class Contrato extends CActiveRecord
 	}
 	
 	public function beforeDelete(){
-		foreach($this->sla as $c)
+		foreach($this->sla as $c){
+			foreach($c->seguimientoSlas as $ssla)
+				$ssla->delete();
+			
 			$c->delete();
+		}
 		return parent::beforeDelete();
 	}
 

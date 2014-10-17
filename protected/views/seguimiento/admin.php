@@ -26,12 +26,14 @@ $this->menu=array(
 		),
 		array(
 		'class'=>'CButtonColumn',
-		'template'=>'{update}{delete}',
+		'template'=>'{repeat}{remove}',
 		'buttons'=>array(
-				'delete'=>array(
-						'url'=>'$this->grid->controller->createUrl("/seguimiento/borrarsemanal", array("fecha"=>$data["fecha"]))',
+				'remove'=>array(
+					'label'=>'<span class="icon-remove"></span>',
+					'url'=>'$this->grid->controller->createUrl("/seguimiento/borrarsemanal", array("fecha"=>$data["fecha"]))',
 				),
-				'update'=>array(
+				'repeat'=>array(
+					'label'=>'<span class="icon-repeat"></span>',
 					'url'=>'$this->grid->controller->createUrl("/seguimiento/regenerarsemanal", array("fecha"=>$data["fecha"]))',
 				),
 		),
@@ -50,13 +52,15 @@ $this->menu=array(
 		),
 		array(
 			'class'=>'CButtonColumn',
-			'template'=>'{update}{delete}',
+			'template'=>'{repeat}{remove}',
 			'buttons'=>array(
-					'delete'=>array(
-							'url'=>'$this->grid->controller->createUrl("/seguimiento/borrarmensual", array("fecha"=>$data["fecha"]))',
+					'remove'=>array(
+						'label'=>'<span class="icon-remove"></span>',
+						'url'=>'$this->grid->controller->createUrl("/seguimiento/borrarmensual", array("fecha"=>$data["fecha"]))',
 					),
-					'update'=>array(
-							'url'=>'$this->grid->controller->createUrl("/seguimiento/regenerarmensual", array("fecha"=>$data["fecha"]))',
+					'repeat'=>array(
+						'label'=>'<span class="icon-repeat"></span>',
+						'url'=>'$this->grid->controller->createUrl("/seguimiento/regenerarmensual", array("fecha"=>$data["fecha"]))',
 					),
 			),
 		),
