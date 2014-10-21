@@ -55,6 +55,17 @@ class SeguimientoController extends Controller
 	
 	public function actionGenerarSemanal()
 	{
+		
+		//obtener último seguimiento
+		$ultimoSeguimiento = Yii::app()->db->createCommand("SELECT * FROM seguimiento_percepcion_general ORDER BY fecha DESC LIMIT 1;")->queryRow();
+		$ultimafecha = $ultimoSeguimiento["fecha"];
+	
+		if($ultimafecha == date('YW')){
+			Yii::app()->user->setFlash('error', "Ya hay un seguimiento semanal creado");
+			$this->redirect(array('seguimiento/admin'));
+		}
+		
+		
 		$fecha = date('YW');
 		$clientes = Cliente::model()->findAll();
 		foreach ($clientes as $cliente){
@@ -99,6 +110,15 @@ class SeguimientoController extends Controller
 	
 	public function actionGenerarMensual()
 	{
+		//obtener último seguimiento
+		$ultimoSeguimiento = Yii::app()->db->createCommand("SELECT * FROM seguimiento_itil ORDER BY fecha DESC LIMIT 1;")->queryRow();
+		$ultimafecha = $ultimoSeguimiento["fecha"];
+		if(date("Ym", strtotime(substr($ultimafecha, 0,4)."W".substr($ultimafecha,4,2))) == date("Ym")){
+			Yii::app()->user->setFlash('error', "Ya hay un seguimiento creado en el mes ".date("M"));
+			$this->redirect(array('seguimiento/admin'));
+		}
+		
+		
 		$fecha = date('YW');
 		$clientes = Cliente::model()->findAll();
 		foreach ($clientes as $cliente){

@@ -13,6 +13,20 @@ $this->menu=array(
 
 ?>
 
+<?php if(Yii::app()->user->hasFlash('error')): ?>
+ 
+<div class="alert in alert-block fade alert-error">
+    <?php echo Yii::app()->user->getFlash('error'); ?>
+</div>
+ 
+<?php endif; ?>
+
+<?php 
+Yii::app()->user->setFlash('warning', '<strong>Advertencia!</strong> No se han realizado cargas de datos');
+//Yii::app()->user->setFlash('error', '<strong>Oh snap!</strong> Change a few things up and try submitting again.');
+
+?>
+
 <h2>Administrar Seguimientos</h2>
 
 <h4>Seguimiento Percepción</h4>
