@@ -60,13 +60,13 @@ class SeguimientoController extends Controller
 		$ultimoSeguimiento = Yii::app()->db->createCommand("SELECT * FROM seguimiento_percepcion_general ORDER BY fecha DESC LIMIT 1;")->queryRow();
 		$ultimafecha = $ultimoSeguimiento["fecha"];
 	
-		if($ultimafecha == date('YW')){
+		if($ultimafecha != null && $ultimafecha == date('YW')){
 			Yii::app()->user->setFlash('error', "Ya hay un seguimiento semanal creado");
 			$this->redirect(array('seguimiento/admin'));
 		}
 		
 		
-		$fecha = date('YW');
+		$fecha = "201606";//date('YW');
 		$clientes = Cliente::model()->findAll();
 		foreach ($clientes as $cliente){
 			$this->generarSemanalGeneralCliente($cliente->id, $fecha);
@@ -113,13 +113,16 @@ class SeguimientoController extends Controller
 		//obtener último seguimiento
 		$ultimoSeguimiento = Yii::app()->db->createCommand("SELECT * FROM seguimiento_itil ORDER BY fecha DESC LIMIT 1;")->queryRow();
 		$ultimafecha = $ultimoSeguimiento["fecha"];
-		if(date("Ym", strtotime(substr($ultimafecha, 0,4)."W".substr($ultimafecha,4,2))) == date("Ym")){
+		
+		
+		if($ultimafecha != null && date("Ym", strtotime(substr($ultimafecha, 0,4)."W".substr($ultimafecha,4,2))) == date("Ym")){
 			Yii::app()->user->setFlash('error', "Ya hay un seguimiento creado en el mes ".date("M"));
 			$this->redirect(array('seguimiento/admin'));
 		}
 		
+
 		
-		$fecha = date('YW');
+		$fecha = "201606";//date('YW');
 		$clientes = Cliente::model()->findAll();
 		foreach ($clientes as $cliente){
 			$this->generarItilCliente($cliente->id, $fecha);

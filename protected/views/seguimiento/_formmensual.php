@@ -14,7 +14,6 @@
 	// See class documentation of CActiveForm for details on this.
 	'enableAjaxValidation'=>false,
 )); ?>
-
 <h3>Seguimiento Itil</h3>
 <?php $this->widget('bootstrap.widgets.TbGridView', array(
     'id'=>'servicio-grid',

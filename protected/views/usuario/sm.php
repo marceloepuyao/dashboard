@@ -31,7 +31,7 @@ $this->breadcrumbs=array(
 		),
 		array(
     		'name'=>'Nombre',
-    		'value'=>'$data["nombre"]." ".$data["apellido"]',
+    		'value'=>'$data["nombre"]." ".$data["apellido"]." (".$data["email"].")"',
     	),
 	)
 ));?>
